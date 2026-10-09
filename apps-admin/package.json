@@ -1,0 +1,20 @@
+{
+  "name": "ipa-sources-admin",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "jose": "^6.2.12"
+  },
+  "devDependencies": {
+    "wrangler": "^4.149.0"
+  },
+  "cloudflare": {
+    "bindings": {
+      "GITHUB_TOKEN": {
+        "description": "Fine-grained GitHub token with Contents read/write access to the repository configured in wrangler.jsonc."
+      }
+    }
+  }
+}

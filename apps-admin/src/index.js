@@ -111,7 +111,7 @@ async function loadCatalog(env) {
   return { catalog, sha: body.sha };
 }
 
-async function saveCatalog(catalog, sha, env, appName) {
+async function saveCatalog(catalog, sha, env, appName, action = "add") {
   const branch = env.GITHUB_BRANCH || "main";
   const bytes = encoder.encode(`${JSON.stringify(catalog, null, 2)}\n`);
   let binary = "";
@@ -120,7 +120,7 @@ async function saveCatalog(catalog, sha, env, appName) {
   }
   const content = btoa(binary);
   const payload = {
-    message: `content: add ${appName} to custom IPA source`,
+    message: `content: ${action} ${appName} ${action === "add" ? "to" : "from"} custom IPA source`,
     content,
     branch,
     ...(sha ? { sha } : {}),
@@ -173,6 +173,14 @@ async function handleApi(request, env) {
     const catalog = await loadGeneratedCatalog(env);
     return json({ source: catalog.source || {}, apps: catalog.apps });
   }
+  if (request.method === "GET" && new URL(request.url).pathname === "/api/catalog-url") {
+    const owner = String(env.GITHUB_OWNER || "").trim();
+    const repo = String(env.GITHUB_REPO || "").trim();
+    const branch = String(env.GITHUB_BRANCH || "main").trim();
+    if (!owner || !repo) return json({ error: "缺少 GitHub 仓库配置" }, 500);
+    const url = `https://raw.githubusercontent.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(branch)}/apps.json`;
+    return json({ url });
+  }
   if (request.method === "POST" && new URL(request.url).pathname === "/api/apps") {
     let input;
     try { input = validateApp(await request.json()); }
@@ -182,6 +190,34 @@ async function handleApi(request, env) {
     const { app, updated } = queueApp(input, catalog);
     await saveCatalog(catalog, sha, env, input.name);
     return json({ app, updated, metadataPending: true }, 201);
+  }
+  if (request.method === "DELETE" && new URL(request.url).pathname === "/api/apps") {
+    let input;
+    try { input = await request.json(); }
+    catch { return json({ error: "删除请求内容无效" }, 400); }
+    if (typeof input.name !== "string" || !input.name.trim()) {
+      return json({ error: "缺少应用名称" }, 400);
+    }
+    const name = input.name.trim();
+    const bundleIdentifier = typeof input.bundleIdentifier === "string" ? input.bundleIdentifier.trim() : "";
+    const downloadURL = typeof input.downloadURL === "string" ? input.downloadURL.trim() : "";
+    if (!bundleIdentifier && !downloadURL) {
+      return json({ error: "缺少应用标识，无法安全删除" }, 400);
+    }
+    const { catalog, sha } = await loadCatalog(env);
+    const index = catalog.apps.findIndex((app) => {
+      if (app.name !== name) return false;
+      if (bundleIdentifier) return app.bundleIdentifier === bundleIdentifier;
+      return !downloadURL || (app.versions || []).some((version) => {
+        const sourceURL = String(version.downloadURL || "");
+        const normalize = (url) => url.replace(/^https:\/\/gh-proxy\.org\/(?=https:\/\/)/, "");
+        return normalize(sourceURL) === normalize(downloadURL);
+      });
+    });
+    if (index < 0) return json({ error: "应用已不存在，请刷新列表后重试" }, 404);
+    const [deleted] = catalog.apps.splice(index, 1);
+    await saveCatalog(catalog, sha, env, deleted.name, "remove");
+    return json({ deleted: deleted.name });
   }
   return json({ error: "Not found" }, 404);
 }

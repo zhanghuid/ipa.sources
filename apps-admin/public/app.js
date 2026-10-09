@@ -5,6 +5,8 @@ const count = document.querySelector("#app-count");
 const message = document.querySelector("#form-message");
 const submitButton = document.querySelector("#submit-button");
 const refreshButton = document.querySelector("#refresh-button");
+let activeCatalogRequest;
+let catalogRequestId = 0;
 
 function setMessage(text, kind = "error") {
   message.textContent = text;
@@ -65,19 +67,87 @@ function renderApps(apps) {
     link.rel = "noreferrer";
     link.textContent = "IPA ↗";
     link.setAttribute("aria-label", `打开 ${app.name} 的 IPA 下载链接`);
-    row.append(icon, info, link);
+    const actions = document.createElement("div");
+    actions.className = "app-row-actions";
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "delete-button";
+    deleteButton.type = "button";
+    deleteButton.textContent = "删除";
+    deleteButton.setAttribute("aria-label", `删除 ${app.name}`);
+    deleteButton.addEventListener("click", () => deleteApp(app, version, deleteButton));
+    actions.append(link, deleteButton);
+    row.append(icon, info, actions);
     list.append(row);
   }
 }
 
+async function deleteApp(app, version, button) {
+  const label = app.name || "这个应用";
+  if (!window.confirm(`确定删除「${label}」吗？该应用及其全部已登记版本会从自定义源移除。`)) return;
+  button.disabled = true;
+  button.textContent = "删除中…";
+  try {
+    const response = await fetch("/api/apps", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        name: app.name,
+        bundleIdentifier: app.bundleIdentifier || "",
+        downloadURL: version.downloadURL || "",
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || `删除失败 (${response.status})`);
+    setMessage(`已从自定义源删除 ${result.deleted}。`, "success");
+    await loadApps();
+  } catch (error) {
+    setMessage(error.message || "删除失败，请刷新列表后重试。");
+    button.disabled = false;
+    button.textContent = "删除";
+  }
+}
+
 async function loadApps() {
+  activeCatalogRequest?.abort();
+  const controller = new AbortController();
+  activeCatalogRequest = controller;
+  const requestId = ++catalogRequestId;
   state.hidden = false;
   state.className = "catalog-state";
-  state.innerHTML = '<span class="loader" aria-hidden="true"></span><span>正在读取仓库目录…</span>';
+  state.replaceChildren();
+  const loader = document.createElement("span");
+  loader.className = "loader";
+  loader.setAttribute("aria-hidden", "true");
+  const label = document.createElement("span");
+  label.textContent = "正在读取自定义应用…";
+  state.append(loader, label);
   list.hidden = true;
+  let timeoutId;
   try {
-    const response = await fetch("/api/apps", { headers: { Accept: "application/json" } });
-    const result = await response.json();
+    const timeout = new Promise((_, reject) => {
+      timeoutId = setTimeout(() => {
+        controller.abort();
+        const error = new Error("读取应用列表超时，请检查网络或 Access 登录状态后重试");
+        error.name = "TimeoutError";
+        reject(error);
+      }, 20_000);
+    });
+    const request = (async () => {
+      const response = await fetch("/api/apps", {
+        headers: { Accept: "application/json" },
+        signal: controller.signal,
+      });
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        const error = new Error(response.redirected
+          ? "Cloudflare Access 登录已过期，请重新登录后刷新页面。"
+          : `目录服务返回了非 JSON 响应 (${response.status})，请稍后重试。`);
+        error.status = response.status;
+        throw error;
+      }
+      return { response, result: await response.json() };
+    })();
+    const { response, result } = await Promise.race([request, timeout]);
     if (!response.ok) {
       const error = new Error(result.error || `读取失败 (${response.status})`);
       error.status = response.status;
@@ -85,13 +155,19 @@ async function loadApps() {
     }
     renderApps(result.apps || []);
   } catch (error) {
+    if (controller.signal.aborted && error.name === "AbortError" && requestId !== catalogRequestId) return;
     state.className = "catalog-state error";
-    state.textContent = error.status === 401
+    state.textContent = error.name === "TimeoutError" || error.name === "AbortError"
+      ? `${error.message || "读取应用列表超时"}。`
+      : error.status === 401
       ? `${error.message} 登录后刷新页面。`
       : error.status === 503
         ? `${error.message} 部署前需要配置 Access 团队域名和应用 AUD。`
-        : `${error.message}。登录后可刷新重试。`;
+        : `${error.message || "读取应用列表失败"}。可点击右侧刷新按钮重试。`;
     count.textContent = "—";
+  } finally {
+    clearTimeout(timeoutId);
+    if (activeCatalogRequest === controller) activeCatalogRequest = undefined;
   }
 }
 

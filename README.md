@@ -1,5 +1,7 @@
 # Personal IPA Source
 
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/zhanghuid/ipa.sources/tree/main/apps-admin)
+
 An AltSource-compatible catalog generated from repository-scoped source files. The source registry is [`config/sources/index.json`](config/sources/index.json); each upstream catalog is synced into `config/sources/<owner>/<repo>.json`, then merged into [`apps.json`](apps.json). GitHub Actions fetches both catalogs every six hours. Duplicate apps are identified by bundle ID; duplicate versions are identified by version and build, and the entry with the newer release date is kept. App details come from the catalog with the latest dated version.
 
 ## Add or edit apps
@@ -10,14 +12,22 @@ Add or edit upstream catalog sources in [`config/sources/index.json`](config/sou
 
 The private admin page is in [`apps-admin/`](apps-admin/). It is a Cloudflare Worker with Static Assets and a small API. Sign in through Cloudflare Access and enter the app name and a direct HTTPS IPA URL. The Worker commits a pending entry to `config/sources/custom/ipas.json`; GitHub Actions downloads the complete IPA, reads its `Info.plist` to fill in the bundle ID, version, build, minimum iOS version, and file size, extracts the largest declared primary PNG icon when one is present, then regenerates `apps.json`. Extracted icons are stored under `config/sources/custom/icons/`; App Store artwork is used as a fallback. This does not depend on the IPA host supporting HTTP Range requests. IPA downloads are limited to 2 GiB.
 
-The [`Deploy IPA admin page` workflow](.github/workflows/deploy-admin.yml) deploys the Worker when its code changes. Add GitHub Actions secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` first. The Cloudflare API token needs permission to edit Workers scripts and access the target account. `preview_urls` is disabled to avoid a second unprotected preview hostname.
+Use the **Deploy to Cloudflare** button above for a guided first deployment. Cloudflare creates a separate GitHub repository containing the self-contained Worker from `apps-admin/` (the folder contents become the new repository root) and connects it to Workers Builds. The source repository must be public for this button to work. The initial deployment uses a `workers.dev` address and safe placeholder settings; complete the setup below before using the admin API.
 
-Deployment setup:
+After the button deploys the Worker:
 
-1. Deploy once with `npm run admin:deploy` to create the `ipa-sources-admin.<account>.workers.dev` hostname.
+1. In the newly created GitHub repository, edit its root `wrangler.jsonc`: set `GITHUB_OWNER`, `GITHUB_REPO`, and `GITHUB_BRANCH` to the source repository that contains your `apps.json` and `config/sources/custom/ipas.json`. Push the change to deploy the Worker with your source repository configured.
+2. In Cloudflare Zero Trust, create an Access application for the deployed `workers.dev` hostname and allow only your identity. You can use GitHub as the identity provider. Copy its team issuer and audience tag into `ACCESS_ISSUER` and `ACCESS_AUD` in `wrangler.jsonc`, then push the change to redeploy. Configure Access before using the admin API.
+3. Create a fine-grained GitHub token limited to the source repository with **Contents: Read and write**, then add it to the Worker as the `GITHUB_TOKEN` secret. Never commit this token.
+
+For this repository's own deployment, the [`Deploy IPA admin page` workflow](.github/workflows/deploy-admin.yml) deploys the Worker when its code changes. Add GitHub Actions secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` first. The Cloudflare API token needs permission to edit Workers scripts and access the target account. `preview_urls` is disabled to avoid a second unprotected preview hostname. This repo's personal domain and Access configuration are kept in [`wrangler.production.jsonc`](wrangler.production.jsonc); the generic [`apps-admin/wrangler.jsonc`](apps-admin/wrangler.jsonc) is used by the one-click deployment template.
+
+Deployment setup for this repository:
+
+1. Deploy once with `npm run admin:deploy` to create the configured Worker.
 2. In Cloudflare Zero Trust, protect that complete Worker hostname with Access and allow only your identity. Cloudflare Access can use GitHub as its identity provider if desired.
-3. Copy the Access team issuer and this application’s audience tag into `ACCESS_ISSUER` and `ACCESS_AUD` in [`apps-admin/wrangler.jsonc`](apps-admin/wrangler.jsonc), then push the change to trigger deployment.
-4. Create a fine-grained GitHub token limited to this repository with **Contents: Read and write**, then run `npx wrangler secret put GITHUB_TOKEN --config apps-admin/wrangler.jsonc`. Do not commit the token.
+3. Copy the Access team issuer and this application’s audience tag into `ACCESS_ISSUER` and `ACCESS_AUD` in [`wrangler.production.jsonc`](wrangler.production.jsonc), then push the change to trigger deployment.
+4. Create a fine-grained GitHub token limited to this repository with **Contents: Read and write**, then run `npx wrangler secret put GITHUB_TOKEN --config wrangler.production.jsonc`. Do not commit the token.
 
 For local UI preview, run `npm run admin:dev`. The API still requires a valid Cloudflare Access JWT, so listing and submitting work after deploying behind Access. IPA hosts only need to provide a direct HTTPS download; GitHub Actions downloads the full file for metadata extraction.
 

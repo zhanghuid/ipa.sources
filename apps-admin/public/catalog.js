@@ -23,13 +23,47 @@ function makeDownload(version, appName) {
   const url = safeDownloadURL(version.downloadURL);
   if (!url) return null;
   const link = document.createElement("a");
-  link.className = "source-link";
+  link.className = "source-link version-download";
   link.href = url;
   link.target = "_blank";
   link.rel = "noopener noreferrer";
   link.textContent = "下载 IPA ↗";
   link.setAttribute("aria-label", `下载 ${appName} v${version.version || "未知"}`);
   return link;
+}
+
+function isCustomApp(app) {
+  return app.developerName === "Personal source" || String(app.iconURL || "").includes("/config/sources/custom/icons/");
+}
+
+async function deleteCustomApp(app, button) {
+  const name = app.name || "这个应用";
+  if (!window.confirm(`确定删除「${name}」吗？该应用及其全部已登记版本会从自定义源移除。`)) return;
+  button.disabled = true;
+  button.textContent = "删除中…";
+  try {
+    const response = await fetch("/api/apps", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        name: app.name,
+        bundleIdentifier: app.bundleIdentifier || "",
+        downloadURL: latestVersion(app).downloadURL || "",
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || `删除失败 (${response.status})`);
+    allApps = allApps.filter((item) => item !== app);
+    count.textContent = String(allApps.length).padStart(2, "0");
+    renderApps();
+    resultCount.textContent = `已从自定义源删除 ${result.deleted}；目录生成文件会在自动同步后更新。`;
+  } catch (error) {
+    state.hidden = false;
+    state.className = "catalog-state error";
+    state.textContent = error.message || "删除失败，请刷新目录后重试。";
+    button.disabled = false;
+    button.textContent = "删除";
+  }
 }
 
 function makeIcon(app) {
@@ -53,13 +87,16 @@ function makeVersionRow(version, appName) {
   row.className = "version-row";
   const detail = document.createElement("div");
   detail.className = "version-detail";
+  const heading = document.createElement("div");
+  heading.className = "version-heading";
   const versionName = document.createElement("strong");
   versionName.textContent = `v${version.version || "未知"}`;
   const meta = document.createElement("span");
   const build = version.buildVersion ? `Build ${version.buildVersion}` : "";
   const date = version.date || "日期未知";
   meta.textContent = [build, date].filter(Boolean).join(" · ");
-  detail.append(versionName, meta);
+  heading.append(versionName, meta);
+  detail.append(heading);
   row.append(detail);
   const description = version.localizedDescription || version.versionDescription;
   if (description) {
@@ -114,9 +151,20 @@ function renderApps() {
     const versionCount = document.createElement("span");
     versionCount.textContent = `${versions.length} 个版本`;
     summary.append(latestLabel, versionCount);
-    article.append(info, summary);
+    const actions = document.createElement("div");
+    actions.className = "full-app-actions";
     const latestDownload = makeDownload(latest, app.name || "应用");
-    if (latestDownload) article.append(latestDownload);
+    if (latestDownload) actions.append(latestDownload);
+    if (isCustomApp(app)) {
+      const deleteButton = document.createElement("button");
+      deleteButton.className = "delete-button";
+      deleteButton.type = "button";
+      deleteButton.textContent = "删除";
+      deleteButton.setAttribute("aria-label", `删除 ${app.name || "自定义应用"}`);
+      deleteButton.addEventListener("click", () => deleteCustomApp(app, deleteButton));
+      actions.append(deleteButton);
+    }
+    article.append(info, summary, actions);
     if (versions.length > 1) {
       const details = document.createElement("details");
       details.className = "version-history";

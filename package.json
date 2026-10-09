@@ -5,8 +5,8 @@
   "description": "Personal AltSource-compatible IPA catalog",
   "scripts": {
     "release": "bumpp --commit --tag --push",
-    "admin:dev": "wrangler dev --config apps-admin/wrangler.jsonc",
-    "admin:deploy": "wrangler deploy --config apps-admin/wrangler.jsonc"
+    "admin:dev": "wrangler dev --config wrangler.production.jsonc",
+    "admin:deploy": "wrangler deploy --config wrangler.production.jsonc"
   },
   "devDependencies": {
     "bumpp": "^12.3.0",

@@ -7,8 +7,9 @@
     <meta name="theme-color" content="#f7f8fa" />
     <meta name="description" content="管理个人 IPA 源中的手动应用。" />
     <title>自有 IPA 源 · 应用管理</title>
-    <link rel="stylesheet" href="/styles.css" />
-    <script src="/app.js" defer></script>
+    <link rel="stylesheet" href="/styles.css?v=20261009-copy-catalog-url-top" />
+    <script src="/copy-catalog-url.js?v=20261009-copy-catalog-url-top" defer></script>
+    <script src="/app.js?v=20261009-copy-catalog-url-top" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">跳到主要内容</a>
@@ -31,9 +32,16 @@
           <h1 id="page-title">应用管理</h1>
           <p class="lede">手动添加的应用会保存到仓库，并自动合并进主源。</p>
         </div>
-        <div class="catalog-count" aria-live="polite">
-          <span id="app-count" class="count-number">—</span>
-          <span class="count-label">已登记</span>
+        <div class="heading-actions">
+          <button class="copy-url-button" type="button" data-copy-catalog-url aria-label="复制 apps.json 访问地址" title="复制 apps.json 访问地址">
+            <svg aria-hidden="true" viewBox="0 0 16 16"><rect x="5" y="5" width="8" height="9" rx="1.5"></rect><path d="M10.5 5V3.5A1.5 1.5 0 0 0 9 2H4.5A1.5 1.5 0 0 0 3 3.5v7A1.5 1.5 0 0 0 4.5 12H5"></path></svg>
+            <span data-copy-label>复制 apps.json</span>
+          </button>
+          <span class="copy-url-status" data-copy-status role="status" aria-live="polite"></span>
+          <div class="catalog-count" aria-live="polite">
+            <span id="app-count" class="count-number">—</span>
+            <span class="count-label">已登记</span>
+          </div>
         </div>
       </section>
 
@@ -77,8 +85,7 @@
             </button>
           </div>
           <div id="catalog-state" class="catalog-state" aria-live="polite">
-            <span class="loader" aria-hidden="true"></span>
-            <span>正在读取仓库目录…</span>
+            <span>应用列表尚未加载。请确认 Cloudflare Access 登录状态后刷新页面。</span>
           </div>
           <div id="app-list" class="app-list" hidden></div>
         </section>
