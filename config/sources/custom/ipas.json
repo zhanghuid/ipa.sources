@@ -2,6 +2,30 @@
   "name": "Custom Apps",
   "apps": [
     {
+      "name": "uz",
+      "bundleIdentifier": "",
+      "developerName": "Personal source",
+      "subtitle": "",
+      "localizedDescription": "",
+      "iconURL": "",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "pending",
+          "buildVersion": "pending",
+          "date": "2026-10-09",
+          "localizedDescription": "等待 GitHub Actions 下载 IPA 并读取版本信息。",
+          "downloadURL": "https://streamshare.wireway.ch/download/xfxwqm8w",
+          "size": 0,
+          "minOSVersion": "14.0"
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
       "name": "yida",
       "bundleIdentifier": "com.xinqiu.yidaapp",
       "developerName": "Personal source",
