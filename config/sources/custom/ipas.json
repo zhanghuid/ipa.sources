@@ -2,6 +2,30 @@
   "name": "Custom Apps",
   "apps": [
     {
+      "name": "tvs",
+      "bundleIdentifier": "",
+      "developerName": "Personal source",
+      "subtitle": "",
+      "localizedDescription": "",
+      "iconURL": "",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "pending",
+          "buildVersion": "pending",
+          "date": "2026-10-09",
+          "localizedDescription": "等待 GitHub Actions 下载 IPA 并读取版本信息。",
+          "downloadURL": "https://github.com/yuluoos/TVBox-tvs/releases/download/v1.2.1/tvs-selfsign-1.2.1.ipa",
+          "size": 0,
+          "minOSVersion": "14.0"
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
       "name": "echoTv",
       "bundleIdentifier": "com.hoowhoami.echotv",
       "developerName": "Personal source",
