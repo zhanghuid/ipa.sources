@@ -1,6 +1,10 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "ipa-sources-admin",
+  "workers_dev": true,
+  "routes": [
+    { "pattern": "ipa-sources-admin.whoops.space", "custom_domain": true }
+  ],
   "main": "src/index.js",
   "compatibility_date": "2026-10-09",
   "compatibility_flags": ["nodejs_compat"],
