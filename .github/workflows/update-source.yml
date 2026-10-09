@@ -1,0 +1,43 @@
+name: Update IPA source
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+  push:
+    paths:
+      - "config/apps.json"
+      - "scripts/generate_source.py"
+      - ".github/workflows/update-source.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-ipa-source
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Generate catalog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACCELERATOR_BASE_URL: ${{ vars.ACCELERATOR_BASE_URL }}
+        run: python scripts/generate_source.py
+      - name: Commit catalog changes
+        run: |
+          if git diff --quiet -- apps.json; then
+            echo "Catalog is up to date"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps.json
+          git commit -m "chore: update IPA catalog"
+          git push
