@@ -3,27 +3,28 @@
   "apps": [
     {
       "name": "tvs",
-      "bundleIdentifier": "",
+      "bundleIdentifier": "com.example.tvs",
       "developerName": "Personal source",
       "subtitle": "",
       "localizedDescription": "",
-      "iconURL": "",
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/sources/custom/icons/com.example.tvs.png",
       "category": "utilities",
       "versions": [
         {
-          "version": "pending",
-          "buildVersion": "pending",
+          "version": "1.2.1",
+          "buildVersion": "6",
           "date": "2026-10-09",
-          "localizedDescription": "等待 GitHub Actions 下载 IPA 并读取版本信息。",
+          "localizedDescription": "",
           "downloadURL": "https://github.com/yuluoos/TVBox-tvs/releases/download/v1.2.1/tvs-selfsign-1.2.1.ipa",
-          "size": 0,
-          "minOSVersion": "14.0"
+          "size": 31006356,
+          "minOSVersion": "15.0"
         }
       ],
       "appPermissions": {
         "entitlements": [],
         "privacy": {}
-      }
+      },
+      "_iconExtractionChecked": "cgbi-v1"
     },
     {
       "name": "echoTv",
