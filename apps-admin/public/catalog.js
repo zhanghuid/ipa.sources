@@ -145,17 +145,30 @@ async function loadCatalog() {
   list.hidden = true;
   resultCount.textContent = "";
   try {
-    const response = await fetch("/api/catalog", {
-      headers: { Accept: "application/json" },
-      signal: AbortSignal.timeout(25_000),
+    const controller = new AbortController();
+    let timeoutId;
+    const timeout = new Promise((_, reject) => {
+      timeoutId = setTimeout(() => {
+        controller.abort();
+        const error = new Error("读取目录超时");
+        error.name = "TimeoutError";
+        reject(error);
+      }, 25_000);
     });
-    const contentType = response.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) {
-      throw new Error(response.redirected
-        ? "Cloudflare Access 登录已过期，请重新登录后刷新目录。"
-        : `目录服务返回了非 JSON 响应 (${response.status})，请稍后重试。`);
-    }
-    const result = await response.json();
+    const request = (async () => {
+      const response = await fetch("/api/catalog", {
+        headers: { Accept: "application/json" },
+        signal: controller.signal,
+      });
+      const contentType = response.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error(response.redirected
+          ? "Cloudflare Access 登录已过期，请重新登录后刷新目录。"
+          : `目录服务返回了非 JSON 响应 (${response.status})，请稍后重试。`);
+      }
+      return { response, result: await response.json() };
+    })();
+    const { response, result } = await Promise.race([request, timeout]).finally(() => clearTimeout(timeoutId));
     if (!response.ok) throw new Error(result.error || `读取失败 (${response.status})`);
     allApps = result.apps || [];
     count.textContent = String(allApps.length).padStart(2, "0");
