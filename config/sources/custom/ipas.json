@@ -2,6 +2,30 @@
   "name": "Custom Apps",
   "apps": [
     {
+      "name": "yida",
+      "bundleIdentifier": "",
+      "developerName": "Personal source",
+      "subtitle": "",
+      "localizedDescription": "",
+      "iconURL": "",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "pending",
+          "buildVersion": "pending",
+          "date": "2026-10-09",
+          "localizedDescription": "等待 GitHub Actions 下载 IPA 并读取版本信息。",
+          "downloadURL": "https://github.com/xiaohucode/yidaRule/releases/download/1.4.4/yidaApp-1.4.4-release-nosign.ipa",
+          "size": 0,
+          "minOSVersion": "14.0"
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
       "name": "echoTv",
       "bundleIdentifier": "com.hoowhoami.echotv",
       "developerName": "Personal source",
