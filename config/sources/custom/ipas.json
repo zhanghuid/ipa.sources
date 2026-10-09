@@ -2,31 +2,6 @@
   "name": "Custom Apps",
   "apps": [
     {
-      "name": "tvs",
-      "bundleIdentifier": "com.example.tvs",
-      "developerName": "Personal source",
-      "subtitle": "",
-      "localizedDescription": "",
-      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/sources/custom/icons/com.example.tvs.png",
-      "category": "utilities",
-      "versions": [
-        {
-          "version": "1.2.1",
-          "buildVersion": "6",
-          "date": "2026-10-09",
-          "localizedDescription": "",
-          "downloadURL": "https://github.com/yuluoos/TVBox-tvs/releases/download/v1.2.1/tvs-selfsign-1.2.1.ipa",
-          "size": 31006356,
-          "minOSVersion": "15.0"
-        }
-      ],
-      "appPermissions": {
-        "entitlements": [],
-        "privacy": {}
-      },
-      "_iconExtractionChecked": "cgbi-v1"
-    },
-    {
       "name": "echoTv",
       "bundleIdentifier": "com.hoowhoami.echotv",
       "developerName": "Personal source",
