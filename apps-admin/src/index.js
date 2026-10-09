@@ -49,17 +49,26 @@ function validateApp(input) {
 
 async function githubRequest(path, env, init = {}) {
   if (!env.GITHUB_TOKEN) throw new Error("缺少 Worker secret：GITHUB_TOKEN");
-  const response = await fetch(`https://api.github.com${path}`, {
-    ...init,
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
-      "X-GitHub-Api-Version": "2022-11-28",
-      "User-Agent": "ipa-sources-admin",
-      ...(init.body ? { "Content-Type": "application/json" } : {}),
-      ...init.headers,
-    },
-  });
+  let response;
+  try {
+    response = await fetch(`https://api.github.com${path}`, {
+      ...init,
+      signal: AbortSignal.timeout(20_000),
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `Bearer ${env.GITHUB_TOKEN}`,
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "ipa-sources-admin",
+        ...(init.body ? { "Content-Type": "application/json" } : {}),
+        ...init.headers,
+      },
+    });
+  } catch (error) {
+    if (error.name === "TimeoutError" || error.name === "AbortError") {
+      throw Object.assign(new Error("读取 GitHub 仓库超时，请稍后重试。"), { status: 504 });
+    }
+    throw error;
+  }
   const body = await response.json().catch(() => ({}));
   if (!response.ok && response.status !== 404) {
     throw new Error(body.message || `GitHub API returned ${response.status}`);
@@ -185,7 +194,7 @@ export default {
       catch (error) {
         if (error instanceof Response) return error;
         console.error(JSON.stringify({ event: "admin_api_error", message: error.message }));
-        return json({ error: error.message || "请求失败" }, 500);
+        return json({ error: error.message || "请求失败" }, error.status || 500);
       }
     }
     return env.ASSETS.fetch(request);

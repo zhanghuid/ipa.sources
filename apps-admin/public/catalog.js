@@ -145,7 +145,16 @@ async function loadCatalog() {
   list.hidden = true;
   resultCount.textContent = "";
   try {
-    const response = await fetch("/api/catalog", { headers: { Accept: "application/json" } });
+    const response = await fetch("/api/catalog", {
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(25_000),
+    });
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      throw new Error(response.redirected
+        ? "Cloudflare Access 登录已过期，请重新登录后刷新目录。"
+        : `目录服务返回了非 JSON 响应 (${response.status})，请稍后重试。`);
+    }
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || `读取失败 (${response.status})`);
     allApps = result.apps || [];
@@ -154,7 +163,9 @@ async function loadCatalog() {
     renderApps();
   } catch (error) {
     state.className = "catalog-state error";
-    state.textContent = `${error.message}。登录后可刷新重试。`;
+    state.textContent = error.name === "TimeoutError" || error.name === "AbortError"
+      ? "读取目录超时，请检查网络或 Access 登录状态后重试。"
+      : `${error.message || "读取目录失败"} 可点击右侧刷新按钮重试。`;
     count.textContent = "—";
   }
 }
