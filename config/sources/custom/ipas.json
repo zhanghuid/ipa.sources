@@ -3,27 +3,28 @@
   "apps": [
     {
       "name": "uz",
-      "bundleIdentifier": "",
+      "bundleIdentifier": "com.uzvideoapp2",
       "developerName": "Personal source",
       "subtitle": "",
       "localizedDescription": "",
-      "iconURL": "",
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/sources/custom/icons/com.uzvideoapp2.png",
       "category": "utilities",
       "versions": [
         {
-          "version": "pending",
-          "buildVersion": "pending",
+          "version": "1.6.68",
+          "buildVersion": "1.6.68",
           "date": "2026-10-09",
-          "localizedDescription": "等待 GitHub Actions 下载 IPA 并读取版本信息。",
+          "localizedDescription": "",
           "downloadURL": "https://streamshare.wireway.ch/download/xfxwqm8w",
-          "size": 0,
-          "minOSVersion": "14.0"
+          "size": 26726759,
+          "minOSVersion": "13.0"
         }
       ],
       "appPermissions": {
         "entitlements": [],
         "privacy": {}
-      }
+      },
+      "_iconExtractionChecked": "cgbi-v1"
     },
     {
       "name": "yida",
