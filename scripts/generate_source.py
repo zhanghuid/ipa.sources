@@ -9,6 +9,7 @@ import os
 import plistlib
 import re
 import sys
+import struct
 import tempfile
 import time
 import threading
@@ -26,6 +27,115 @@ SOURCES_INDEX = ROOT / "config/sources/index.json"
 SOURCES_DIR = ROOT / "config/sources"
 OUTPUT = ROOT / "apps.json"
 MAX_CUSTOM_IPA_SIZE = 2 * 1024 * 1024 * 1024
+CUSTOM_ICONS_DIR = SOURCES_DIR / "custom/icons"
+ICON_EXTRACTION_VERSION = "cgbi-v1"
+PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+
+
+def png_chunks(image: bytes) -> list[tuple[bytes, bytes]]:
+    if not image.startswith(PNG_SIGNATURE):
+        raise ValueError("icon is not a PNG image")
+    chunks: list[tuple[bytes, bytes]] = []
+    offset = len(PNG_SIGNATURE)
+    while offset + 12 <= len(image):
+        length = struct.unpack_from(">I", image, offset)[0]
+        end = offset + 12 + length
+        if end > len(image):
+            raise ValueError("PNG chunk exceeds file size")
+        kind = image[offset + 4:offset + 8]
+        chunks.append((kind, image[offset + 8:offset + 8 + length]))
+        offset = end
+        if kind == b"IEND":
+            break
+    return chunks
+
+
+def png_dimensions(image: bytes) -> tuple[int, int]:
+    for kind, data in png_chunks(image):
+        if kind == b"IHDR" and len(data) == 13:
+            return struct.unpack_from(">II", data, 0)
+    raise ValueError("PNG has no valid IHDR chunk")
+
+
+def normalize_cgbi_png(image: bytes) -> bytes:
+    """Convert Apple's CgBI PNG variant to a standards-compliant PNG."""
+    chunks = png_chunks(image)
+    if not any(kind == b"CgBI" for kind, _ in chunks):
+        return image
+    header = next((data for kind, data in chunks if kind == b"IHDR"), None)
+    if header is None or len(header) != 13:
+        raise ValueError("CgBI image has no valid IHDR chunk")
+    width, height, depth, color_type, compression, filter_method, interlace = struct.unpack(">IIBBBBB", header)
+    if depth != 8 or color_type not in (2, 6) or interlace != 0 or compression != 0 or filter_method != 0:
+        raise ValueError("unsupported CgBI icon encoding")
+    channels = 4 if color_type == 6 else 3
+    stride = width * channels
+    if width < 1 or height < 1 or stride * height > 64 * 1024 * 1024:
+        raise ValueError("CgBI icon dimensions exceed processing limits")
+    compressed = b"".join(data for kind, data in chunks if kind == b"IDAT")
+    raw = zlib.decompress(compressed, -15)
+    if len(raw) != height * (stride + 1):
+        raise ValueError("CgBI pixel data length does not match its dimensions")
+
+    def paeth(left: int, above: int, upper_left: int) -> int:
+        estimate = left + above - upper_left
+        distances = (abs(estimate - left), abs(estimate - above), abs(estimate - upper_left))
+        return (left, above, upper_left)[distances.index(min(distances))]
+
+    rows: list[bytearray] = []
+    offset = 0
+    previous = bytearray(stride)
+    for _ in range(height):
+        filter_type = raw[offset]
+        row = bytearray(raw[offset + 1:offset + 1 + stride])
+        offset += stride + 1
+        if filter_type > 4:
+            raise ValueError("CgBI icon uses an invalid PNG row filter")
+        for index in range(stride):
+            left = row[index - channels] if index >= channels else 0
+            above = previous[index]
+            upper_left = previous[index - channels] if index >= channels else 0
+            if filter_type == 1:
+                predictor = left
+            elif filter_type == 2:
+                predictor = above
+            elif filter_type == 3:
+                predictor = (left + above) // 2
+            elif filter_type == 4:
+                predictor = paeth(left, above, upper_left)
+            else:
+                predictor = 0
+            row[index] = (row[index] + predictor) & 0xFF
+        rows.append(row)
+        previous = row
+
+    standard_scanlines = bytearray()
+    for row in rows:
+        standard_scanlines.append(0)
+        for x in range(0, stride, channels):
+            blue, green, red = row[x:x + 3]
+            if channels == 4:
+                alpha = row[x + 3]
+                if alpha == 0:
+                    red = green = blue = 0
+                elif alpha < 255:
+                    red = min(255, (red * 255 + alpha // 2) // alpha)
+                    green = min(255, (green * 255 + alpha // 2) // alpha)
+                    blue = min(255, (blue * 255 + alpha // 2) // alpha)
+                standard_scanlines.extend((red, green, blue, alpha))
+            else:
+                standard_scanlines.extend((red, green, blue))
+
+    def make_chunk(kind: bytes, data: bytes) -> bytes:
+        body = kind + data
+        return struct.pack(">I", len(data)) + body + struct.pack(">I", zlib.crc32(body) & 0xFFFFFFFF)
+
+    return (
+        PNG_SIGNATURE
+        + make_chunk(b"IHDR", header)
+        + make_chunk(b"IDAT", zlib.compress(standard_scanlines))
+        + make_chunk(b"IEND", b"")
+    )
 
 
 class Progress:
@@ -124,6 +234,60 @@ def fetch_catalog(url: str, label: str) -> dict:
     return catalog
 
 
+def extract_icon_png(archive: zipfile.ZipFile, app_root: str, info: dict, names: list[str]) -> bytes | None:
+    """Return the largest declared primary icon PNG stored directly in the app bundle."""
+    icon_names: list[str] = []
+    for key in ("CFBundleIcons", "CFBundleIcons~ipad"):
+        primary = info.get(key, {}).get("CFBundlePrimaryIcon", {})
+        icon_names.extend(str(name) for name in primary.get("CFBundleIconFiles", []))
+        icon_name = primary.get("CFBundleIconName")
+        if icon_name:
+            icon_names.append(str(icon_name))
+    icon_names = [name.rsplit("/", 1)[-1].removesuffix(".png") for name in icon_names]
+
+    candidates: list[tuple[int, bytes]] = []
+    prefix = app_root.rstrip("/") + "/"
+    for path in names:
+        if not path.startswith(prefix) or "/" in path[len(prefix):] or not path.lower().endswith(".png"):
+            continue
+        basename = path[len(prefix):]
+        stem = basename[:-4]
+        declared_match = any(
+            stem == name or stem.startswith(name + "@") or stem.startswith(name + "~")
+            for name in icon_names
+        )
+        if not declared_match and not stem.lower().startswith("appicon"):
+            continue
+        try:
+            image_data = archive.read(path)
+            width, height = png_dimensions(image_data)
+            if width < 1 or height < 1 or width * height > 16_000_000:
+                continue
+            candidates.append((width * height, normalize_cgbi_png(image_data)))
+        except (KeyError, OSError, ValueError, zipfile.BadZipFile, zlib.error, RuntimeError):
+            continue
+    return max(candidates, key=lambda candidate: candidate[0])[1] if candidates else None
+
+
+def store_custom_icon(bundle_id: str, image: bytes) -> str:
+    """Save an extracted icon as a public raw GitHub asset and return its URL."""
+    if not re.fullmatch(r"[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+", bundle_id):
+        raise ValueError("refusing to store an icon with an invalid bundle ID")
+    if len(image) > 12 * 1024 * 1024:
+        raise ValueError(f"{bundle_id}: extracted icon exceeds the 12 MiB limit")
+    repository = os.getenv("GITHUB_REPOSITORY", "zhanghuid/ipa.sources")
+    if not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository):
+        repository = "zhanghuid/ipa.sources"
+    branch = urllib.parse.quote(os.getenv("GITHUB_REF_NAME", "main"), safe="/")
+    CUSTOM_ICONS_DIR.mkdir(parents=True, exist_ok=True)
+    target = CUSTOM_ICONS_DIR / f"{bundle_id}.png"
+    if not target.exists() or target.read_bytes() != image:
+        temporary = target.with_suffix(".png.tmp")
+        temporary.write_bytes(image)
+        temporary.replace(target)
+    return f"https://raw.githubusercontent.com/{repository}/{branch}/config/sources/custom/icons/{bundle_id}.png"
+
+
 def ipa_metadata(url: str, label: str) -> dict:
     """Download a complete IPA and read its main Payload app Info.plist."""
     parsed = urllib.parse.urlparse(url)
@@ -164,8 +328,9 @@ def ipa_metadata(url: str, label: str) -> dict:
         temporary.flush()
         try:
             with zipfile.ZipFile(temporary.name) as archive:
+                names = archive.namelist()
                 plist_names = [
-                    name for name in archive.namelist()
+                    name for name in names
                     if re.fullmatch(r"Payload/[^/]+\.app/Info\.plist", name)
                 ]
                 if not plist_names:
@@ -175,6 +340,7 @@ def ipa_metadata(url: str, label: str) -> dict:
                 if info_entry.file_size > 8 * 1024 * 1024:
                     raise ValueError(f"{label}: Info.plist exceeds the 8 MiB processing limit")
                 info = plistlib.loads(archive.read(info_path))
+                icon_png = extract_icon_png(archive, info_path.rsplit("/", 1)[0], info, names)
         except (
             zipfile.BadZipFile,
             KeyError,
@@ -199,6 +365,7 @@ def ipa_metadata(url: str, label: str) -> dict:
         "buildVersion": str(info.get("CFBundleVersion", "1")),
         "minOSVersion": str(info.get("MinimumOSVersion", "14.0")),
         "size": downloaded,
+        "iconPNG": icon_png,
     }
 
 
@@ -230,8 +397,22 @@ def hydrate_custom_catalog(catalog: dict) -> bool:
     """Resolve queued custom IPA metadata and persist it into the source file."""
     changed = False
     for app in catalog.get("apps", []):
-        for version in app.get("versions", []):
-            if version.get("version") != "pending" and app.get("bundleIdentifier"):
+        versions = sorted(
+            app.get("versions", []),
+            key=lambda item: (str(item.get("date", "")), str(item.get("version", ""))),
+            reverse=True,
+        )
+        if app.get("bundleIdentifier") and not app.get("iconURL") and app.get("_iconExtractionChecked") != ICON_EXTRACTION_VERSION:
+            store_metadata = app_store_metadata(str(app["bundleIdentifier"]))
+            app.update({key: value for key, value in store_metadata.items() if value})
+            if app.get("iconURL"):
+                app["_iconExtractionChecked"] = ICON_EXTRACTION_VERSION
+                changed = True
+        for version in versions:
+            is_latest = bool(versions) and version is versions[0]
+            needs_metadata = version.get("version") == "pending" or not app.get("bundleIdentifier")
+            needs_icon = is_latest and not app.get("iconURL") and app.get("_iconExtractionChecked") != ICON_EXTRACTION_VERSION
+            if not needs_metadata and not needs_icon:
                 continue
             url = str(version.get("downloadURL", "")).strip()
             try:
@@ -260,6 +441,13 @@ def hydrate_custom_catalog(catalog: dict) -> bool:
                 key: value for key, value in app_store_metadata(metadata["bundleIdentifier"]).items()
                 if value
             })
+            if metadata["iconPNG"]:
+                app["iconURL"] = store_custom_icon(metadata["bundleIdentifier"], metadata["iconPNG"])
+                app["_iconExtractionChecked"] = ICON_EXTRACTION_VERSION
+                changed = True
+            elif needs_icon:
+                app["_iconExtractionChecked"] = ICON_EXTRACTION_VERSION
+                changed = True
             version.update({
                 "version": metadata["version"],
                 "buildVersion": metadata["buildVersion"],
@@ -324,7 +512,7 @@ def merge_catalogs(named_catalogs: list[tuple[str, dict]], accelerator: str) -> 
         candidates = grouped[bundle_id]
         # Latest published version date decides which catalog's app metadata is preferred.
         candidates.sort(key=lambda row: (latest_version_date(row[1]), -row[0]), reverse=True)
-        result = dict(candidates[0][1])
+        result = {key: value for key, value in candidates[0][1].items() if not key.startswith("_")}
         versions_by_key: dict[tuple[str, str], tuple[str, dict]] = {}
         for _, app, _ in candidates:
             for version in app.get("versions", []):

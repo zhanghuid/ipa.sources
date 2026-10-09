@@ -2234,7 +2234,7 @@
       "developerName": "Personal source",
       "subtitle": "",
       "localizedDescription": "",
-      "iconURL": "",
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/sources/custom/icons/com.hoowhoami.echotv.png",
       "category": "utilities",
       "versions": [
         {
