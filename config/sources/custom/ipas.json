@@ -3,7 +3,7 @@
   "apps": [
     {
       "name": "echoTv",
-      "bundleIdentifier": "",
+      "bundleIdentifier": "com.hoowhoami.echotv",
       "developerName": "Personal source",
       "subtitle": "",
       "localizedDescription": "",
@@ -11,13 +11,13 @@
       "category": "utilities",
       "versions": [
         {
-          "version": "pending",
-          "buildVersion": "pending",
+          "version": "1.0.7",
+          "buildVersion": "8",
           "date": "2026-10-09",
-          "localizedDescription": "等待 GitHub Actions 下载 IPA 并读取版本信息。",
+          "localizedDescription": "",
           "downloadURL": "https://github.com/hoowhoami/EchoTV/releases/download/v1.0.7-beta.1/echotv-v1.0.7-beta.1-iOS.ipa",
-          "size": 0,
-          "minOSVersion": "14.0"
+          "size": 30761838,
+          "minOSVersion": "13.0"
         }
       ],
       "appPermissions": {

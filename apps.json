@@ -2227,6 +2227,30 @@
           "minOSVersion": "15.1"
         }
       ]
+    },
+    {
+      "name": "echoTv",
+      "bundleIdentifier": "com.hoowhoami.echotv",
+      "developerName": "Personal source",
+      "subtitle": "",
+      "localizedDescription": "",
+      "iconURL": "",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "1.0.7",
+          "buildVersion": "8",
+          "date": "2026-10-09",
+          "localizedDescription": "",
+          "downloadURL": "https://gh-proxy.org/https://github.com/hoowhoami/EchoTV/releases/download/v1.0.7-beta.1/echotv-v1.0.7-beta.1-iOS.ipa",
+          "size": 30761838,
+          "minOSVersion": "13.0"
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
     }
   ]
 }
