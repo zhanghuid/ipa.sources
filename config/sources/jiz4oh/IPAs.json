@@ -1,0 +1,1306 @@
+{
+  "name": "IPAs",
+  "subtitle": "jiz4oh 自用的 IPA 归档源",
+  "description": "这个仓库用于维护一个 AltSource 风格的 `apps.json`，供兼容 AltSource 的客户端导入，并配合 LiveContainer 使用。",
+  "iconURL": "https://avatars.githubusercontent.com/u/41264693?v=4",
+  "website": "https://github.com/jiz4oh/IPAs",
+  "tintColor": "#4F7FFF",
+  "apps": [
+    {
+      "name": "Alook",
+      "bundleIdentifier": "com.ld.TakeBrowser",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/9a/6c/3d/9a6c3d83-b828-a339-a7d5-d864160126dd/AppIcon-0-0-1x_U007epad-0-11-0-85-220.png/512x512bb.jpg",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "21.8",
+          "buildVersion": "1",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：Alook_21.8_Custom.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/Alook_21.8_Custom.ipa",
+          "size": 12406442
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "Animeko",
+      "bundleIdentifier": "org.animeko.animeko",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "upstream": {
+        "repo": "open-ani/animeko"
+      },
+      "iconURL": "https://raw.githubusercontent.com/open-ani/animeko/main/.github/assets/logo.png",
+      "category": "entertainment",
+      "versions": [
+        {
+          "version": "6.2.0",
+          "buildVersion": "6.2.99",
+          "date": "2026-09-26",
+          "localizedDescription": "上游源文件：ani-6.2.0.ipa",
+          "downloadURL": "https://github.com/open-ani/animeko/releases/download/v6.2.0/ani-6.2.0.ipa",
+          "size": 45401084
+        },
+        {
+          "version": "6.1.0",
+          "buildVersion": "60100",
+          "date": "2026-08-28",
+          "localizedDescription": "上游源文件：ani-6.1.0.ipa",
+          "downloadURL": "https://github.com/open-ani/animeko/releases/download/v6.1.0/ani-6.1.0.ipa",
+          "size": 44425669
+        },
+        {
+          "version": "6.0.0",
+          "buildVersion": "60000",
+          "date": "2026-08-01",
+          "localizedDescription": "上游源文件：ani-6.0.0.ipa",
+          "downloadURL": "https://github.com/open-ani/animeko/releases/download/v6.0.0/ani-6.0.0.ipa",
+          "size": 41391524
+        },
+        {
+          "version": "5.7.1",
+          "buildVersion": "50710",
+          "date": "2026-07-09",
+          "localizedDescription": "上游源文件：ani-5.7.1.ipa",
+          "downloadURL": "https://github.com/open-ani/animeko/releases/download/v5.7.1/ani-5.7.1.ipa",
+          "size": 30505730
+        },
+        {
+          "version": "5.7.0",
+          "buildVersion": "50700",
+          "date": "2026-06-28",
+          "localizedDescription": "上游源文件：ani-5.7.0.ipa",
+          "downloadURL": "https://github.com/open-ani/animeko/releases/download/v5.7.0/ani-5.7.0.ipa",
+          "size": 30504854
+        },
+        {
+          "version": "5.6.0",
+          "buildVersion": "50600",
+          "date": "2026-05-28",
+          "localizedDescription": "上游源文件：ani-5.6.0.ipa",
+          "downloadURL": "https://github.com/open-ani/animeko/releases/download/v5.6.0/ani-5.6.0.ipa",
+          "size": 30337983
+        },
+        {
+          "version": "5.5.2",
+          "buildVersion": "50520",
+          "date": "2026-05-26",
+          "localizedDescription": "上游源文件：ani-5.5.2.ipa",
+          "downloadURL": "https://github.com/open-ani/animeko/releases/download/v5.5.2/ani-5.5.2.ipa",
+          "size": 29924579
+        },
+        {
+          "version": "5.5.1",
+          "buildVersion": "50510",
+          "date": "2026-05-24",
+          "localizedDescription": "上游源文件：ani-5.5.1.ipa",
+          "downloadURL": "https://github.com/open-ani/animeko/releases/download/v5.5.1/ani-5.5.1.ipa",
+          "size": 29923207
+        },
+        {
+          "version": "5.4.4",
+          "buildVersion": "50440",
+          "date": "2026-05-13",
+          "localizedDescription": "上游源文件：ani-5.4.4.ipa",
+          "downloadURL": "https://github.com/open-ani/animeko/releases/download/v5.4.4/ani-5.4.4.ipa",
+          "size": 35357234
+        },
+        {
+          "version": "5.4.3",
+          "buildVersion": "50430",
+          "date": "2026-04-12",
+          "localizedDescription": "上游源文件：ani-5.4.3.ipa",
+          "downloadURL": "https://github.com/open-ani/animeko/releases/download/v5.4.3/ani-5.4.3.ipa",
+          "size": 35360753
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "Apollo",
+      "bundleIdentifier": "com.christianselig.Apollo",
+      "developerName": "Apollo Reborn",
+      "subtitle": "GitHub Release",
+      "localizedDescription": "同步自 Apollo-Reborn 上游发布。",
+      "upstream": {
+        "repo": "Apollo-Reborn/Apollo-Reborn",
+        "assetPatterns": [
+          "Apollo-Reborn-*.ipa"
+        ],
+        "excludePatterns": [
+          "*-GLASS*.ipa",
+          "*-NOEXTENSIONS.ipa"
+        ]
+      },
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple126/v4/a1/d8/a6/a1d8a63c-1534-2a04-b0fe-3de6e9c800b9/AppIcon-0-1x_U007emarketing-0-0-0-7-0-0-sRGB-85-220.png/512x512bb.jpg",
+      "category": "social",
+      "versions": [
+        {
+          "version": "3.8.5",
+          "buildVersion": "300",
+          "date": "2026-09-29",
+          "localizedDescription": "上游源文件：Apollo-Reborn-3.8.5.ipa",
+          "downloadURL": "https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_3.8.5/Apollo-Reborn-3.8.5.ipa",
+          "size": 96696713
+        },
+        {
+          "version": "3.8.0",
+          "buildVersion": "299",
+          "date": "2026-09-25",
+          "localizedDescription": "上游源文件：Apollo-Reborn-3.8.0.ipa",
+          "downloadURL": "https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_3.8.0/Apollo-Reborn-3.8.0.ipa",
+          "size": 96553795
+        },
+        {
+          "version": "3.7.1",
+          "buildVersion": "298",
+          "date": "2026-09-13",
+          "localizedDescription": "上游源文件：Apollo-Reborn-3.7.1.ipa",
+          "downloadURL": "https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_3.7.1/Apollo-Reborn-3.7.1.ipa",
+          "size": 96132071
+        },
+        {
+          "version": "3.7.0",
+          "buildVersion": "297",
+          "date": "2026-09-11",
+          "localizedDescription": "上游源文件：Apollo-Reborn-3.7.0.ipa",
+          "downloadURL": "https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_3.7.0/Apollo-Reborn-3.7.0.ipa",
+          "size": 96105993
+        },
+        {
+          "version": "3.6.0",
+          "buildVersion": "296",
+          "date": "2026-08-18",
+          "localizedDescription": "上游源文件：Apollo-Reborn-3.6.0.ipa",
+          "downloadURL": "https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_3.6.0/Apollo-Reborn-3.6.0.ipa",
+          "size": 95474417
+        },
+        {
+          "version": "3.5.1",
+          "buildVersion": "295",
+          "date": "2026-08-07",
+          "localizedDescription": "上游源文件：Apollo-Reborn-3.5.1.ipa",
+          "downloadURL": "https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_3.5.1/Apollo-Reborn-3.5.1.ipa",
+          "size": 95240622
+        },
+        {
+          "version": "3.5.0",
+          "buildVersion": "294",
+          "date": "2026-07-30",
+          "localizedDescription": "上游源文件：Apollo-Reborn-3.5.0.ipa",
+          "downloadURL": "https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_3.5.0/Apollo-Reborn-3.5.0.ipa",
+          "size": 93574665
+        },
+        {
+          "version": "3.4.2",
+          "buildVersion": "293",
+          "date": "2026-07-17",
+          "localizedDescription": "上游源文件：Apollo-Reborn-3.4.2.ipa",
+          "downloadURL": "https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_3.4.2/Apollo-Reborn-3.4.2.ipa",
+          "size": 90365958
+        },
+        {
+          "version": "3.4.1",
+          "buildVersion": "292",
+          "date": "2026-07-15",
+          "localizedDescription": "上游源文件：Apollo-Reborn-3.4.1.ipa",
+          "downloadURL": "https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_3.4.1/Apollo-Reborn-3.4.1.ipa",
+          "size": 90341077
+        },
+        {
+          "version": "3.4.0",
+          "buildVersion": "291",
+          "date": "2026-07-08",
+          "localizedDescription": "上游源文件：Apollo-Reborn-3.4.0.ipa",
+          "downloadURL": "https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_3.4.0/Apollo-Reborn-3.4.0.ipa",
+          "size": 90178536
+        },
+        {
+          "version": "3.3.0",
+          "buildVersion": "290",
+          "date": "2026-06-26",
+          "localizedDescription": "上游源文件：Apollo-Reborn-3.3.0.ipa",
+          "downloadURL": "https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_3.3.0/Apollo-Reborn-3.3.0.ipa",
+          "size": 89910361
+        },
+        {
+          "version": "3.2.0",
+          "buildVersion": "289",
+          "date": "2026-06-16",
+          "localizedDescription": "上游源文件：Apollo-Reborn-3.2.0.ipa",
+          "downloadURL": "https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_3.2.0/Apollo-Reborn-3.2.0.ipa",
+          "size": 89292182
+        },
+        {
+          "version": "1.15.11",
+          "buildVersion": "2.2.1",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：Apollo-1.15.11_ImprovedCustomApi-2.2.1.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/Apollo-1.15.11_ImprovedCustomApi-2.2.1.ipa",
+          "size": 114791684
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "Twitter/X",
+      "bundleIdentifier": "com.atebits.Tweetie2",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "同一 bundle id 下包含多个 Twitter / X 变体。",
+      "upstream": {
+        "repo": "NeoFreeBird/app",
+        "assetPatterns": [
+          "NeoFreeBird-*.ipa"
+        ]
+      },
+      "iconURL": "https://raw.githubusercontent.com/NeoFreeBird/app/main/Branding/Icon_rounded.png",
+      "category": "social",
+      "versions": [
+        {
+          "version": "12.13",
+          "buildVersion": "10",
+          "date": "2026-08-05",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/X_12.13.ipa",
+          "size": 231276893
+        },
+        {
+          "version": "11.35",
+          "buildVersion": "12",
+          "date": "2025-11-03",
+          "localizedDescription": "上游源文件：NeoFreeBird-2.2-Twitter-11.35.ipa",
+          "downloadURL": "https://github.com/NeoFreeBird/app/releases/download/2.2/NeoFreeBird-2.2-Twitter-11.35.ipa",
+          "size": 153108663
+        },
+        {
+          "version": "11.35",
+          "buildVersion": "12",
+          "date": "2025-11-03",
+          "localizedDescription": "上游源文件：NeoFreeBird-2.2-Twitter-11.35-noFixTwitterLogin.ipa",
+          "downloadURL": "https://github.com/NeoFreeBird/app/releases/download/2.2/NeoFreeBird-2.2-Twitter-11.35-noFixTwitterLogin.ipa",
+          "size": 158452402
+        },
+        {
+          "version": "10.16",
+          "buildVersion": "10.16",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：BHTwitter_LoginFix_10.16_2026-03-10_15_00_20.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/BHTwitter_LoginFix_10.16_2026-03-10_15_00_20.ipa",
+          "size": 120664663
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "嗶咔漫畫",
+      "bundleIdentifier": "com.picacomic.picacg.picacg",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。重复的本地文件会分别保留为独立的 Release 资源。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/85/87/a5/8587a5e9-0dbe-e66f-d81a-d34383464e23/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg",
+      "category": "entertainment",
+      "versions": [
+        {
+          "version": "2.5.82",
+          "buildVersion": "2026041804",
+          "date": "2026-05-08",
+          "localizedDescription": "源文件：PicACG-v2.5.82-unsigned.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/PicACG-v2.5.82-unsigned.ipa",
+          "size": 16328199
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "ESign",
+      "bundleIdentifier": "p3.xyz.yyyue.esign",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://avatars.githubusercontent.com/u/135683347?v=4",
+      "category": "developer",
+      "versions": [
+        {
+          "version": "5.0.2",
+          "buildVersion": "1",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：esign_5.0.2_unsigned.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/esign_5.0.2_unsigned.ipa",
+          "size": 7522792
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "Feather",
+      "bundleIdentifier": "thewonderofyou.Feather",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "upstream": {
+        "repo": "CLARATION/Feather"
+      },
+      "iconURL": "https://raw.githubusercontent.com/CLARATION/Feather/main/Feather/Resources/Assets.xcassets/AppIcon.appiconset/feather.png",
+      "category": "developer",
+      "versions": [
+        {
+          "version": "2.9.0",
+          "buildVersion": "1",
+          "date": "2026-07-05",
+          "localizedDescription": "上游源文件：Feather.ipa",
+          "downloadURL": "https://github.com/claration/feather/releases/download/v2.9.0/Feather.ipa",
+          "size": 14241853
+        },
+        {
+          "version": "2.9.0",
+          "buildVersion": "1",
+          "date": "2026-07-05",
+          "localizedDescription": "上游源文件：Feather.ipa",
+          "downloadURL": "https://github.com/claration/Feather/releases/download/v2.9.0/Feather.ipa",
+          "size": 14241853
+        },
+        {
+          "version": "2.8.2",
+          "buildVersion": "63ec47d071c188f833fd607f152b58a5bc34ab9c",
+          "date": "2026-04-22",
+          "localizedDescription": "上游源文件：Feather.ipa",
+          "downloadURL": "https://github.com/claration/Feather/releases/download/v2.8.2/Feather.ipa",
+          "size": 14242031
+        },
+        {
+          "version": "2.8.2",
+          "buildVersion": "63ec47d071c188f833fd607f152b58a5bc34ab9c",
+          "date": "2026-04-22",
+          "localizedDescription": "上游源文件：Feather.ipa",
+          "downloadURL": "https://github.com/CLARATION/Feather/releases/download/v2.8.2/Feather.ipa",
+          "size": 14242031
+        },
+        {
+          "version": "2.7.0",
+          "buildVersion": "1",
+          "date": "2026-04-05",
+          "localizedDescription": "上游源文件：Feather.ipa",
+          "downloadURL": "https://github.com/CLARATION/Feather/releases/download/v2.7.0/Feather.ipa",
+          "size": 14154834
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "JHenTai",
+      "bundleIdentifier": "top.jtmonster.jhentai",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "upstream": {
+        "repo": "jiangtian616/JHenTai"
+      },
+      "iconURL": "https://raw.githubusercontent.com/jiangtian616/JHenTai/master/assets/icon/JHenTai_512.png",
+      "category": "entertainment",
+      "versions": [
+        {
+          "version": "8.0.16",
+          "buildVersion": "334",
+          "date": "2026-09-09",
+          "localizedDescription": "上游源文件：JHenTai_8.0.16+334.ipa",
+          "downloadURL": "https://github.com/jiangtian616/JHenTai/releases/download/v8.0.16%2B334/JHenTai_8.0.16%2B334.ipa",
+          "size": 13025015
+        },
+        {
+          "version": "8.0.16",
+          "buildVersion": "333",
+          "date": "2026-09-02",
+          "localizedDescription": "上游源文件：JHenTai_8.0.16+333.ipa",
+          "downloadURL": "https://github.com/jiangtian616/JHenTai/releases/download/v8.0.16/JHenTai_8.0.16%2B333.ipa",
+          "size": 13019846
+        },
+        {
+          "version": "8.0.14",
+          "buildVersion": "328",
+          "date": "2026-08-02",
+          "localizedDescription": "上游源文件：JHenTai_8.0.14+328.ipa",
+          "downloadURL": "https://github.com/jiangtian616/JHenTai/releases/download/v8.0.14%2B328/JHenTai_8.0.14%2B328.ipa",
+          "size": 12883787
+        },
+        {
+          "version": "8.0.14",
+          "buildVersion": "323",
+          "date": "2026-07-05",
+          "localizedDescription": "上游源文件：JHenTai_8.0.14+323.ipa",
+          "downloadURL": "https://github.com/jiangtian616/JHenTai/releases/download/v8.0.14%2B323/JHenTai_8.0.14%2B323.ipa",
+          "size": 15692732
+        },
+        {
+          "version": "8.0.14",
+          "buildVersion": "317",
+          "date": "2026-07-01",
+          "localizedDescription": "上游源文件：JHenTai_8.0.14+317.ipa",
+          "downloadURL": "https://github.com/jiangtian616/JHenTai/releases/download/v8.0.14/JHenTai_8.0.14%2B317.ipa",
+          "size": 15767125
+        },
+        {
+          "version": "8.0.13",
+          "buildVersion": "312",
+          "date": "2026-06-04",
+          "localizedDescription": "上游源文件：JHenTai_8.0.13+312.ipa",
+          "downloadURL": "https://github.com/jiangtian616/JHenTai/releases/download/v8.0.13%2B312/JHenTai_8.0.13%2B312.ipa",
+          "size": 15744326
+        },
+        {
+          "version": "8.0.12",
+          "buildVersion": "310",
+          "date": "2026-05-22",
+          "localizedDescription": "上游源文件：JHenTai_8.0.12+310.ipa",
+          "downloadURL": "https://github.com/jiangtian616/JHenTai/releases/download/v8.0.12%2B310/JHenTai_8.0.12%2B310.ipa",
+          "size": 15745602
+        },
+        {
+          "version": "8.0.12",
+          "buildVersion": "308",
+          "date": "2026-02-24",
+          "localizedDescription": "上游源文件：JHenTai_8.0.12+308.ipa",
+          "downloadURL": "https://github.com/jiangtian616/JHenTai/releases/download/v8.0.12/JHenTai_8.0.12%2B308.ipa",
+          "size": 15739502
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "Kazumi",
+      "bundleIdentifier": "com.example.kazumi",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "upstream": {
+        "repo": "Predidit/Kazumi"
+      },
+      "iconURL": "https://raw.githubusercontent.com/Predidit/Kazumi/main/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024%401x.png",
+      "category": "entertainment",
+      "versions": [
+        {
+          "version": "2.3.8",
+          "buildVersion": "20308",
+          "date": "2026-10-07",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.3.8_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.3.8/Kazumi_ios_2.3.8_no_sign.ipa",
+          "size": 30463104
+        },
+        {
+          "version": "2.3.7",
+          "buildVersion": "20307",
+          "date": "2026-09-30",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.3.7_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.3.7/Kazumi_ios_2.3.7_no_sign.ipa",
+          "size": 30538813
+        },
+        {
+          "version": "2.3.6",
+          "buildVersion": "20306",
+          "date": "2026-09-23",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.3.6_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.3.6/Kazumi_ios_2.3.6_no_sign.ipa",
+          "size": 30406530
+        },
+        {
+          "version": "2.3.4",
+          "buildVersion": "20304",
+          "date": "2026-09-22",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.3.4_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.3.4/Kazumi_ios_2.3.4_no_sign.ipa",
+          "size": 29106919
+        },
+        {
+          "version": "2.3.3",
+          "buildVersion": "20303",
+          "date": "2026-09-15",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.3.3_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.3.3/Kazumi_ios_2.3.3_no_sign.ipa",
+          "size": 29823335
+        },
+        {
+          "version": "2.3.1",
+          "buildVersion": "20301",
+          "date": "2026-09-07",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.3.1_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.3.1/Kazumi_ios_2.3.1_no_sign.ipa",
+          "size": 29812172
+        },
+        {
+          "version": "2.3.0",
+          "buildVersion": "20300",
+          "date": "2026-08-28",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.3.0_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.3.0/Kazumi_ios_2.3.0_no_sign.ipa",
+          "size": 29656485
+        },
+        {
+          "version": "2.2.9",
+          "buildVersion": "20209",
+          "date": "2026-08-21",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.2.9_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.2.9/Kazumi_ios_2.2.9_no_sign.ipa",
+          "size": 29638292
+        },
+        {
+          "version": "2.2.8",
+          "buildVersion": "20208",
+          "date": "2026-08-15",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.2.8_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.2.8/Kazumi_ios_2.2.8_no_sign.ipa",
+          "size": 29635192
+        },
+        {
+          "version": "2.2.7",
+          "buildVersion": "20207",
+          "date": "2026-08-08",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.2.7_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.2.7/Kazumi_ios_2.2.7_no_sign.ipa",
+          "size": 29554015
+        },
+        {
+          "version": "2.2.6",
+          "buildVersion": "20206",
+          "date": "2026-08-01",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.2.6_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.2.6/Kazumi_ios_2.2.6_no_sign.ipa",
+          "size": 29552334
+        },
+        {
+          "version": "2.2.5",
+          "buildVersion": "20205",
+          "date": "2026-07-30",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.2.5_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.2.5/Kazumi_ios_2.2.5_no_sign.ipa",
+          "size": 29556445
+        },
+        {
+          "version": "2.2.3",
+          "buildVersion": "20203",
+          "date": "2026-07-23",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.2.3_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.2.3/Kazumi_ios_2.2.3_no_sign.ipa",
+          "size": 29182954
+        },
+        {
+          "version": "2.2.1",
+          "buildVersion": "20201",
+          "date": "2026-07-16",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.2.1_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.2.1/Kazumi_ios_2.2.1_no_sign.ipa",
+          "size": 29172455
+        },
+        {
+          "version": "2.2.0",
+          "buildVersion": "20200",
+          "date": "2026-07-09",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.2.0_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.2.0/Kazumi_ios_2.2.0_no_sign.ipa",
+          "size": 28150602
+        },
+        {
+          "version": "2.1.8",
+          "buildVersion": "20108",
+          "date": "2026-07-02",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.1.8_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.1.8/Kazumi_ios_2.1.8_no_sign.ipa",
+          "size": 28346335
+        },
+        {
+          "version": "2.1.7",
+          "buildVersion": "20107",
+          "date": "2026-06-25",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.1.7_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.1.7/Kazumi_ios_2.1.7_no_sign.ipa",
+          "size": 28341165
+        },
+        {
+          "version": "2.1.6",
+          "buildVersion": "20106",
+          "date": "2026-06-18",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.1.6_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.1.6/Kazumi_ios_2.1.6_no_sign.ipa",
+          "size": 28334562
+        },
+        {
+          "version": "2.1.5",
+          "buildVersion": "20105",
+          "date": "2026-06-11",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.1.5_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.1.5/Kazumi_ios_2.1.5_no_sign.ipa",
+          "size": 28035611
+        },
+        {
+          "version": "2.1.4",
+          "buildVersion": "20104",
+          "date": "2026-06-07",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.1.4_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.1.4/Kazumi_ios_2.1.4_no_sign.ipa",
+          "size": 28025683
+        },
+        {
+          "version": "2.1.3",
+          "buildVersion": "20103",
+          "date": "2026-05-29",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.1.3_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.1.3/Kazumi_ios_2.1.3_no_sign.ipa",
+          "size": 28024764
+        },
+        {
+          "version": "2.1.2",
+          "buildVersion": "20102",
+          "date": "2026-05-21",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.1.2_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.1.2/Kazumi_ios_2.1.2_no_sign.ipa",
+          "size": 28000908
+        },
+        {
+          "version": "2.1.1",
+          "buildVersion": "20101",
+          "date": "2026-05-08",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.1.1_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.1.1/Kazumi_ios_2.1.1_no_sign.ipa",
+          "size": 28029329
+        },
+        {
+          "version": "2.1.0",
+          "buildVersion": "20100",
+          "date": "2026-05-03",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.1.0_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.1.0/Kazumi_ios_2.1.0_no_sign.ipa",
+          "size": 27997661
+        },
+        {
+          "version": "2.0.9",
+          "buildVersion": "20009",
+          "date": "2026-05-02",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.0.9_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.0.9/Kazumi_ios_2.0.9_no_sign.ipa",
+          "size": 27997089
+        },
+        {
+          "version": "2.0.8",
+          "buildVersion": "20008",
+          "date": "2026-04-24",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.0.8_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.0.8/Kazumi_ios_2.0.8_no_sign.ipa",
+          "size": 27886967
+        },
+        {
+          "version": "2.0.7",
+          "buildVersion": "20007",
+          "date": "2026-04-09",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.0.7_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.0.7/Kazumi_ios_2.0.7_no_sign.ipa",
+          "size": 27866552
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "PiliPala",
+      "bundleIdentifier": "com.guozhigq.pilipala",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "upstream": {
+        "repo": "guozhigq/pilipala"
+      },
+      "iconURL": "https://raw.githubusercontent.com/guozhigq/pilipala/main/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024%401x.png",
+      "category": "entertainment",
+      "versions": [
+        {
+          "version": "1.0.27",
+          "buildVersion": "1027",
+          "date": "2025-04-02",
+          "localizedDescription": "上游源文件：Pili-1.0.27.0402.ipa",
+          "downloadURL": "https://github.com/guozhigq/pilipala/releases/download/v1.0.27.0402/Pili-1.0.27.0402.ipa",
+          "size": 21543773
+        },
+        {
+          "version": "1.0.27",
+          "buildVersion": "1027",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：Pili-1.0.27.0402.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/Pili-1.0.27.0402.ipa",
+          "size": 21543773
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "Simple Live",
+      "bundleIdentifier": "com.xycz.simple-live",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://raw.githubusercontent.com/xiaoyaocz/dart_simple_live/master/simple_live_app/ios/Runner/Assets.xcassets/AppIcon.appiconset/icon-1024.png",
+      "category": "entertainment",
+      "upstream": {
+        "repo": "June6699/dart_simple_live"
+      },
+      "versions": [
+        {
+          "version": "1.13.1",
+          "buildVersion": "11301",
+          "date": "2026-09-25",
+          "localizedDescription": "上游源文件：ios_no_sign.ipa",
+          "downloadURL": "https://github.com/June6699/dart_simple_live/releases/download/v1.13.1/ios_no_sign.ipa",
+          "size": 35004780
+        },
+        {
+          "version": "1.13.0",
+          "buildVersion": "11300",
+          "date": "2026-09-08",
+          "localizedDescription": "上游源文件：ios_no_sign.ipa",
+          "downloadURL": "https://github.com/June6699/dart_simple_live/releases/download/v1.13.0-pre/ios_no_sign.ipa",
+          "size": 100800781
+        },
+        {
+          "version": "1.12.8",
+          "buildVersion": "11208",
+          "date": "2026-08-19",
+          "localizedDescription": "上游源文件：ios_no_sign.ipa",
+          "downloadURL": "https://github.com/June6699/dart_simple_live/releases/download/v1.12.8/ios_no_sign.ipa",
+          "size": 31256179
+        },
+        {
+          "version": "1.12.7",
+          "buildVersion": "11207",
+          "date": "2026-07-24",
+          "localizedDescription": "上游源文件：ios_no_sign.ipa",
+          "downloadURL": "https://github.com/June6699/dart_simple_live/releases/download/v1.12.7/ios_no_sign.ipa",
+          "size": 31092611
+        },
+        {
+          "version": "1.12.5",
+          "buildVersion": "11205",
+          "date": "2026-06-05",
+          "localizedDescription": "https://github.com/June6699/dart_simple_live/issues",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/simple_live_1.12.5.ipa",
+          "size": 29617646
+        },
+        {
+          "version": "1.11.4",
+          "buildVersion": "11104",
+          "date": "2026-04-20",
+          "localizedDescription": "https://github.com/xiaoyaocz/dart_simple_live",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/simple_live_1.11.4.ipa",
+          "size": 19166053
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "微信",
+      "bundleIdentifier": "com.tencent.xin",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "同一 bundle id 下包含多个微信变体。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/8b/9f/53/8b9f534e-e826-d72a-f3ae-04231eef8ccf/AppIcon-0-0-1x_U007epad-0-1-0-sRGB-0-85-220.png/512x512bb.jpg",
+      "category": "social",
+      "versions": [
+        {
+          "version": "8.0.68",
+          "buildVersion": "8.0.68.34",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：WeChat_8.0.68_Clean.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/WeChat_8.0.68_Clean.ipa",
+          "size": 330012268
+        },
+        {
+          "version": "8.0.57",
+          "buildVersion": "8.0.57.33",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：WeChat_8.0.57_Clean.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/WeChat_8.0.57_Clean.ipa",
+          "size": 311741968
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "微信 wx",
+      "bundleIdentifier": "com.tencent.wx",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "同一 bundle id 下包含多个微信变体。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/8b/9f/53/8b9f534e-e826-d72a-f3ae-04231eef8ccf/AppIcon-0-0-1x_U007epad-0-1-0-sRGB-0-85-220.png/512x512bb.jpg",
+      "category": "social",
+      "versions": [
+        {
+          "version": "8.0.57",
+          "buildVersion": "8.0.57.33",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：WeChat_8.0.57_PKC_0.7.8_wx.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/WeChat_8.0.57_PKC_0.7.8_wx.ipa",
+          "size": 346427258
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "微信 qy.xin",
+      "bundleIdentifier": "com.tencent.qy.xin",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "同一 bundle id 下包含多个微信变体。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/8b/9f/53/8b9f534e-e826-d72a-f3ae-04231eef8ccf/AppIcon-0-0-1x_U007epad-0-1-0-sRGB-0-85-220.png/512x512bb.jpg",
+      "category": "social",
+      "versions": [
+        {
+          "version": "8.0.57",
+          "buildVersion": "8.0.57.33",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：WeChat_8.0.57_PKC_0.7.8_qy.xin.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/WeChat_8.0.57_PKC_0.7.8_qy.xin.ipa",
+          "size": 346427262
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "是你的益达",
+      "bundleIdentifier": "com.xinqiu.yidaapp",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "upstream": {
+        "repo": "xiaohucode/yidaRule"
+      },
+      "iconURL": "https://raw.githubusercontent.com/xiaohucode/yidaRule/main/screenshot/logo.png",
+      "category": "other",
+      "versions": [
+        {
+          "version": "1.4.4",
+          "buildVersion": "1.4.4",
+          "date": "2026-06-12",
+          "localizedDescription": "上游源文件：yidaApp-1.4.4-release-nosign.ipa",
+          "downloadURL": "https://github.com/xiaohucode/yidaRule/releases/download/1.4.4/yidaApp-1.4.4-release-nosign.ipa",
+          "size": 37340273
+        },
+        {
+          "version": "1.4.3",
+          "buildVersion": "1.4.3",
+          "date": "2026-06-11",
+          "localizedDescription": "上游源文件：yidaApp-1.4.3-release-nosign.ipa",
+          "downloadURL": "https://github.com/xiaohucode/yidaRule/releases/download/1.4.3/yidaApp-1.4.3-release-nosign.ipa",
+          "size": 37343128
+        },
+        {
+          "version": "1.4.2",
+          "buildVersion": "1.4.2",
+          "date": "2026-06-07",
+          "localizedDescription": "上游源文件：yidaApp-1.4.2-release-nosign.ipa",
+          "downloadURL": "https://github.com/xiaohucode/yidaRule/releases/download/1.4.2/yidaApp-1.4.2-release-nosign.ipa",
+          "size": 37342936
+        },
+        {
+          "version": "1.4.1",
+          "buildVersion": "1.4.1",
+          "date": "2026-05-11",
+          "localizedDescription": "上游源文件：yidaApp-1.4.1-release-nosign.ipa",
+          "downloadURL": "https://github.com/xiaohucode/yidaRule/releases/download/1.4.1/yidaApp-1.4.1-release-nosign.ipa",
+          "size": 37019052
+        },
+        {
+          "version": "1.4.0",
+          "buildVersion": "1.4.0",
+          "date": "2026-05-10",
+          "localizedDescription": "上游源文件：yidaApp-1.4.0-release-nosign.ipa",
+          "downloadURL": "https://github.com/xiaohucode/yidaRule/releases/download/1.4.0/yidaApp-1.4.0-release-nosign.ipa",
+          "size": 37339342
+        },
+        {
+          "version": "1.3.9",
+          "buildVersion": "1.3.9",
+          "date": "2026-04-29",
+          "localizedDescription": "上游源文件：yidaApp-1.3.9-release-nosign.ipa",
+          "downloadURL": "https://github.com/xiaohucode/yidaRule/releases/download/1.3.9/yidaApp-1.3.9-release-nosign.ipa",
+          "size": 41064092
+        },
+        {
+          "version": "1.3.8",
+          "buildVersion": "1.3.8",
+          "date": "2026-04-24",
+          "localizedDescription": "上游源文件：yidaApp-1.3.7-release-nosign.ipa",
+          "downloadURL": "https://github.com/xiaohucode/yidaRule/releases/download/1.3.8/yidaApp-1.3.7-release-nosign.ipa",
+          "size": 41649349
+        },
+        {
+          "version": "1.3.6",
+          "buildVersion": "1.3.6",
+          "date": "2026-04-11",
+          "localizedDescription": "上游源文件：yidaApp-1.3.6-release-nosign.ipa",
+          "downloadURL": "https://github.com/xiaohucode/yidaRule/releases/download/1.3.6/yidaApp-1.3.6-release-nosign.ipa",
+          "size": 42024703
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "今日头条",
+      "bundleIdentifier": "com.ss.iphone.article.NewsSocial",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9f/66/c3/9f66c385-09d0-529a-d04f-2736d0c81865/AppIcon-News-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/512x512bb.jpg",
+      "category": "social",
+      "versions": [
+        {
+          "version": "11.5.0",
+          "buildVersion": "11.5.0.10",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：ToutiaoPro_11.5.0_NoAds.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/ToutiaoPro_11.5.0_NoAds.ipa",
+          "size": 225195563
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "千阅",
+      "bundleIdentifier": "com.zct2.flReader",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/d2/3c/67/d23c6704-2d92-d7eb-8941-a34283d96774/AppIcon-0-1x_U007emarketing-0-8-0-sRGB-85-220-0.png/512x512bb.jpg",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "2.8.9",
+          "buildVersion": "4",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：QianYue_2.8.9_PremiumUnlocked.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/QianYue_2.8.9_PremiumUnlocked.ipa",
+          "size": 48601266
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "哔哩哔哩",
+      "bundleIdentifier": "com.bilibili.inter",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/29/7e/cf/297ecff3-b0cd-c4e8-ea7a-d66e0071260f/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg",
+      "category": "entertainment",
+      "versions": [
+        {
+          "version": "3.19.0",
+          "buildVersion": "77500100",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：Bilibili_3.19.0.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/Bilibili_3.19.0.ipa",
+          "size": 154611388
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "百度贴吧",
+      "bundleIdentifier": "com.baidu.tieba",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b8/10/10/b810105b-3782-713f-0469-66fdd24161db/AppIcon-0-0-1x_U007emarketing-0-8-0-sRGB-85-220.png/512x512bb.jpg",
+      "category": "social",
+      "versions": [
+        {
+          "version": "12.73.1",
+          "buildVersion": "12.73.1.0",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：BaiduTieba_12.73.1_NoAds.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/BaiduTieba_12.73.1_NoAds.ipa",
+          "size": 174453216
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "源阅读",
+      "bundleIdentifier": "com.yuedu.sourceread",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "同一 bundle id 下包含多个本地版本。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/70/1c/07/701c0767-dac4-6323-c22f-c9b8184d9734/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/512x512bb.jpg",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "1.5.1",
+          "buildVersion": "1.5.1",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：SourceRead_1.5.1_Custom.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/SourceRead_1.5.1_Custom.ipa",
+          "size": 31839083
+        },
+        {
+          "version": "1.5.0",
+          "buildVersion": "132",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：SourceRead_1.5.0.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/SourceRead_1.5.0.ipa",
+          "size": 30981072
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "皮皮虾",
+      "bundleIdentifier": "com.bd.iphone.super",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f7/95/37/f79537d9-8d5a-f35d-72fe-e6e97b68b7aa/AppIcon-0-0-1x_U007emarketing-0-7-0-0-85-220.png/512x512bb.jpg",
+      "category": "social",
+      "versions": [
+        {
+          "version": "5.2.0",
+          "buildVersion": "5.2.0.80",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：PiPiXia_5.2.0_1743917485.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/PiPiXia_5.2.0_1743917485.ipa",
+          "size": 134201582
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "香色闺阁",
+      "bundleIdentifier": "com.appbox.StandarReader",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/8c/8c/4f/8c8c4f2d-d359-33d7-ac16-9ae13158287b/AppIcon-0-0-1x_U007epad-0-1-85-220.png/512x512bb.jpg",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "2.56.1",
+          "buildVersion": "2.56.1",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：XiangSeGuiGe_2.56.1.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/XiangSeGuiGe_2.56.1.ipa",
+          "size": 2849753
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "小红书",
+      "bundleIdentifier": "com.xingin.discover",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/66/c2/dc/66c2dc22-bca2-f488-d9a1-b2d5d2b1e196/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/512x512bb.jpg",
+      "category": "social",
+      "versions": [
+        {
+          "version": "8.92",
+          "buildVersion": "8920227",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：Xiaohongshu_8.92_NoWatermark.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/Xiaohongshu_8.92_NoWatermark.ipa",
+          "size": 177486804
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "轻阅读",
+      "bundleIdentifier": "com.q9uo11.myread",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "同一 bundle id 下包含多个本地版本。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/3b/77/8a/3b778ac4-4146-6f9a-544b-caff65557270/AppIcon-0-0-1x_U007ephone-0-11-0-85-220.png/512x512bb.jpg",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "3.4.0",
+          "buildVersion": "26",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：qread_3.4.0.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/qread_3.4.0.ipa",
+          "size": 27893301
+        },
+        {
+          "version": "3.3.4",
+          "buildVersion": "25",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：LightRead_3.3.4.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/LightRead_3.3.4.ipa",
+          "size": 27677924
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "豆瓣",
+      "bundleIdentifier": "com.douban.frodo",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/1c/cd/a9/1ccda9b3-3158-9679-9105-f5026df0ffcb/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/512x512bb.jpg",
+      "category": "social",
+      "versions": [
+        {
+          "version": "7.100.0",
+          "buildVersion": "071000003",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：Douban_7.100.0_NoAds.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/Douban_7.100.0_NoAds.ipa",
+          "size": 101964961
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "起点读书",
+      "bundleIdentifier": "m.qidian.QDReaderAppStore",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/97/40/5e/97405e49-87bb-3f0a-bf3a-91cf8fdf99a0/AppIcon-0-0-1x_U007epad-0-1-0-0-sRGB-GLES2_U002c0-85-220.png/512x512bb.jpg",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "5.9.408",
+          "buildVersion": "2668",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：QidianReader_5.9.408_NoAds.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/QidianReader_5.9.408_NoAds.ipa",
+          "size": 99457131
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "酷安",
+      "bundleIdentifier": "com.coolapk.app",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3f/0c/a0/3f0ca0c4-8b56-b024-e763-d0b9943cecc3/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.png/512x512bb.jpg",
+      "category": "social",
+      "versions": [
+        {
+          "version": "15.3.1",
+          "buildVersion": "2505221",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：CoolApk_15.3.1_NoAds.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/CoolApk_15.3.1_NoAds.ipa",
+          "size": 46515660
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
+      "name": "闲鱼",
+      "bundleIdentifier": "com.taobao.fleamarket",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "iconURL": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/d6/ae/47/d6ae47ee-ea3c-8fe3-84db-052a36bcfd41/AppIcon-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/512x512bb.jpg",
+      "category": "lifestyle",
+      "versions": [
+        {
+          "version": "7.23.40",
+          "buildVersion": "50269082",
+          "date": "2026-04-20",
+          "localizedDescription": "源文件：Xianyu_7.23.40_NoAds.ipa",
+          "downloadURL": "https://github.com/jiz4oh/IPAs/releases/download/latest/Xianyu_7.23.40_NoAds.ipa",
+          "size": 135257710
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    }
+  ]
+}

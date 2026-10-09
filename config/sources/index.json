@@ -1,0 +1,14 @@
+{
+  "sources": [
+    {
+      "name": "jiz4oh/IPAs",
+      "url": "https://raw.githubusercontent.com/jiz4oh/IPAs/master/apps.json",
+      "file": "jiz4oh/IPAs.json"
+    },
+    {
+      "name": "bebound/AltGallery",
+      "url": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json",
+      "file": "bebound/AltGallery.json"
+    }
+  ]
+}

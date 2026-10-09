@@ -13,15 +13,5 @@
     "versionsToKeep": 10
   },
   "acceleratorBaseURL": "https://gh-proxy.org/",
-  "catalogSources": [
-    {
-      "name": "jiz4oh/IPAs",
-      "url": "https://raw.githubusercontent.com/jiz4oh/IPAs/master/apps.json"
-    },
-    {
-      "name": "bebound/AltGallery",
-      "url": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json"
-    }
-  ],
   "apps": []
 }

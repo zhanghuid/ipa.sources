@@ -1,10 +1,25 @@
 # Personal IPA Source
 
-An AltSource-compatible catalog merged from [jiz4oh/IPAs](https://raw.githubusercontent.com/jiz4oh/IPAs/master/apps.json) and [bebound/AltGallery](https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/all-apps.json). GitHub Actions fetches both catalogs every six hours and updates [`apps.json`](apps.json). Duplicate apps are identified by bundle ID; duplicate versions are identified by version and build, and the entry with the newer release date is kept. App details come from the catalog with the latest dated version.
+An AltSource-compatible catalog generated from repository-scoped source files. The source registry is [`config/sources/index.json`](config/sources/index.json); each upstream catalog is synced into `config/sources/<owner>/<repo>.json`, then merged into [`apps.json`](apps.json). GitHub Actions fetches both catalogs every six hours. Duplicate apps are identified by bundle ID; duplicate versions are identified by version and build, and the entry with the newer release date is kept. App details come from the catalog with the latest dated version.
 
 ## Add or edit apps
 
-The two source URLs are configured under `catalogSources` in [`config/apps.json`](config/apps.json). You can add more catalogs there. You can also add directly tracked GitHub Release apps under `apps`; each entry needs a display name, bundle ID, upstream repository (`owner/repo`), and one or more `assetPatterns`. Patterns use shell-style wildcards and match asset filenames case-insensitively. `excludePatterns` can remove unwanted variants. `versionsToKeep` is the number of upstream releases to retain; all matching IPA files in those releases are included.
+Add or edit upstream catalog sources in [`config/sources/index.json`](config/sources/index.json), using a file path grouped by owner/repository. The generator downloads and stores each latest upstream JSON at that path before merging. Manually submitted apps live in [`config/sources/custom/ipas.json`](config/sources/custom/ipas.json) and are merged automatically. You can also add directly tracked GitHub Release apps under `apps` in [`config/apps.json`](config/apps.json); each entry needs a display name, bundle ID, upstream repository (`owner/repo`), and one or more `assetPatterns`. Patterns use shell-style wildcards and match asset filenames case-insensitively. `excludePatterns` can remove unwanted variants. `versionsToKeep` is the number of upstream releases to retain; all matching IPA files in those releases are included.
+
+### Submit apps through the Cloudflare page
+
+The private admin page is in [`apps-admin/`](apps-admin/). It is a Cloudflare Worker with Static Assets and a small API. Sign in through Cloudflare Access and enter the app name and a direct HTTPS IPA URL. The Worker commits a pending entry to `config/sources/custom/ipas.json`; GitHub Actions downloads the complete IPA, reads its `Info.plist` to fill in the bundle ID, version, build, minimum iOS version, and file size, then regenerates `apps.json`. This does not depend on the IPA host supporting HTTP Range requests. IPA downloads are limited to 2 GiB.
+
+The [`Deploy IPA admin page` workflow](.github/workflows/deploy-admin.yml) deploys the Worker when its code changes. Add GitHub Actions secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` first. The Cloudflare API token needs permission to edit Workers scripts and access the target account. `preview_urls` is disabled to avoid a second unprotected preview hostname.
+
+Deployment setup:
+
+1. Deploy once with `npm run admin:deploy` to create the `ipa-sources-admin.<account>.workers.dev` hostname.
+2. In Cloudflare Zero Trust, protect that complete Worker hostname with Access and allow only your identity. Cloudflare Access can use GitHub as its identity provider if desired.
+3. Copy the Access team issuer and this application’s audience tag into `ACCESS_ISSUER` and `ACCESS_AUD` in [`apps-admin/wrangler.jsonc`](apps-admin/wrangler.jsonc), then push the change to trigger deployment.
+4. Create a fine-grained GitHub token limited to this repository with **Contents: Read and write**, then run `npx wrangler secret put GITHUB_TOKEN --config apps-admin/wrangler.jsonc`. Do not commit the token.
+
+For local UI preview, run `npm run admin:dev`. The API still requires a valid Cloudflare Access JWT, so listing and submitting work after deploying behind Access. IPA hosts only need to provide a direct HTTPS download; GitHub Actions downloads the full file for metadata extraction.
 
 After pushing this repository to GitHub, enable Actions. The workflow runs on a six-hour schedule, after catalog configuration changes, and on manual dispatch. It commits the generated `apps.json` when the catalog changes. No IPA binaries are copied into this repository.
 

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#f7f8fa" />
+    <meta name="description" content="浏览自有 IPA 源中的全部应用和版本。" />
+    <title>自有 IPA 源 · 完整目录</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/catalog.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="自有 IPA 源首页">
+        <span class="brand-mark" aria-hidden="true">IPA</span>
+        <span>自有 IPA 源</span>
+      </a>
+      <nav class="topbar-nav" aria-label="主导航">
+        <a class="nav-link" href="/">应用管理</a>
+        <a class="nav-link active" href="/catalog.html" aria-current="page">完整目录</a>
+      </nav>
+      <div class="topbar-meta"><span class="status-dot"></span>私有管理</div>
+    </header>
+
+    <main id="main" class="workspace">
+      <section class="page-heading" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">GENERATED / APPS.JSON</p>
+          <h1 id="page-title">完整应用目录</h1>
+          <p class="lede">浏览所有来源合并后的应用，并查看每个应用的可用版本。</p>
+        </div>
+        <div class="catalog-count" aria-live="polite">
+          <span id="app-count" class="count-number">—</span>
+          <span class="count-label">个应用</span>
+        </div>
+      </section>
+
+      <section class="catalog-panel full-catalog" aria-label="完整应用目录">
+        <div class="catalog-toolbar">
+          <label class="search-field" for="search-apps">
+            <svg aria-hidden="true" viewBox="0 0 20 20"><circle cx="8.8" cy="8.8" r="5.8"/><path d="m13.2 13.2 4 4"/></svg>
+            <input id="search-apps" type="search" placeholder="搜索名称、Bundle ID 或开发者" autocomplete="off" />
+          </label>
+          <button id="refresh-button" class="icon-button" type="button" aria-label="刷新应用目录" title="刷新目录">
+            <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M16.2 8A6.5 6.5 0 0 0 4.8 5.4L3.5 7M3.8 12a6.5 6.5 0 0 0 11.4 2.6l1.3-1.6M3.5 7h3.8M16.5 13h-3.8" /></svg>
+          </button>
+        </div>
+        <p id="result-count" class="result-count" aria-live="polite"></p>
+        <div id="catalog-state" class="catalog-state" aria-live="polite">
+          <span class="loader" aria-hidden="true"></span>
+          <span>正在读取生成目录…</span>
+        </div>
+        <div id="app-list" class="full-app-list" hidden></div>
+      </section>
+
+      <footer class="page-footer">
+        <span>由 GitHub Actions 自动生成 · <code>apps.json</code></span>
+        <a href="/" aria-label="返回应用管理">应用管理 <span aria-hidden="true">→</span></a>
+      </footer>
+    </main>
+  </body>
+</html>

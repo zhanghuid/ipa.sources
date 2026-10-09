@@ -6,19 +6,26 @@ from __future__ import annotations
 import fnmatch
 import json
 import os
+import plistlib
 import re
 import sys
+import tempfile
 import time
 import threading
 import urllib.error
 import urllib.parse
 import urllib.request
+import zipfile
+import zlib
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "config/apps.json"
+SOURCES_INDEX = ROOT / "config/sources/index.json"
+SOURCES_DIR = ROOT / "config/sources"
 OUTPUT = ROOT / "apps.json"
+MAX_CUSTOM_IPA_SIZE = 2 * 1024 * 1024 * 1024
 
 
 class Progress:
@@ -91,12 +98,12 @@ def github_json(url: str) -> dict:
         return json.load(response)
 
 
-def fetch_catalog(url: str) -> dict:
+def fetch_catalog(url: str, label: str) -> dict:
     request = urllib.request.Request(url, headers={"User-Agent": "personal-ipa-source"})
     head_request = urllib.request.Request(url, headers={"User-Agent": "personal-ipa-source"}, method="HEAD")
     with urllib.request.urlopen(head_request, timeout=30) as head_response:
         content_length = int(head_response.headers.get("Content-Length", "0") or 0)
-    progress = Progress(f"下载 {url.split('/')[-1]}", content_length or 100, animate=True)
+    progress = Progress(f"下载 {label}", content_length or 100, animate=True)
     progress.start()
     with urllib.request.urlopen(request, timeout=60) as response:
         content_length = int(response.headers.get("Content-Length", "0") or content_length)
@@ -115,6 +122,180 @@ def fetch_catalog(url: str) -> dict:
     if not isinstance(catalog.get("apps"), list):
         raise ValueError(f"Catalog at {url} has no apps array")
     return catalog
+
+
+def ipa_metadata(url: str, label: str) -> dict:
+    """Download a complete IPA and read its main Payload app Info.plist."""
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme != "https":
+        raise ValueError(f"{label}: IPA download URL must use HTTPS")
+    request = urllib.request.Request(url, headers={"User-Agent": "personal-ipa-source"})
+    with tempfile.NamedTemporaryFile(prefix="ipa-source-", suffix=".ipa") as temporary:
+        progress = Progress(f"下载 IPA：{label}", 100)
+        progress.start()
+        downloaded = 0
+        content_length = 0
+        download_complete = False
+        try:
+            with urllib.request.urlopen(request, timeout=180) as response:
+                if urllib.parse.urlparse(response.geturl()).scheme != "https":
+                    raise ValueError(f"{label}: IPA download redirected to a non-HTTPS URL")
+                content_length = int(response.headers.get("Content-Length", "0") or 0)
+                if content_length > MAX_CUSTOM_IPA_SIZE:
+                    raise ValueError(f"{label}: IPA exceeds the 2 GiB processing limit")
+                if content_length:
+                    progress.total = content_length
+                while True:
+                    chunk = response.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    downloaded += len(chunk)
+                    if downloaded > MAX_CUSTOM_IPA_SIZE:
+                        raise ValueError(f"{label}: IPA exceeds the 2 GiB processing limit")
+                    temporary.write(chunk)
+                    if content_length:
+                        progress.update(min(downloaded, content_length), content_length)
+                    elif downloaded % (16 * 1024 * 1024) < 1024 * 1024:
+                        print(f"  {label}: 已下载 {downloaded // (1024 * 1024)} MiB", file=sys.stderr, flush=True)
+            download_complete = True
+        finally:
+            outcome = "下载完成" if download_complete else "下载中断"
+            progress.finish(f"{outcome}：{label}（{downloaded / (1024 * 1024):.1f} MiB）")
+        temporary.flush()
+        try:
+            with zipfile.ZipFile(temporary.name) as archive:
+                plist_names = [
+                    name for name in archive.namelist()
+                    if re.fullmatch(r"Payload/[^/]+\.app/Info\.plist", name)
+                ]
+                if not plist_names:
+                    raise ValueError(f"{label}: IPA does not contain a main app Info.plist")
+                info_path = max(plist_names, key=lambda name: name.count("/"))
+                info_entry = archive.getinfo(info_path)
+                if info_entry.file_size > 8 * 1024 * 1024:
+                    raise ValueError(f"{label}: Info.plist exceeds the 8 MiB processing limit")
+                info = plistlib.loads(archive.read(info_path))
+        except (
+            zipfile.BadZipFile,
+            KeyError,
+            plistlib.InvalidFileException,
+            zlib.error,
+            EOFError,
+            RuntimeError,
+            NotImplementedError,
+            ValueError,
+        ) as error:
+            raise ValueError(f"{label}: unable to parse IPA Info.plist: {error}") from error
+
+    bundle_id = str(info.get("CFBundleIdentifier", "")).strip()
+    version = str(info.get("CFBundleShortVersionString", "")).strip()
+    if not re.fullmatch(r"[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+", bundle_id):
+        raise ValueError(f"{label}: IPA has an invalid CFBundleIdentifier")
+    if not version:
+        raise ValueError(f"{label}: IPA has no CFBundleShortVersionString")
+    return {
+        "bundleIdentifier": bundle_id,
+        "version": version,
+        "buildVersion": str(info.get("CFBundleVersion", "1")),
+        "minOSVersion": str(info.get("MinimumOSVersion", "14.0")),
+        "size": downloaded,
+    }
+
+
+def app_store_metadata(bundle_id: str) -> dict:
+    """Best-effort metadata lookup for artwork and developer details."""
+    query = urllib.parse.urlencode({"bundleId": bundle_id, "country": "cn"})
+    request = urllib.request.Request(
+        f"https://itunes.apple.com/lookup?{query}",
+        headers={"User-Agent": "personal-ipa-source"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=15) as response:
+            result = json.load(response).get("results", [])
+    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError):
+        return {}
+    if not result:
+        return {}
+    app = result[0]
+    return {
+        "developerName": app.get("sellerName", ""),
+        "subtitle": app.get("trackName", ""),
+        "localizedDescription": app.get("description", ""),
+        "iconURL": app.get("artworkUrl512") or app.get("artworkUrl100", ""),
+        "category": "games" if str(app.get("primaryGenreName", "")).lower() == "games" else "utilities",
+    }
+
+
+def hydrate_custom_catalog(catalog: dict) -> bool:
+    """Resolve queued custom IPA metadata and persist it into the source file."""
+    changed = False
+    for app in catalog.get("apps", []):
+        for version in app.get("versions", []):
+            if version.get("version") != "pending" and app.get("bundleIdentifier"):
+                continue
+            url = str(version.get("downloadURL", "")).strip()
+            try:
+                if not url:
+                    raise ValueError("pending version has no download URL")
+                metadata = ipa_metadata(url, str(app.get("name", "IPA")))
+                existing_bundle = str(app.get("bundleIdentifier", "")).strip()
+                if existing_bundle and existing_bundle != metadata["bundleIdentifier"]:
+                    raise ValueError(
+                        f"IPA Bundle ID {metadata['bundleIdentifier']} does not match existing {existing_bundle}"
+                    )
+            except (ValueError, urllib.error.URLError, TimeoutError, OSError) as error:
+                if isinstance(error, urllib.error.URLError) or isinstance(error, TimeoutError):
+                    message = f"Unable to download IPA ({type(error).__name__}); check URL access."
+                else:
+                    message = str(error)
+                message = message[:300]
+                if version.get("metadataError") != message:
+                    version["metadataError"] = message
+                    changed = True
+                print(f"warning: unable to resolve {app.get('name', '<unnamed>')}: {message}", file=sys.stderr)
+                continue
+            version.pop("metadataError", None)
+            app["bundleIdentifier"] = metadata["bundleIdentifier"]
+            app.update({
+                key: value for key, value in app_store_metadata(metadata["bundleIdentifier"]).items()
+                if value
+            })
+            version.update({
+                "version": metadata["version"],
+                "buildVersion": metadata["buildVersion"],
+                "size": metadata["size"],
+                "minOSVersion": metadata["minOSVersion"],
+                "localizedDescription": "",
+            })
+            changed = True
+    grouped: dict[str, dict] = {}
+    unresolved_apps: list[dict] = []
+    for app in catalog["apps"]:
+        bundle_id = str(app.get("bundleIdentifier", "")).strip()
+        if not bundle_id:
+            unresolved_apps.append(app)
+            continue
+        current = grouped.get(bundle_id)
+        if current is None:
+            grouped[bundle_id] = app
+            continue
+        versions_by_key: dict[tuple[str, str], dict] = {
+            (str(item.get("version", "")), str(item.get("buildVersion", ""))): item
+            for item in current.get("versions", [])
+        }
+        for item in app.get("versions", []):
+            key = (str(item.get("version", "")), str(item.get("buildVersion", "")))
+            prior = versions_by_key.get(key)
+            if prior is None or str(item.get("date", "")) > str(prior.get("date", "")):
+                versions_by_key[key] = item
+        current["versions"] = sorted(
+            versions_by_key.values(),
+            key=lambda item: (str(item.get("date", "")), str(item.get("version", ""))),
+            reverse=True,
+        )
+        changed = True
+    catalog["apps"] = [*grouped.values(), *unresolved_apps]
+    return changed
 
 
 def latest_version_date(app: dict) -> str:
@@ -254,14 +435,57 @@ def main() -> int:
     source = dict(config.get("source", {}))
     catalog = {**source, "apps": []}
     input_catalogs: list[tuple[str, dict]] = []
-    remote_sources = config.get("catalogSources", [])
+    source_index = json.loads(SOURCES_INDEX.read_text(encoding="utf-8"))
+    remote_sources = source_index.get("sources", [])
     source_progress = Progress("获取源目录", len(remote_sources) + len(config.get("apps", [])))
     source_progress.start()
+    fetched_sources: list[tuple[dict, dict]] = []
     for remote in remote_sources:
         name = remote.get("name", remote["url"])
         print(f"Fetching catalog: {name}")
-        input_catalogs.append((name, fetch_catalog(remote["url"])))
+        source_catalog = fetch_catalog(remote["url"], name)
+        fetched_sources.append((remote, source_catalog))
+        input_catalogs.append((name, source_catalog))
         source_progress.update()
+
+    # Save the upstream catalogs as repository-scoped inputs only after all fetches
+    # succeed, so a temporary outage cannot leave a partially refreshed source set.
+    for remote, source_catalog in fetched_sources:
+        source_path = SOURCES_DIR / remote["file"]
+        source_path.parent.mkdir(parents=True, exist_ok=True)
+        temporary_path = source_path.with_suffix(source_path.suffix + ".tmp")
+        temporary_path.write_text(json.dumps(source_catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        temporary_path.replace(source_path)
+    custom_catalog_path = SOURCES_DIR / "custom/ipas.json"
+    if custom_catalog_path.exists():
+        custom_catalog = json.loads(custom_catalog_path.read_text(encoding="utf-8"))
+        if not isinstance(custom_catalog.get("apps"), list):
+            raise ValueError(f"Custom catalog at {custom_catalog_path} has no apps array")
+        if hydrate_custom_catalog(custom_catalog):
+            custom_catalog_path.write_text(
+                json.dumps(custom_catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+            )
+            print(f"Updated custom IPA metadata in {custom_catalog_path}")
+        ready_custom_catalog = {
+            **custom_catalog,
+            "apps": [
+                {
+                    **app,
+                    "versions": [version for version in app.get("versions", []) if version.get("version") != "pending"],
+                }
+                for app in custom_catalog["apps"]
+                if app.get("bundleIdentifier")
+                and any(version.get("version") != "pending" for version in app.get("versions", []))
+            ],
+        }
+        pending_count = sum(
+            version.get("version") == "pending"
+            for app in custom_catalog["apps"]
+            for version in app.get("versions", [])
+        )
+        if pending_count:
+            print(f"warning: {pending_count} custom IPA version(s) are pending metadata and were skipped for this catalog run")
+        input_catalogs.append(("custom/ipas.json", ready_custom_catalog))
     for app in config.get("apps", []):
         if not app.get("repo"):
             raise ValueError(f"App {app.get('name', '<unnamed>')} has no repo")

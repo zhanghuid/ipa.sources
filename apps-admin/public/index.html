@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#f7f8fa" />
+    <meta name="description" content="管理个人 IPA 源中的手动应用。" />
+    <title>自有 IPA 源 · 应用管理</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="自有 IPA 源首页">
+        <span class="brand-mark" aria-hidden="true">IPA</span>
+        <span>自有 IPA 源</span>
+      </a>
+      <nav class="topbar-nav" aria-label="主导航">
+        <a class="nav-link active" href="/">应用管理</a>
+        <a class="nav-link" href="/catalog.html">完整目录</a>
+      </nav>
+      <div class="topbar-meta"><span class="status-dot"></span>私有管理</div>
+    </header>
+
+    <main id="main" class="workspace">
+      <section class="page-heading" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">SOURCE / CUSTOM</p>
+          <h1 id="page-title">应用管理</h1>
+          <p class="lede">手动添加的应用会保存到仓库，并自动合并进主源。</p>
+        </div>
+        <div class="catalog-count" aria-live="polite">
+          <span id="app-count" class="count-number">—</span>
+          <span class="count-label">已登记</span>
+        </div>
+      </section>
+
+      <section class="entry-layout" aria-label="添加应用和已登记应用">
+        <form id="app-form" class="form-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">NEW ENTRY</p>
+              <h2>添加应用</h2>
+            </div>
+            <span class="step-mark">01</span>
+          </div>
+
+          <label class="field" for="app-name">
+            <span>应用名称 <span class="required">*</span></span>
+            <input id="app-name" name="name" autocomplete="off" placeholder="例如：我的播放器" required maxlength="120" />
+          </label>
+
+          <label class="field" for="ipa-url">
+            <span>IPA 下载地址 <span class="required">*</span></span>
+            <input id="ipa-url" name="downloadURL" type="url" inputmode="url" placeholder="https://…/app.ipa" required />
+            <small>需为可直接下载的 HTTPS 链接。提交后由 GitHub Actions 下载 IPA 并读取版本信息。</small>
+          </label>
+
+          <div id="form-message" class="form-message" role="status" aria-live="polite" hidden></div>
+          <button id="submit-button" class="button button-primary" type="submit">
+            <span class="button-label">添加到自有源</span>
+            <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 10h12M10 4l6 6-6 6" /></svg>
+          </button>
+          <p class="form-footnote">提交会创建一次 GitHub 提交；目录生成流程会自动读取 IPA 元数据。</p>
+        </form>
+
+        <section class="catalog-panel" aria-labelledby="catalog-title">
+          <div class="section-heading catalog-heading">
+            <div>
+              <p class="eyebrow">CUSTOM CATALOG</p>
+              <h2 id="catalog-title">已登记应用</h2>
+            </div>
+            <button id="refresh-button" class="icon-button" type="button" aria-label="刷新应用列表" title="刷新列表">
+              <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M16.2 8A6.5 6.5 0 0 0 4.8 5.4L3.5 7M3.8 12a6.5 6.5 0 0 0 11.4 2.6l1.3-1.6M3.5 7h3.8M16.5 13h-3.8" /></svg>
+            </button>
+          </div>
+          <div id="catalog-state" class="catalog-state" aria-live="polite">
+            <span class="loader" aria-hidden="true"></span>
+            <span>正在读取仓库目录…</span>
+          </div>
+          <div id="app-list" class="app-list" hidden></div>
+        </section>
+      </section>
+
+      <footer class="page-footer">
+        <span>自动维护 · <code>config/sources/custom/ipas.json</code></span>
+        <a href="https://github.com/zhanghuid/ipa.sources" target="_blank" rel="noreferrer">打开仓库 <span aria-hidden="true">↗</span></a>
+      </footer>
+    </main>
+  </body>
+</html>

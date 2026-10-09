@@ -7,6 +7,8 @@ on:
   push:
     paths:
       - "config/apps.json"
+      - "config/sources/index.json"
+      - "config/sources/custom/**"
       - "scripts/generate_source.py"
       - ".github/workflows/update-source.yml"
 
@@ -32,12 +34,12 @@ jobs:
         run: python scripts/generate_source.py
       - name: Commit catalog changes
         run: |
-          if git diff --quiet -- apps.json; then
+          if git diff --quiet -- apps.json config/sources; then
             echo "Catalog is up to date"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps.json
+          git add apps.json config/sources
           git commit -m "chore: update IPA catalog"
           git push

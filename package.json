@@ -4,9 +4,15 @@
   "private": true,
   "description": "Personal AltSource-compatible IPA catalog",
   "scripts": {
-    "release": "bumpp --commit --tag --push"
+    "release": "bumpp --commit --tag --push",
+    "admin:dev": "wrangler dev --config apps-admin/wrangler.jsonc",
+    "admin:deploy": "wrangler deploy --config apps-admin/wrangler.jsonc"
   },
   "devDependencies": {
-    "bumpp": "^12.3.0"
+    "bumpp": "^12.3.0",
+    "wrangler": "^4.149.0"
+  },
+  "dependencies": {
+    "jose": "^6.2.12"
   }
 }
