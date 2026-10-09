@@ -13,7 +13,11 @@ export default {
     if (!["GET", "HEAD"].includes(request.method)) return new Response("Method not allowed", { status: 405 });
 
     let raw = new URL(request.url).pathname.slice(1);
-    try { raw = decodeURIComponent(raw); } catch { return new Response("Invalid URL encoding", { status: 400 }); }
+    // Accept legacy percent-encoded proxy paths while preserving percent escapes
+    // that belong to the original GitHub URL (such as encoded release tag names).
+    if (!raw.startsWith("https://")) {
+      try { raw = decodeURIComponent(raw); } catch { return new Response("Invalid URL encoding", { status: 400 }); }
+    }
     let target;
     try { target = new URL(raw); } catch { return new Response("Expected an encoded HTTPS URL", { status: 400 }); }
     if (target.protocol !== "https:" || !ALLOWED_HOSTS.has(target.hostname) || !target.pathname.includes("/releases/download/")) {

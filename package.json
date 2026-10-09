@@ -1,0 +1,12 @@
+{
+  "name": "ipa-sources",
+  "version": "0.1.1",
+  "private": true,
+  "description": "Personal AltSource-compatible IPA catalog",
+  "scripts": {
+    "release": "bumpp --commit --tag --push"
+  },
+  "devDependencies": {
+    "bumpp": "^12.3.0"
+  }
+}

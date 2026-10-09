@@ -8,13 +8,17 @@ The two source URLs are configured under `catalogSources` in [`config/apps.json`
 
 After pushing this repository to GitHub, enable Actions. The workflow runs on a six-hour schedule, after catalog configuration changes, and on manual dispatch. It commits the generated `apps.json` when the catalog changes. No IPA binaries are copied into this repository.
 
+## Releases
+
+This repository is not an npm package; `package.json` is private and only stores the project version for `bumpp`. Run `npm install` once, then `npm run release` and select the version bump. `bumpp` updates the version, creates a release commit and `v` Git tag, and pushes them. Pushing the tag starts the GitHub Actions release workflow, which creates a GitHub Release with generated release notes. It does not publish to the npm registry.
+
 ## Download acceleration
 
-The catalog can route GitHub release downloads from both imported catalogs and directly tracked apps through an optional Cloudflare Worker. [`workers/accelerator.js`](workers/accelerator.js) is a streaming proxy with byte-range forwarding, browser CORS headers, one-day edge caching, and a GitHub Releases host/path allowlist.
+The default accelerator is `https://gh-proxy.org/` (set by `acceleratorBaseURL` in the config). The generator prefixes the original GitHub URL in the format documented by [GH-Proxy](https://gh-proxy.com/docs/github-accelerator), without percent-encoding the full URL. You can override the default with the GitHub Actions variable `ACCELERATOR_BASE_URL` or a local environment variable of the same name. To use your own proxy, [`workers/accelerator.js`](workers/accelerator.js) is an optional Cloudflare Worker with byte-range forwarding, CORS headers, and a GitHub Releases host/path allowlist.
 
 1. Deploy `workers/accelerator.js` as a Cloudflare Worker and bind a custom domain, for example `https://ipa-cdn.example.com`.
 2. In this GitHub repository, add the Actions **variable** `ACCELERATOR_BASE_URL` with that origin. No secret is needed.
-3. Run **Actions → Update IPA source → Run workflow** once. Generated IPA `downloadURL`s will use the Worker. Without the variable, the catalog uses the upstream GitHub URLs directly.
+3. Run **Actions → Update IPA source → Run workflow** once. Generated IPA `downloadURL`s will use the Worker. Remove the override and clear `acceleratorBaseURL` in the config to use direct GitHub URLs.
 
 The Worker does not store or rehost IPA files. It streams upstream release assets and lets Cloudflare cache eligible full-file responses at its edge. Range requests (used by some download clients) are forwarded and not cached by the Worker cache API.
 

@@ -183,7 +183,10 @@ def parse_version(tag: str, filename: str) -> tuple[str, str]:
 def accelerated_url(url: str, base: str) -> str:
     if not base:
         return url
-    return base.rstrip("/") + "/" + urllib.parse.quote(url, safe="")
+    # GitHub proxy services expect the source URL as a readable path after the
+    # proxy origin (e.g. https://proxy.example/https://github.com/owner/repo/...).
+    # Percent-encoding the whole source URL breaks those services and some IPA clients.
+    return base.rstrip("/") + "/" + url
 
 
 def release_versions(app: dict, defaults: dict, accelerator: str) -> list[dict]:
@@ -247,7 +250,7 @@ def release_versions(app: dict, defaults: dict, accelerator: str) -> list[dict]:
 
 def main() -> int:
     config = json.loads(CONFIG.read_text(encoding="utf-8"))
-    accelerator = os.getenv("ACCELERATOR_BASE_URL", "").strip()
+    accelerator = (os.getenv("ACCELERATOR_BASE_URL") or config.get("acceleratorBaseURL", "")).strip()
     source = dict(config.get("source", {}))
     catalog = {**source, "apps": []}
     input_catalogs: list[tuple[str, dict]] = []
