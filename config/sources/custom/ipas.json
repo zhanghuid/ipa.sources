@@ -3,27 +3,28 @@
   "apps": [
     {
       "name": "yida",
-      "bundleIdentifier": "",
+      "bundleIdentifier": "com.xinqiu.yidaapp",
       "developerName": "Personal source",
       "subtitle": "",
       "localizedDescription": "",
-      "iconURL": "",
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/sources/custom/icons/com.xinqiu.yidaapp.png",
       "category": "utilities",
       "versions": [
         {
-          "version": "pending",
-          "buildVersion": "pending",
+          "version": "1.4.4",
+          "buildVersion": "1.4.4",
           "date": "2026-10-09",
-          "localizedDescription": "等待 GitHub Actions 下载 IPA 并读取版本信息。",
+          "localizedDescription": "",
           "downloadURL": "https://github.com/xiaohucode/yidaRule/releases/download/1.4.4/yidaApp-1.4.4-release-nosign.ipa",
-          "size": 0,
-          "minOSVersion": "14.0"
+          "size": 37340273,
+          "minOSVersion": "13.0"
         }
       ],
       "appPermissions": {
         "entitlements": [],
         "privacy": {}
-      }
+      },
+      "_iconExtractionChecked": "cgbi-v1"
     },
     {
       "name": "echoTv",

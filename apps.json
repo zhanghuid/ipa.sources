@@ -897,24 +897,22 @@
       }
     },
     {
-      "name": "是你的益达",
+      "name": "yida",
       "bundleIdentifier": "com.xinqiu.yidaapp",
-      "developerName": "个人归档",
-      "subtitle": "IPA 归档",
-      "localizedDescription": "从本地 IPA 归档生成。",
-      "upstream": {
-        "repo": "xiaohucode/yidaRule"
-      },
-      "iconURL": "https://raw.githubusercontent.com/xiaohucode/yidaRule/main/screenshot/logo.png",
-      "category": "other",
+      "developerName": "Personal source",
+      "subtitle": "",
+      "localizedDescription": "",
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/sources/custom/icons/com.xinqiu.yidaapp.png",
+      "category": "utilities",
       "versions": [
         {
           "version": "1.4.4",
           "buildVersion": "1.4.4",
-          "date": "2026-06-12",
-          "localizedDescription": "上游源文件：yidaApp-1.4.4-release-nosign.ipa",
+          "date": "2026-10-09",
+          "localizedDescription": "",
           "downloadURL": "https://gh-proxy.org/https://github.com/xiaohucode/yidaRule/releases/download/1.4.4/yidaApp-1.4.4-release-nosign.ipa",
-          "size": 37340273
+          "size": 37340273,
+          "minOSVersion": "13.0"
         },
         {
           "version": "1.4.3",
