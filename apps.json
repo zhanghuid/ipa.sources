@@ -155,6 +155,14 @@
       "category": "social",
       "versions": [
         {
+          "version": "3.9.0",
+          "buildVersion": "301",
+          "date": "2026-10-09",
+          "localizedDescription": "上游源文件：Apollo-Reborn-3.9.0.ipa",
+          "downloadURL": "https://gh-proxy.org/https://github.com/Apollo-Reborn/Apollo-Reborn/releases/download/v1.15.11_3.9.0/Apollo-Reborn-3.9.0.ipa",
+          "size": 97026669
+        },
+        {
           "version": "3.8.5",
           "buildVersion": "300",
           "date": "2026-09-29",
