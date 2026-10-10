@@ -91,6 +91,21 @@ function contentsEndpoint(env, filePath) {
   return `/repos/${owner}/${repo}/contents/${path}`;
 }
 
+function normalizeDownloadURL(value) {
+  const raw = String(value || "").trim();
+  try {
+    const wrapper = new URL(raw);
+    // Accelerated links append the source URL to the proxy path; match the URL, not a proxy host.
+    const embeddedURL = wrapper.pathname.match(/\/(https?:\/\/.+)$/i)?.[1];
+    const candidate = embeddedURL ? `${embeddedURL}${wrapper.search}` : raw;
+    const normalized = new URL(candidate);
+    normalized.hash = "";
+    return normalized.href;
+  } catch {
+    return raw;
+  }
+}
+
 async function loadGeneratedCatalog(env) {
   const branch = env.GITHUB_BRANCH || "main";
   const { response, body } = await githubRequest(`${contentsEndpoint(env, "apps.json")}?ref=${encodeURIComponent(branch)}`, env);
@@ -210,8 +225,7 @@ async function handleApi(request, env) {
       if (bundleIdentifier) return app.bundleIdentifier === bundleIdentifier;
       return !downloadURL || (app.versions || []).some((version) => {
         const sourceURL = String(version.downloadURL || "");
-        const normalize = (url) => url.replace(/^https:\/\/gh-proxy\.org\/(?=https:\/\/)/, "");
-        return normalize(sourceURL) === normalize(downloadURL);
+        return normalizeDownloadURL(sourceURL) === normalizeDownloadURL(downloadURL);
       });
     });
     if (index < 0) return json({ error: "应用已不存在，请刷新列表后重试" }, 404);
