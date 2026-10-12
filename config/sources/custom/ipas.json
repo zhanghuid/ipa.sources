@@ -3,27 +3,28 @@
   "apps": [
     {
       "name": "Yingxia",
-      "bundleIdentifier": "",
+      "bundleIdentifier": "com.tvbox.yingxia.ios",
       "developerName": "Personal source",
       "subtitle": "",
       "localizedDescription": "",
-      "iconURL": "",
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/sources/custom/icons/com.tvbox.yingxia.ios.png",
       "category": "utilities",
       "versions": [
         {
-          "version": "pending",
-          "buildVersion": "pending",
+          "version": "1.2.2",
+          "buildVersion": "7",
           "date": "2026-10-12",
-          "localizedDescription": "等待 GitHub Actions 下载 IPA 并读取版本信息。",
+          "localizedDescription": "",
           "downloadURL": "https://download.getmegaportal.com/yingxia/1.2.2/Yingxia-1.2.2-ios.ipa",
-          "size": 0,
-          "minOSVersion": "14.0"
+          "size": 67222921,
+          "minOSVersion": "18.0"
         }
       ],
       "appPermissions": {
         "entitlements": [],
         "privacy": {}
-      }
+      },
+      "_iconExtractionChecked": "cgbi-v1"
     },
     {
       "name": "uz",
