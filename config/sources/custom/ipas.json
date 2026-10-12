@@ -2,6 +2,30 @@
   "name": "Custom Apps",
   "apps": [
     {
+      "name": "Yingxia",
+      "bundleIdentifier": "",
+      "developerName": "Personal source",
+      "subtitle": "",
+      "localizedDescription": "",
+      "iconURL": "",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "pending",
+          "buildVersion": "pending",
+          "date": "2026-10-12",
+          "localizedDescription": "等待 GitHub Actions 下载 IPA 并读取版本信息。",
+          "downloadURL": "https://download.getmegaportal.com/yingxia/1.2.2/Yingxia-1.2.2-ios.ipa",
+          "size": 0,
+          "minOSVersion": "14.0"
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
       "name": "uz",
       "bundleIdentifier": "com.uzvideoapp2",
       "developerName": "Personal source",
