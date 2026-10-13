@@ -2,6 +2,29 @@
   "name": "Custom Apps",
   "apps": [
     {
+      "name": "红果桌面版 1.0.13",
+      "packageName": "",
+      "developerName": "Personal source",
+      "subtitle": "",
+      "localizedDescription": "",
+      "iconURL": "",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "pending",
+          "buildVersion": "pending",
+          "date": "2026-10-13",
+          "localizedDescription": "等待 GitHub Actions 下载 APK 并读取版本信息。",
+          "downloadURL": "https://github.com/waligoraamodio288-rgb/hongguo-desktop-releases/releases/download/tv-v0.5.4/HongguoTV-0.5.4-arm64.apk",
+          "size": 0
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
       "name": "小猫影视",
       "packageName": "",
       "developerName": "Personal source",
