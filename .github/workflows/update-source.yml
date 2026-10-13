@@ -45,6 +45,9 @@ jobs:
       - name: Generate subscription source feeds
         run: python scripts/generate_library.py
       - name: Commit catalog changes
+        # GitHub ignores the `paths` filter for tag pushes, so a release tag runs
+        # this job on a detached HEAD where `git push` has no branch to push to.
+        if: github.ref_type == 'branch'
         run: |
           if git diff --quiet -- apps.json android.json config/ios/sources config/android/sources config/android/catalog.json sources; then
             echo "Catalogs are up to date"
