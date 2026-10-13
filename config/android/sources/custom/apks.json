@@ -16,7 +16,8 @@
           "date": "2026-10-13",
           "localizedDescription": "等待 GitHub Actions 下载 APK 并读取版本信息。",
           "downloadURL": "https://github.com/youhunwl/TVAPP/raw/refs/heads/main/%E5%BD%B1%E8%A7%86/%E5%B0%8F%E7%8C%AB%E5%BD%B1%E8%A7%86",
-          "size": 0
+          "size": 0,
+          "metadataError": "小猫影视: unable to parse APK manifest: File is not a zip file"
         }
       ],
       "appPermissions": {
