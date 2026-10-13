@@ -1,7 +1,18 @@
 {
   "name": "聚合源",
   "category": "aggregate",
-  "generatedAt": "2026-10-13T11:31:31Z",
-  "total": 0,
-  "sources": []
+  "generatedAt": "2026-10-13T11:33:20Z",
+  "total": 2,
+  "sources": [
+    {
+      "title": "Zoo.ink",
+      "url": "https://zoo.ink/tvbox.html",
+      "status": "unchecked"
+    },
+    {
+      "title": "d1y/kitty",
+      "url": "https://d1y.github.io/kitty/",
+      "status": "unchecked"
+    }
+  ]
 }

@@ -1,7 +1,13 @@
 {
   "name": "视频源",
   "category": "video",
-  "generatedAt": "2026-10-13T11:31:31Z",
-  "total": 0,
-  "sources": []
+  "generatedAt": "2026-10-13T11:33:20Z",
+  "total": 1,
+  "sources": [
+    {
+      "title": "VOD 影视源",
+      "url": "https://d1y.github.io/kitty/vod.json",
+      "status": "unchecked"
+    }
+  ]
 }
