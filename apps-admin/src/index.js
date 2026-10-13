@@ -34,6 +34,28 @@ const STORE_PAGES = [
 // Split/bundle formats are zip containers too, but not a single installable APK.
 const UNSUPPORTED_ANDROID_EXTENSIONS = { apks: true, xapk: true };
 
+// GitHub pages that render a file listing or metadata instead of the archive.
+const GITHUB_NON_FILE_PATHS = [
+  {
+    pattern: /\/(tree|blob|commits|commit|issues|pull|discussions|wiki|actions)(\/|$)/,
+    reason: "GitHub 页面不是文件直链，请填写文件本身的下载地址",
+  },
+  {
+    pattern: /\/releases(\/(tag|latest)(\/[^/]+)?)?\/?$/,
+    reason: "GitHub Release 页面不是文件直链，请填写具体资产的下载地址（含 /releases/download/）",
+  },
+];
+
+// GitHub signs asset links with an expiry; they stop working minutes later.
+const TEMPORARY_ASSET_HOSTS = [
+  "release-assets.githubusercontent.com",
+  "objects.githubusercontent.com",
+  "github-cloud.s3.amazonaws.com",
+];
+
+const TEMPORARY_ASSET_MESSAGE =
+  "这是 GitHub 的临时签名下载链接，过期后会失效；请改用 /releases/download/ 形式的稳定地址";
+
 function resolvePlatform(value) {
   const key = String(value || "ios").trim().toLowerCase();
   return PLATFORMS[key] ? key : null;
@@ -80,10 +102,50 @@ function fileExtension(pathname) {
   return match ? match[1].toLowerCase() : "";
 }
 
+function isGitHubHost(hostname) {
+  return hostname === "github.com" || hostname.endsWith(".github.com")
+    || hostname === "githubusercontent.com" || hostname.endsWith(".githubusercontent.com");
+}
+
+function signedQuery(url) {
+  const params = url.searchParams;
+  return params.has("X-Amz-Signature") || params.has("X-Amz-Credential")
+    || (params.has("sig") && params.has("se"));
+}
+
+/** Reject page links that never serve the archive, and expiring signed URLs. */
+function validateHostSpecifics(download, config) {
+  const hostname = download.hostname.toLowerCase();
+  const pathname = download.pathname;
+
+  if (TEMPORARY_ASSET_HOSTS.includes(hostname)) {
+    return { problem: TEMPORARY_ASSET_MESSAGE };
+  }
+  if (!isGitHubHost(hostname)) {
+    return signedQuery(download) ? { warning: "该地址带签名参数，过期后可能无法下载，建议改用稳定地址" } : {};
+  }
+  for (const rule of GITHUB_NON_FILE_PATHS) {
+    if (rule.pattern.test(pathname)) return { problem: rule.reason };
+  }
+  if (signedQuery(download)) return { problem: TEMPORARY_ASSET_MESSAGE };
+  // /raw/ and raw.githubusercontent.com URLs that end without a file extension
+  // are directory listings, which download as HTML instead of an archive.
+  const rawLike = hostname === "raw.githubusercontent.com" || /\/(raw|resolve)\//.test(pathname);
+  if (rawLike && !fileExtension(pathname)) {
+    return {
+      problem: `这个 GitHub 地址指向目录，不是 ${config.urlLabel} 文件；请填写直达文件的地址（以 .${config.extension} 结尾）`,
+    };
+  }
+  return {};
+}
+
 function validateDownload(download, platform, config) {
   const hostname = download.hostname.toLowerCase();
   const store = STORE_PAGES.find((page) => hostname === page.host || hostname.endsWith(`.${page.host}`));
   if (store) throw new Error(store.reason);
+
+  const hostCheck = validateHostSpecifics(download, config);
+  if (hostCheck.problem) throw new Error(hostCheck.problem);
 
   const extension = fileExtension(download.pathname);
   const other = platform === "android" ? "IPA" : "APK";
@@ -95,9 +157,10 @@ function validateDownload(download, platform, config) {
   }
   // A matching extension is strong evidence; no extension is common for redirect
   // endpoints, so it stays allowed and the generator verifies the real file later.
-  if (extension === config.extension) return { extension, confident: true };
-  if (!extension) return { extension, confident: false };
-  return { extension, confident: false, unknownExtension: extension };
+  const warning = hostCheck.warning || "";
+  if (extension === config.extension) return { extension, confident: true, warning };
+  if (!extension) return { extension, confident: false, warning };
+  return { extension, confident: false, unknownExtension: extension, warning };
 }
 
 function validateApp(input, platform) {
@@ -122,9 +185,12 @@ function validateApp(input, platform) {
     iconURL: "",
     category: "utilities",
     downloadURL: download.href,
-    _warning: check.unknownExtension
-      ? `地址后缀是 .${check.unknownExtension}，不是 .${config.extension}；提交后会在下载解析阶段校验真实文件`
-      : "",
+    _warning: [
+      check.unknownExtension
+        ? `地址后缀是 .${check.unknownExtension}，不是 .${config.extension}；提交后会在下载解析阶段校验真实文件`
+        : "",
+      check.warning,
+    ].filter(Boolean).join(" "),
   };
 }
 
@@ -227,8 +293,14 @@ async function saveCatalog(catalog, sha, env, platform, appName, action = "add")
 
 function queueApp(input, catalog, platform) {
   const config = PLATFORMS[platform];
-  const index = catalog.apps.findIndex((app) =>
+  // Prefer an existing entry for the same app so a new build becomes another
+  // version instead of a duplicate row. The submitted name is the only handle
+  // the form provides, so fall back to it before creating a new entry.
+  const byURL = catalog.apps.findIndex((app) =>
     (app.versions || []).some((version) => normalizeDownloadURL(version.downloadURL) === input.downloadURL));
+  const byName = byURL >= 0 ? -1 : catalog.apps.findIndex(
+    (app) => String(app.name || "").trim().toLowerCase() === input.name.trim().toLowerCase());
+  const index = byURL >= 0 ? byURL : byName;
   const existing = index >= 0 ? catalog.apps[index] : null;
   const versions = [...(existing?.versions || [])];
   const versionIndex = versions.findIndex((version) => normalizeDownloadURL(version.downloadURL) === input.downloadURL);

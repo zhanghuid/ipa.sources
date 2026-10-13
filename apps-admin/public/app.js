@@ -25,6 +25,7 @@ const PLATFORM_COPY = {
     path: "config/ios/sources/custom/ipas.json",
     output: "apps.json",
     identifier: "bundleIdentifier",
+    expected: "ipa",
     rejected: ["apk", "apks", "xapk"],
     storeHint: "App Store / TestFlight 页面不是 IPA 直链",
   },
@@ -36,6 +37,7 @@ const PLATFORM_COPY = {
     path: "config/android/sources/custom/apks.json",
     output: "android.json",
     identifier: "packageName",
+    expected: "apk",
     rejected: ["ipa"],
     storeHint: "Google Play 页面不是 APK 直链",
   },
@@ -48,6 +50,37 @@ const STORE_HOSTS = [
   ["play.google.com", "Google Play 页面不是可直接下载的 APK 文件，请填写 APK 直链"],
 ];
 
+// GitHub 页面地址只会返回 HTML 目录，不会返回安装包本体。
+const GITHUB_PAGE_PATHS = [
+  [/\/(tree|blob|commits|commit|issues|pull|discussions|wiki|actions)(\/|$)/, "GitHub 页面不是文件直链，请填写文件本身的下载地址"],
+  [/^\/[^/]+\/[^/]+\/releases(\/(tag|latest)(\/[^/]+)?)?\/?$/, "GitHub Release 页面不是文件直链，请填写具体资产的下载地址（含 /releases/download/）"],
+];
+
+const TEMPORARY_ASSET_HOSTS = [
+  "release-assets.githubusercontent.com",
+  "objects.githubusercontent.com",
+  "github-cloud.s3.amazonaws.com",
+];
+
+const TEMPORARY_ASSET_MESSAGE = "这是 GitHub 的临时签名下载链接，过期后会失效；请改用 /releases/download/ 形式的稳定地址";
+
+function fileExtensionOf(pathname) {
+  const last = pathname.split("/").filter(Boolean).pop() || "";
+  const match = last.match(/\.([A-Za-z0-9]{1,10})$/);
+  return match ? match[1].toLowerCase() : "";
+}
+
+function isGitHubHost(hostname) {
+  return hostname === "github.com" || hostname.endsWith(".github.com")
+    || hostname === "githubusercontent.com" || hostname.endsWith(".githubusercontent.com");
+}
+
+function hasSignedQuery(url) {
+  const params = url.searchParams;
+  return params.has("X-Amz-Signature") || params.has("X-Amz-Credential")
+    || (params.has("sig") && params.has("se"));
+}
+
 function urlProblem(raw, platform) {
   const copy = PLATFORM_COPY[platform];
   let url;
@@ -56,13 +89,23 @@ function urlProblem(raw, platform) {
   } catch {
     return "下载地址无效，请填写完整的 HTTPS 链接";
   }
-  if (url.protocol !== "https:") return `${copy.field} 必须使用 HTTPS`;
+  if (url.protocol !== "https:") return `${copy.field}必须使用 HTTPS`;
   const hostname = url.hostname.toLowerCase();
   const store = STORE_HOSTS.find(([host]) => hostname === host || hostname.endsWith(`.${host}`));
   if (store) return store[1];
-  const last = url.pathname.split("/").filter(Boolean).pop() || "";
-  const match = last.match(/\.([A-Za-z0-9]{1,10})$/);
-  const extension = match ? match[1].toLowerCase() : "";
+  if (TEMPORARY_ASSET_HOSTS.includes(hostname)) return TEMPORARY_ASSET_MESSAGE;
+  if (isGitHubHost(hostname)) {
+    for (const [pattern, message] of GITHUB_PAGE_PATHS) {
+      if (pattern.test(url.pathname)) return message;
+    }
+    const rawLike = hostname === "raw.githubusercontent.com" || /\/(raw|resolve)\//.test(url.pathname);
+    const githubExtension = fileExtensionOf(url.pathname);
+    if (rawLike && !githubExtension) {
+      return `这个 GitHub 地址指向目录，不是 ${copy.field.replace(" 下载地址", "")} 文件；请填写直达文件的地址（以 .${copy.expected} 结尾）`;
+    }
+    if (hasSignedQuery(url)) return TEMPORARY_ASSET_MESSAGE;
+  }
+  const extension = fileExtensionOf(url.pathname);
   if (copy.rejected.includes(extension)) {
     const other = platform === "android" ? "iOS / IPA" : "Android / APK";
     return `当前是 ${platform === "android" ? "Android" : "iOS"} 平台，但这个地址是 .${extension}（属于 ${other}）`;
@@ -166,6 +209,13 @@ function renderApps(apps) {
     identifier.title = identifier.textContent;
     meta.append(versionLabel, identifier);
     info.append(title, meta);
+    if (version.metadataError) {
+      const failure = document.createElement("p");
+      failure.className = "app-error";
+      failure.textContent = `解析失败：${version.metadataError}`;
+      failure.title = version.metadataError;
+      info.append(failure);
+    }
     const link = document.createElement("a");
     link.className = "source-link";
     link.href = version.downloadURL || "#";

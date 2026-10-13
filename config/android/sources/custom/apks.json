@@ -74,64 +74,6 @@
         "pad"
       ],
       "_deviceCheckVersion": "manifest-v1"
-    },
-    {
-      "name": "小猫影视",
-      "packageName": "",
-      "developerName": "Personal source",
-      "subtitle": "",
-      "localizedDescription": "",
-      "iconURL": "",
-      "category": "utilities",
-      "versions": [
-        {
-          "version": "pending",
-          "buildVersion": "pending",
-          "date": "2026-10-13",
-          "localizedDescription": "等待 GitHub Actions 下载 APK 并读取版本信息。",
-          "downloadURL": "https://github.com/youhunwl/TVAPP/raw/refs/heads/main/%E5%BD%B1%E8%A7%86/%E5%B0%8F%E7%8C%AB%E5%BD%B1%E8%A7%86",
-          "size": 0,
-          "metadataError": "小猫影视: unable to parse APK manifest: File is not a zip file"
-        }
-      ],
-      "appPermissions": {
-        "entitlements": [],
-        "privacy": {}
-      }
-    },
-    {
-      "name": "红果桌面版 1.0.13",
-      "packageName": "cn.hongguo.tv",
-      "developerName": "Personal source",
-      "subtitle": "",
-      "localizedDescription": "",
-      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/android/sources/custom/icons/cn.hongguo.tv.png",
-      "category": "utilities",
-      "versions": [
-        {
-          "version": "0.5.4-standalone-arm64",
-          "buildVersion": "14",
-          "date": "2026-10-13",
-          "localizedDescription": "等待 GitHub Actions 下载 APK 并读取版本信息。",
-          "downloadURL": "https://release-assets.githubusercontent.com/github-production-release-asset/1369141830/0b00428d-4cd7-43fa-8770-ac619c3b61b7?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-10-13T09%3A32%3A58Z&rscd=attachment%3B+filename%3DHongguoTV-0.5.4-arm64.apk&rsct=application%2Fvnd.android.package-archive&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skt=2026-10-13T08%3A32%3A13Z&ske=2026-10-13T09%3A32%3A58Z&sks=b&skv=2018-11-09&sig=x%2FchlU%2B3mY4ox7XZiRPMYQlpD9dr9lcOCtddN%2BTVdfk%3D&jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmVsZWFzZS1hc3NldHMuZ2l0aHVidXNlcmNvbnRlbnQuY29tIiwia2V5Ijoia2V5MSIsImV4cCI6MTc5MTg4MDYzMywibmJmIjoxNzkxODgwMzMzLCJwYXRoIjoicmVsZWFzZWFzc2V0cHJvZHVjdGlvbi5ibG9iLmNvcmUud2luZG93cy5uZXQifQ.oraR2fxVSbzrmcxl5hR8kufSUoAcrytC-EiwQCx_J90&response-content-disposition=attachment%3B%20filename%3DHongguoTV-0.5.4-arm64.apk&response-content-type=application%2Fvnd.android.package-archive",
-          "size": 4076575,
-          "minSdk": 21
-        }
-      ],
-      "appPermissions": {
-        "permissions": [
-          "android.permission.INTERNET",
-          "android.permission.REQUEST_INSTALL_PACKAGES"
-        ],
-        "privacy": {}
-      },
-      "_iconExtractionChecked": "apk-icons-v1",
-      "devices": [
-        "tv",
-        "phone",
-        "pad"
-      ],
-      "_deviceCheckVersion": "manifest-v1"
     }
   ]
 }

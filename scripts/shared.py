@@ -123,6 +123,20 @@ def fetch_catalog(url: str, label: str) -> dict:
     return catalog
 
 
+HTML_PREVIEW_SNIFF = 512
+
+
+def looks_like_html(head: bytes) -> bool:
+    """Detect a directory or landing page served in place of the archive.
+
+    GitHub ``/tree/`` pages and similar links answer with HTML and a 200 status,
+    which otherwise surfaces as an opaque "not a zip file" parse error far from
+    the real cause. Sniffing the first bytes keeps the message actionable.
+    """
+    start = head.lstrip()[:HTML_PREVIEW_SNIFF].lower()
+    return start.startswith(b"<!doctype html") or start.startswith(b"<html")
+
+
 def download_to_tempfile(url: str, label: str, max_size: int, suffix: str = ".bin") -> tuple[tempfile._TemporaryFileWrapper, int]:
     """Stream a remote file into a temporary file, reporting progress.
 
@@ -139,11 +153,19 @@ def download_to_tempfile(url: str, label: str, max_size: int, suffix: str = ".bi
     downloaded = 0
     content_length = 0
     download_complete = False
+    head = b""
+    content_type = ""
     try:
         try:
             with urllib.request.urlopen(request, timeout=300) as response:
                 if urllib.parse.urlparse(response.geturl()).scheme != "https":
                     raise ValueError(f"{label}: download redirected to a non-HTTPS URL")
+                content_type = (response.headers.get("Content-Type", "") or "").lower()
+                if "text/html" in content_type:
+                    raise ValueError(
+                        f"{label}: the download URL returned an HTML page, not an archive; "
+                        "use a direct file URL (a GitHub /tree/ or release page link cannot be parsed)"
+                    )
                 content_length = int(response.headers.get("Content-Length", "0") or 0)
                 if content_length > max_size:
                     raise ValueError(f"{label}: file exceeds the {max_size // (1024 ** 3)} GiB processing limit")
@@ -153,6 +175,13 @@ def download_to_tempfile(url: str, label: str, max_size: int, suffix: str = ".bi
                     chunk = response.read(1024 * 1024)
                     if not chunk:
                         break
+                    if len(head) < HTML_PREVIEW_SNIFF:
+                        head += chunk[: HTML_PREVIEW_SNIFF - len(head)]
+                        if looks_like_html(head):
+                            raise ValueError(
+                                f"{label}: the download URL returned an HTML page, not an archive; "
+                                "use a direct file URL (a GitHub /tree/ or release page link cannot be parsed)"
+                            )
                     downloaded += len(chunk)
                     if downloaded > max_size:
                         raise ValueError(f"{label}: file exceeds the {max_size // (1024 ** 3)} GiB processing limit")

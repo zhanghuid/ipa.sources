@@ -43,6 +43,25 @@ The private admin page is in [`apps-admin/`](apps-admin/). It is a Cloudflare Wo
 
 The page has a platform switcher, and the full catalog at `/catalog.html` shows both platforms with device filter chips (phone, pad, TV, watch, vision).
 
+Submissions are checked in three places, so a wrong link fails at the earliest possible moment:
+
+- **Form (browser)**: instant validation while typing. The field turns red with a specific reason.
+- **Worker (API)**: the same rules enforced server-side. The response may include a non-blocking `warning`.
+- **Generator (GitHub Actions)**: the real file is downloaded and its internal layout is checked, so a mislabelled archive is caught even when the URL looks right.
+
+The URL checks reject:
+
+| Input | Why |
+| --- | --- |
+| `.apk` on the iOS tab, `.ipa` on the Android tab | Platform mismatch |
+| `.apks` / `.xapk` | Split bundles are not a single installable APK |
+| App Store, iTunes, TestFlight, Google Play pages | Store pages never serve the archive |
+| `github.com/.../tree/`, `/blob/`, `/releases/tag/...` | GitHub pages return HTML, not the file |
+| GitHub `/raw/` paths without a file extension | Directory listing, not a file |
+| `release-assets.githubusercontent.com/...&se=...&sig=...` | Signed asset links expire within minutes |
+
+Extensionless URLs on other hosts stay allowed, because redirect endpoints are common; the generator verifies the real bytes and reports a precise error if the response is an HTML page instead of an archive.
+
 Use the **Deploy to Cloudflare** button above for a guided first deployment. Cloudflare creates a separate GitHub repository containing the self-contained Worker from `apps-admin/` (the folder contents become the new repository root) and connects it to Workers Builds. The source repository must be public for this button to work. The initial deployment uses a `workers.dev` address and safe placeholder settings; complete the setup below before using the admin API.
 
 After the button deploys the Worker:

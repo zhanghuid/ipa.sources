@@ -92,6 +92,7 @@ h2 { margin-bottom: 0; font-size: 17px; line-height: 1.4; font-weight: 620; lett
 .app-name { overflow: hidden; margin: 0 0 5px; font-size: 13px; line-height: 1.3; font-weight: 580; text-overflow: ellipsis; white-space: nowrap; }
 .app-meta { display: flex; gap: 8px; overflow: hidden; color: var(--muted); font: 11px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; }
 .app-meta span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-error { display: -webkit-box; overflow: hidden; margin: 6px 0 0; color: var(--danger); font-size: 11px; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .app-version { color: var(--ink); font-weight: 550; font-variant-numeric: tabular-nums; }
 .source-link { display: inline-flex; min-height: 40px; align-items: center; padding: 0 8px; color: var(--muted); text-decoration: none; font-size: 11px; }
 .source-link:hover { color: var(--accent); }
