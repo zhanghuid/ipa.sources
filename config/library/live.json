@@ -1,4 +1,10 @@
 {
   "name": "直播源",
-  "sources": []
+  "sources": [
+    {
+      "title": "电视直播",
+      "url": "https://d1y.github.io/kitty/lives.json",
+      "status": "unchecked"
+    }
+  ]
 }
