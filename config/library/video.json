@@ -2,6 +2,11 @@
   "name": "视频源",
   "sources": [
     {
+      "title": "视频源 1",
+      "url": "https://9280.kstore.vip/newwex.json",
+      "status": "unchecked"
+    },
+    {
       "title": "VOD 影视源",
       "url": "https://d1y.github.io/kitty/vod.json",
       "status": "unchecked"
