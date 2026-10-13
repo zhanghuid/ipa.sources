@@ -2,6 +2,11 @@
   "name": "视频源",
   "sources": [
     {
+      "title": "电视直播",
+      "url": "https://d1y.github.io/kitty/lives.json",
+      "status": "unchecked"
+    },
+    {
       "title": "VOD 影视源",
       "url": "https://d1y.github.io/kitty/vod.json",
       "status": "unchecked"
