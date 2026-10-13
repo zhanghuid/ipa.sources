@@ -2,6 +2,11 @@
   "name": "聚合源",
   "sources": [
     {
+      "title": "lifves",
+      "url": "https://www.lifves.com/Home/book/booksourcelist.html",
+      "status": "unchecked"
+    },
+    {
       "title": "Yiove 书源仓库",
       "url": "https://shuyuan.yiove.com/",
       "status": "unchecked"
