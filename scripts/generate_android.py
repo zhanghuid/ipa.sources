@@ -23,8 +23,10 @@ from scripts.shared import (
     classify_archive,
     download_to_tempfile,
     fetch_catalog,
+    add_version_record,
     format_mismatch_message,
     latest_version_date,
+    normalize_devices,
     release_versions,
     repository_slug,
     store_icon,
@@ -80,11 +82,26 @@ def hydrate_custom_catalog(catalog: dict) -> bool:
         )
         icon_known = bool(app.get("iconURL")) or app.get("_iconExtractionChecked") == ICON_EXTRACTION_VERSION
         devices_known = app.get("_deviceCheckVersion") == DEVICE_CHECK_VERSION
+        # Manual device tags win and need no download, so merge them before the
+        # parse loop; a tag-only edit must not force a full APK re-download.
+        manual_devices: list[str] = []
+        for item in versions:
+            for device in normalize_devices(item.get("devices")):
+                if device not in manual_devices:
+                    manual_devices.append(device)
+        if manual_devices:
+            merged = manual_devices + [
+                device for device in normalize_devices(app.get("devices")) if device not in manual_devices
+            ]
+            if normalize_devices(app.get("devices")) != merged:
+                app["devices"] = merged
+                changed = True
         for version in versions:
             is_latest = bool(versions) and version is versions[0]
             needs_metadata = version.get("version") == "pending" or not app.get("packageName")
             needs_icon = is_latest and not icon_known
-            needs_devices = is_latest and not devices_known
+            # A manual tag already states the devices, so no parse is needed for it.
+            needs_devices = is_latest and not devices_known and not manual_devices
             if not needs_metadata and not needs_icon and not needs_devices:
                 continue
             url = str(version.get("downloadURL", "")).strip()
@@ -120,9 +137,15 @@ def hydrate_custom_catalog(catalog: dict) -> bool:
                 app["_iconExtractionChecked"] = ICON_EXTRACTION_VERSION
                 changed = True
             if metadata.get("devices"):
-                app["devices"] = metadata["devices"]
+                # Manual tags were merged above and always win, so the manifest
+                # only contributes the classes the tag does not already state.
+                merged = manual_devices + [
+                    item for item in metadata["devices"] if item not in manual_devices
+                ]
+                if not manual_devices or normalize_devices(app.get("devices")) != merged:
+                    app["devices"] = merged
+                    changed = True
                 app["_deviceCheckVersion"] = DEVICE_CHECK_VERSION
-                changed = True
             elif needs_devices:
                 app["_deviceCheckVersion"] = DEVICE_CHECK_VERSION
                 changed = True
@@ -207,16 +230,10 @@ def merge_catalogs(named_catalogs: list[tuple[str, dict]], accelerator: str, def
         candidates = grouped[package_name]
         candidates.sort(key=lambda row: (latest_version_date(row[1]), -row[0]), reverse=True)
         result = {key: value for key, value in candidates[0][1].items() if not key.startswith("_")}
-        versions_by_key: dict[tuple[str, str], tuple[str, dict]] = {}
+        versions_by_key: dict[tuple[str, str, str], tuple[str, dict]] = {}
         for _, app in candidates:
             for version in app.get("versions", []):
-                key = (str(version.get("version", "")), str(version.get("buildVersion", "")))
-                if not key[0] and not key[1]:
-                    key = (str(version.get("downloadURL", "")), "")
-                current = versions_by_key.get(key)
-                date = str(version.get("date", ""))
-                if current is None or date > current[0]:
-                    versions_by_key[key] = (date, dict(version))
+                add_version_record(versions_by_key, version)
         versions = [value[1] for value in versions_by_key.values()]
         versions.sort(key=lambda item: (str(item.get("date", "")), str(item.get("version", ""))), reverse=True)
         # A failed metadata fetch is a retry signal recorded in the source file; it
@@ -231,12 +248,19 @@ def merge_catalogs(named_catalogs: list[tuple[str, dict]], accelerator: str, def
                     version["downloadURL"] = accelerated_url(download_url, accelerator)
         result["versions"] = versions
         devices: list[str] = []
+        # Per-address tags describe the app as a whole, because one app can now
+        # ship a phone build and a TV build as separate addresses.
+        for version in versions:
+            for device in normalize_devices(version.get("devices")):
+                if device not in devices:
+                    devices.append(device)
         for _, app in candidates:
             for device in app.get("devices", []) or []:
                 if device not in devices:
                     devices.append(device)
         result["platform"] = PLATFORM
-        result["devices"] = devices or list(default_devices)
+        # Explicit tags replace the defaults; only a device-less app falls back.
+        result["devices"] = normalize_devices(devices) or list(default_devices)
         merged.append(result)
     return merged
 

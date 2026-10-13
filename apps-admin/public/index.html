@@ -7,11 +7,11 @@
     <meta name="theme-color" content="#f7f8fa" />
     <meta name="description" content="管理个人应用源中的手动条目。" />
     <title>自有应用源 · 应用管理</title>
-    <link rel="stylesheet" href="/styles.css?v=20261013-tab-memory" />
-    <script src="/copy-catalog-url.js?v=20261013-tab-memory" defer></script>
-    <script src="/confirm-dialog.js?v=20261013-tab-memory" defer></script>
-    <script src="/view-preference.js?v=20261013-tab-memory" defer></script>
-    <script src="/app.js?v=20261013-tab-memory" defer></script>
+    <link rel="stylesheet" href="/styles.css?v=20261013-multi-entry" />
+    <script src="/copy-catalog-url.js?v=20261013-multi-entry" defer></script>
+    <script src="/confirm-dialog.js?v=20261013-multi-entry" defer></script>
+    <script src="/view-preference.js?v=20261013-multi-entry" defer></script>
+    <script src="/app.js?v=20261013-multi-entry" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">跳到主要内容</a>
@@ -75,18 +75,23 @@
             <input id="app-name" name="name" autocomplete="off" placeholder="例如：我的播放器" required maxlength="120" />
           </label>
 
-          <label class="field" for="ipa-url">
+          <div class="field">
             <span id="url-field-label">IPA 下载地址 <span class="required">*</span></span>
-            <input id="ipa-url" name="downloadURL" type="url" inputmode="url" placeholder="https://…/app.ipa" required />
             <small id="url-field-hint">需为可直接下载的 HTTPS 链接。提交后由 GitHub Actions 下载 IPA 并读取 Bundle ID、版本与图标。</small>
+            <div id="entry-list" class="entry-list"></div>
+            <button id="add-entry-button" class="button-ghost add-entry-button" type="button">
+              <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M10 4.5v11M4.5 10h11" /></svg>
+              <span>再加一个端的地址</span>
+            </button>
             <small id="url-field-error" class="field-error" role="alert" hidden></small>
-          </label>
+          </div>
 
           <div id="form-message" class="form-message" role="status" aria-live="polite" hidden></div>
           <button id="submit-button" class="button button-primary" type="submit">
             <span class="button-label">添加到自有源</span>
             <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 10h12M10 4l6 6-6 6" /></svg>
           </button>
+          <button id="cancel-edit-button" class="button button-ghost" type="button" hidden>取消编辑</button>
           <p class="form-footnote">提交会创建一次 GitHub 提交；目录生成流程会自动读取包元数据。</p>
         </form>
 

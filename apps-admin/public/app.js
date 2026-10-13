@@ -9,11 +9,16 @@ const formTitle = document.querySelector("#form-title");
 const urlFieldLabel = document.querySelector("#url-field-label");
 const urlFieldHint = document.querySelector("#url-field-hint");
 const urlFieldError = document.querySelector("#url-field-error");
-const urlInput = document.querySelector("#ipa-url");
+const nameInput = document.querySelector("#app-name");
+const entryList = document.querySelector("#entry-list");
+const addEntryButton = document.querySelector("#add-entry-button");
+const cancelEditButton = document.querySelector("#cancel-edit-button");
 const footerPath = document.querySelector("#footer-path");
 const platformTabs = [...document.querySelectorAll(".platform-tab")];
 let activeCatalogRequest;
 let catalogRequestId = 0;
+// Name of the entry being edited, or "" while adding a new one.
+let editingName = "";
 const platformIds = platformTabs.map((tab) => tab.dataset.platform);
 // Reloading keeps the tab you were last on instead of jumping back to iOS.
 let platform = window.viewPreference?.read("platform", platformIds, "ios") || "ios";
@@ -127,33 +132,183 @@ function setMessage(text, kind = "error") {
 function setUrlError(text) {
   urlFieldError.textContent = text || "";
   urlFieldError.hidden = !text;
-  urlInput.setAttribute("aria-invalid", text ? "true" : "false");
 }
 
-function checkUrlField() {
-  const value = urlInput.value.trim();
-  // Stay quiet until there is something to judge, so the field does not nag mid-typing.
-  if (!value) {
-    setUrlError("");
-    return "";
+function setUrlInvalid(input, invalid) {
+  if (invalid) input.setAttribute("aria-invalid", "true");
+  else input.removeAttribute("aria-invalid");
+}
+
+const DEVICE_LABELS = { phone: "手机", pad: "平板", tv: "TV", watch: "手表", mac: "Mac", vision: "头显" };
+const DEVICE_IDS = Object.keys(DEVICE_LABELS);
+
+/** Build one address row: an HTTPS input plus the device classes it serves. */
+function makeEntryRow(entry = {}) {
+  const row = document.createElement("div");
+  row.className = "entry-row";
+
+  const head = document.createElement("div");
+  head.className = "entry-head";
+  const input = document.createElement("input");
+  input.type = "url";
+  input.inputMode = "url";
+  input.className = "entry-url";
+  input.placeholder = PLATFORM_COPY[platform].placeholder;
+  input.value = entry.downloadURL || "";
+  input.setAttribute("aria-label", `${PLATFORM_COPY[platform].field} 下载地址`);
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "icon-button entry-remove";
+  remove.innerHTML = '<svg aria-hidden="true" viewBox="0 0 20 20"><path d="M5.5 5.5l9 9M14.5 5.5l-9 9" /></svg>';
+  remove.setAttribute("aria-label", "移除这个地址");
+  remove.title = "移除这个地址";
+  head.append(input, remove);
+
+  const chips = document.createElement("div");
+  chips.className = "device-chips";
+  for (const id of DEVICE_IDS) {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "device-chip";
+    chip.dataset.device = id;
+    const selected = (entry.devices || []).includes(id);
+    chip.classList.toggle("active", selected);
+    chip.setAttribute("aria-pressed", String(selected));
+    chip.textContent = DEVICE_LABELS[id];
+    chip.addEventListener("click", () => {
+      const next = !chip.classList.contains("active");
+      chip.classList.toggle("active", next);
+      chip.setAttribute("aria-pressed", String(next));
+    });
+    chips.append(chip);
   }
-  const problem = urlProblem(value, platform);
-  setUrlError(problem);
-  return problem;
+
+  const status = document.createElement("small");
+  status.className = "entry-status";
+
+  const validate = () => {
+    const value = input.value.trim();
+    if (!value) {
+      setUrlInvalid(input, false);
+      status.textContent = "";
+      status.hidden = true;
+      return "";
+    }
+    const problem = urlProblem(value, platform);
+    setUrlInvalid(input, Boolean(problem));
+    status.textContent = problem;
+    status.hidden = !problem;
+    return problem;
+  };
+  input.addEventListener("input", validate);
+  input.addEventListener("blur", validate);
+  remove.addEventListener("click", () => {
+    const rows = [...entryList.querySelectorAll(".entry-row")];
+    if (rows.length <= 1) {
+      // Keep one row so the form never ends up with nothing to fill in.
+      input.value = "";
+      for (const chip of chips.querySelectorAll(".device-chip")) {
+        chip.classList.remove("active");
+        chip.setAttribute("aria-pressed", "false");
+      }
+      validate();
+      input.focus();
+      return;
+    }
+    row.remove();
+  });
+
+  row.append(head, chips, status);
+  row._readEntry = () => ({
+    downloadURL: input.value.trim(),
+    devices: [...chips.querySelectorAll(".device-chip.active")].map((chip) => chip.dataset.device),
+  });
+  row._validate = validate;
+  row._focus = () => input.focus();
+  return row;
 }
 
-function latestVersion(app) {
-  return [...(app.versions || [])].sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))[0] || {};
+function addEntryRow(entry) {
+  const row = makeEntryRow(entry);
+  entryList.append(row);
+  return row;
+}
+
+function collectEntries() {
+  return [...entryList.querySelectorAll(".entry-row")].map((row) => row._readEntry());
+}
+
+function resetForm() {
+  editingName = "";
+  form.reset();
+  entryList.replaceChildren();
+  addEntryRow();
+  setUrlError("");
+  const copy = PLATFORM_COPY[platform];
+  formTitle.textContent = copy.title;
+  submitButton.querySelector(".button-label").textContent = "添加到自有源";
+  cancelEditButton.hidden = true;
+}
+
+function startEditing(app) {
+  editingName = app.name;
+  nameInput.value = app.name || "";
+  entryList.replaceChildren();
+  const entries = app.entries?.length ? app.entries : [{}];
+  for (const entry of entries) addEntryRow(entry);
+  formTitle.textContent = `编辑 ${app.name}`;
+  submitButton.querySelector(".button-label").textContent = "保存修改";
+  cancelEditButton.hidden = false;
+  setUrlError("");
+  message.hidden = true;
+  // Editing lives in the form panel, which sits above the list on mobile.
+  form.scrollIntoView({ block: "start", behavior: "smooth" });
+  nameInput.focus();
+}
+
+function checkEntryFields() {
+  let firstProblem = "";
+  let firstInvalid = null;
+  for (const row of entryList.querySelectorAll(".entry-row")) {
+    const problem = row._validate();
+    if (problem && !firstProblem) {
+      firstProblem = problem;
+      firstInvalid = row;
+    }
+  }
+  const entries = collectEntries();
+  if (!firstProblem && !entries.some((entry) => entry.downloadURL)) {
+    firstProblem = `至少填写一个${PLATFORM_COPY[platform].field}`;
+    firstInvalid = entryList.querySelector(".entry-row");
+  }
+  const seen = new Set();
+  for (const entry of entries) {
+    if (!entry.downloadURL) continue;
+    if (seen.has(entry.downloadURL)) {
+      firstProblem ||= "同一个应用不能重复登记相同的下载地址";
+      break;
+    }
+    seen.add(entry.downloadURL);
+  }
+  return { problem: firstProblem, row: firstInvalid };
+}
+
+function latestEntry(app) {
+  const entries = [...(app.entries || [])];
+  entries.sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+  return entries[0] || {};
 }
 
 function applyPlatformCopy() {
   const copy = PLATFORM_COPY[platform];
-  formTitle.textContent = copy.title;
   urlFieldLabel.innerHTML = `${copy.field} <span class="required">*</span>`;
   urlFieldHint.textContent = copy.hint;
-  urlInput.placeholder = copy.placeholder;
   footerPath.textContent = copy.path;
-  checkUrlField();
+  for (const input of entryList.querySelectorAll(".entry-url")) input.placeholder = copy.placeholder;
+  // Switching platform must not leave an edit pointed at the other platform.
+  if (editingName) resetForm();
+  else formTitle.textContent = copy.title;
+  for (const row of entryList.querySelectorAll(".entry-row")) row._validate();
   const label = document.querySelector("[data-copy-label]");
   if (label) label.textContent = `复制 ${copy.output}`;
   document.querySelector("button[data-copy-catalog-url]")?.setAttribute("data-platform", platform);
@@ -182,7 +337,7 @@ function renderApps(apps) {
     return;
   }
   for (const app of apps) {
-    const version = latestVersion(app);
+    const entry = latestEntry(app);
     const row = document.createElement("article");
     row.className = "app-row";
     const icon = document.createElement("div");
@@ -205,46 +360,59 @@ function renderApps(apps) {
     meta.className = "app-meta";
     const versionLabel = document.createElement("span");
     versionLabel.className = "app-version";
-    versionLabel.textContent = `v${version.version || "—"}`;
+    versionLabel.textContent = `v${entry.version || "—"}`;
     const identifier = document.createElement("span");
     identifier.textContent = app[copy.identifier] || "元数据待解析";
     identifier.title = identifier.textContent;
     meta.append(versionLabel, identifier);
+    const entryCount = (app.entries || []).length;
+    if (entryCount > 1) {
+      const multi = document.createElement("span");
+      multi.textContent = `${entryCount} 个地址`;
+      meta.append(multi);
+    }
     info.append(title, meta);
-    if (version.metadataError) {
+    const failed = (app.entries || []).find((item) => item.metadataError);
+    if (failed) {
       const failure = document.createElement("p");
       failure.className = "app-error";
-      failure.textContent = `解析失败：${version.metadataError}`;
-      failure.title = version.metadataError;
+      failure.textContent = `解析失败：${failed.metadataError}`;
+      failure.title = failed.metadataError;
       info.append(failure);
     }
     const link = document.createElement("a");
     link.className = "source-link";
-    link.href = version.downloadURL || "#";
+    link.href = entry.downloadURL || "#";
     link.target = "_blank";
     link.rel = "noreferrer";
     link.textContent = `${copy.field.slice(0, 3)} ↗`;
     link.setAttribute("aria-label", `打开 ${app.name} 的下载链接`);
     const actions = document.createElement("div");
     actions.className = "app-row-actions";
+    const editButton = document.createElement("button");
+    editButton.className = "edit-button";
+    editButton.type = "button";
+    editButton.textContent = "编辑";
+    editButton.setAttribute("aria-label", `编辑 ${app.name}`);
+    editButton.addEventListener("click", () => startEditing(app));
     const deleteButton = document.createElement("button");
     deleteButton.className = "delete-button";
     deleteButton.type = "button";
     deleteButton.textContent = "删除";
     deleteButton.setAttribute("aria-label", `删除 ${app.name}`);
-    deleteButton.addEventListener("click", () => deleteApp(app, version, deleteButton));
-    actions.append(link, deleteButton);
+    deleteButton.addEventListener("click", () => deleteApp(app, entry, deleteButton));
+    actions.append(link, editButton, deleteButton);
     row.append(icon, info, actions);
     list.append(row);
   }
 }
 
-async function deleteApp(app, version, button) {
+async function deleteApp(app, entry, button) {
   const label = app.name || "这个应用";
-  const versionCount = (app.versions || []).length;
+  const entryCount = (app.entries || []).length;
   const confirmed = await window.appConfirm({
     title: `删除「${label}」？`,
-    message: `会从自定义源移除该应用${versionCount > 1 ? `及其 ${versionCount} 个已登记版本` : ""}，下次目录生成后不再出现。`,
+    message: `会从自定义源移除该应用${entryCount > 1 ? `及其 ${entryCount} 个已登记地址` : ""}，下次目录生成后不再出现。`,
     detail: "此操作不会删除上游发布，如需恢复请重新登记。",
     confirmLabel: "删除应用",
     trigger: button,
@@ -261,7 +429,7 @@ async function deleteApp(app, version, button) {
         name: app.name,
         bundleIdentifier: app.bundleIdentifier || "",
         packageName: app.packageName || "",
-        downloadURL: version.downloadURL || "",
+        downloadURL: entry.downloadURL || "",
       }),
     });
     const result = await response.json();
@@ -342,33 +510,52 @@ async function loadApps() {
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   message.hidden = true;
-  const problem = checkUrlField();
-  if (problem) {
-    setMessage(problem);
-    urlInput.focus();
+  const name = nameInput.value.trim();
+  if (!name) {
+    setMessage("请填写应用名称。");
+    nameInput.focus();
     return;
   }
+  const check = checkEntryFields();
+  if (check.problem) {
+    setMessage(check.problem);
+    check.row?._focus();
+    return;
+  }
+  const entries = collectEntries().filter((entry) => entry.downloadURL);
+  const wasEditing = Boolean(editingName);
   submitButton.disabled = true;
   submitButton.querySelector(".button-label").textContent = "提交并排入解析…";
-  const data = Object.fromEntries(new FormData(form));
   try {
     const response = await fetch("/api/apps", {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ ...data, platform }),
+      body: JSON.stringify({ platform, name, originalName: editingName, entries }),
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || `提交失败 (${response.status})`);
-    const summary = `${result.updated ? "已更新" : "已添加"} ${result.app.name}，GitHub Actions 将自动下载并读取版本信息。`;
+    const summary = `${wasEditing ? "已保存" : result.updated ? "已更新" : "已添加"} ${result.app?.name || name}，GitHub Actions 将自动下载并读取版本信息。`;
     setMessage(result.warning ? `${summary}（${result.warning}）` : summary, "success");
-    form.reset();
+    resetForm();
     await loadApps();
   } catch (error) {
     setMessage(error.message);
   } finally {
     submitButton.disabled = false;
-    submitButton.querySelector(".button-label").textContent = "添加到自有源";
+    // Restore the label for the mode we are actually in: a failed edit must not
+    // leave the button reading "提交并排入解析…".
+    submitButton.querySelector(".button-label").textContent = editingName ? "保存修改" : "添加到自有源";
   }
+});
+
+addEntryButton.addEventListener("click", () => {
+  const row = addEntryRow();
+  row._focus();
+});
+
+cancelEditButton.addEventListener("click", () => {
+  resetForm();
+  setMessage("已取消编辑，表单恢复为新增模式。", "success");
 });
 
 for (const tab of platformTabs) {
@@ -382,8 +569,6 @@ for (const tab of platformTabs) {
   });
 }
 
-urlInput.addEventListener("input", checkUrlField);
-urlInput.addEventListener("blur", checkUrlField);
 refreshButton.addEventListener("click", loadApps);
 window.addEventListener("platform-change", (event) => {
   if (event.detail) {
@@ -393,5 +578,6 @@ window.addEventListener("platform-change", (event) => {
     loadApps();
   }
 });
+resetForm();
 applyPlatformCopy();
 loadApps();

@@ -43,6 +43,17 @@ The private admin page is in [`apps-admin/`](apps-admin/). It is a Cloudflare Wo
 
 The page has a platform switcher, and the full catalog at `/catalog.html` shows both platforms with device filter chips (phone, pad, TV, watch, vision).
 
+### Multiple addresses and editing
+
+One app entry can hold several addresses, which is how a single app ships a phone build and a TV build, or a signed and an unsigned variant. Use **再加一个端的地址** to add a row; each row has its own URL and device chips.
+
+- **Device chips** are per address and optional. When set they win over what the package manifest reports, so they can correct a manifest that omits TV support. When left empty the manifest is used, and the address simply contributes to the app's device list.
+- **编辑** loads an app's addresses into the form so the name, the addresses, and the device tags can all change in one GitHub commit.
+- **Adding appends, editing replaces.** Submitting without an edit adds an address and keeps everything already stored. Entering edit mode shows the full address list, so removing a row removes that address. A removed address takes its version history with it.
+- **Device tags are applied without re-downloading.** Changing only the chips keeps the parsed version, icon, and size, because the archive does not need to be read again.
+
+De-duplication uses version, build number, and the download URL. Separate device builds normally share a version number, so the URL keeps them apart, while the same release mirrored at several URLs still collapses into one entry.
+
 Submissions are checked in three places, so a wrong link fails at the earliest possible moment:
 
 - **Form (browser)**: instant validation while typing. The field turns red with a specific reason.

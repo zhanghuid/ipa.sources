@@ -73,9 +73,9 @@
         "privacy": {}
       },
       "devices": [
-        "tv",
         "phone",
-        "pad"
+        "pad",
+        "tv"
       ],
       "platform": "android"
     },
@@ -172,9 +172,9 @@
       "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/android/sources/custom/icons/org.schabi.newpipe.png",
       "category": "entertainment",
       "devices": [
-        "tv",
         "phone",
-        "pad"
+        "pad",
+        "tv"
       ],
       "versions": [
         {

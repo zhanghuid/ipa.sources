@@ -65,6 +65,23 @@ h2 { margin-bottom: 0; font-size: 17px; line-height: 1.4; font-weight: 620; lett
 .field-error { color: var(--danger) !important; font-weight: 500 !important; }
 .field input[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 3px oklch(53% 0.17 28 / 12%); }
 .field input[aria-invalid="true"]:focus-visible { border-color: var(--danger); box-shadow: 0 0 0 3px oklch(53% 0.17 28 / 18%); }
+.entry-list { display: grid; gap: 12px; margin-top: 2px; }
+.entry-row { display: grid; gap: 9px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface-muted); }
+.entry-head { display: flex; align-items: center; gap: 6px; }
+.entry-head .entry-url { flex: 1 1 auto; min-width: 0; min-height: 40px; padding: 9px 11px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); outline: none; font-size: 12.5px; font-weight: 400; transition: border-color 140ms ease, box-shadow 140ms ease; }
+.entry-head .entry-url::placeholder { color: oklch(69% 0.018 255); }
+.entry-head .entry-url:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px oklch(49% 0.15 255 / 16%); }
+.entry-head .entry-url[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 3px oklch(53% 0.17 28 / 12%); }
+.entry-remove { flex: 0 0 auto; width: 36px; height: 36px; }
+.entry-remove:hover { color: var(--danger); background: oklch(97% 0.025 28); }
+.device-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.device-chips .device-chip { min-height: 28px; padding: 0 10px; font-size: 11px; }
+.field small.entry-status { color: var(--danger); font-weight: 500; line-height: 1.55; }
+.add-entry-button { width: 100%; margin-top: 10px; }
+.add-entry-button svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.edit-button { min-height: 34px; padding: 0 9px; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: var(--radius-sm); cursor: pointer; font-size: 11px; }
+.edit-button:hover { color: var(--accent); background: oklch(96% 0.025 255); }
+.form-panel .button-ghost { width: 100%; margin-top: 10px; }
 .form-message { margin-top: 18px; padding: 10px 12px; color: var(--danger); background: oklch(97% 0.025 28); border-radius: var(--radius-sm); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
 .form-message.success { color: oklch(38% 0.1 150); background: oklch(96% 0.035 150); }
 .button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 10px; border: 0; border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 580; transition: background-color 130ms ease, transform 130ms ease, opacity 130ms ease; }

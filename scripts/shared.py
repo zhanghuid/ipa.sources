@@ -266,6 +266,81 @@ def format_mismatch_message(label: str, expected: str, actual: str) -> str | Non
     )
 
 
+DEVICE_ORDER = ["phone", "pad", "tv", "watch", "mac", "vision"]
+
+
+def normalize_devices(value: object) -> list[str]:
+    """Keep only known device classes, in one stable order.
+
+    Manual tags from the admin page share this vocabulary with the manifest
+    parsers, so both can be merged without producing duplicates or variants
+    like "TV" versus "tv".
+    """
+    if not isinstance(value, list):
+        return []
+    lowered = {str(item).strip().lower() for item in value if str(item).strip()}
+    return [device for device in DEVICE_ORDER if device in lowered]
+
+
+def version_identity(version: dict) -> tuple:
+    """Identify one downloadable build for de-duplication across catalogs.
+
+    Version and build number alone stop being unique once an app ships a
+    separate build per device class, because those normally share a version
+    number. Two rules keep both behaviours correct:
+
+    - An explicit device tag marks a deliberate per-device build, so the URL is
+      part of the identity and two device builds on one version stay apart.
+    - Without a tag the entry is a single release that upstream catalogs often
+      mirror at several URLs, so only version and build count and those mirrors
+      keep collapsing into one entry, exactly as before.
+
+    Unresolved entries share the placeholder version ``pending``, so they are
+    always separated by URL.
+    """
+    name = str(version.get("version", ""))
+    build = str(version.get("buildVersion", ""))
+    url = str(version.get("downloadURL", ""))
+    if not name or name == "pending" or not build or build == "pending":
+        return (name, build, (), url)
+    if normalize_devices(version.get("devices")):
+        return (name, build, (), url)
+    return (name, build, (), "")
+
+
+def merge_device_tags(target: dict, source: dict) -> None:
+    """Union two versions' device tags into ``target``."""
+    merged = normalize_devices(
+        list(target.get("devices") or []) + list(source.get("devices") or [])
+    )
+    if merged:
+        target["devices"] = merged
+
+
+def add_version_record(store: dict, version: dict) -> None:
+    """Insert one version into ``store``, keeping the newest and unioning devices."""
+    key = version_identity(version)
+    url = str(version.get("downloadURL", ""))
+    # The same file can arrive once tagged and once untagged, or be mirrored
+    # without a tag at all. Match on the address so it is stored only once
+    # instead of being published as two identical entries.
+    for existing_key, (_, stored) in store.items():
+        if existing_key[:2] == key[:2] and url and str(stored.get("downloadURL", "")) == url:
+            key = existing_key
+            break
+    date = str(version.get("date", ""))
+    current = store.get(key)
+    if current is None:
+        store[key] = (date, dict(version))
+        return
+    if date > current[0]:
+        winner, loser = dict(version), current[1]
+    else:
+        winner, loser = current[1], version
+    merge_device_tags(winner, loser)
+    store[key] = (max(date, current[0]), winner)
+
+
 def matches(filename: str, patterns: list[str]) -> bool:
     return any(fnmatch.fnmatch(filename.lower(), pattern.lower()) for pattern in patterns)
 

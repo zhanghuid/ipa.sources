@@ -56,6 +56,9 @@ const TEMPORARY_ASSET_HOSTS = [
 const TEMPORARY_ASSET_MESSAGE =
   "这是 GitHub 的临时签名下载链接，过期后会失效；请改用 /releases/download/ 形式的稳定地址";
 
+// Device classes shared with the catalog UI and the generators.
+const DEVICE_IDS = ["phone", "pad", "tv", "watch", "mac", "vision"];
+
 function resolvePlatform(value) {
   const key = String(value || "ios").trim().toLowerCase();
   return PLATFORMS[key] ? key : null;
@@ -163,34 +166,69 @@ function validateDownload(download, platform, config) {
   return { extension, confident: false, unknownExtension: extension, warning };
 }
 
-function validateApp(input, platform) {
-  const config = PLATFORMS[platform];
-  const fields = ["name", "downloadURL"];
-  for (const field of fields) {
-    if (typeof input[field] !== "string" || !input[field].trim()) {
-      throw new Error(`${field} 为必填项`);
-    }
+function normalizeDevices(value) {
+  if (value === undefined || value === null) return null;
+  if (!Array.isArray(value)) throw new Error("端标签格式无效");
+  const seen = [];
+  for (const item of value) {
+    const id = String(item || "").trim().toLowerCase();
+    if (!id) continue;
+    if (!DEVICE_IDS.includes(id)) throw new Error(`未知的端标签：${id}`);
+    if (!seen.includes(id)) seen.push(id);
   }
-  if (input.name.trim().length > 120) throw new Error("应用名称不能超过 120 个字符");
-  if (input.downloadURL.length > 4096) throw new Error(`${config.urlLabel} 下载地址不能超过 4096 个字符`);
+  // Canonical order so the stored file stays stable regardless of click order.
+  return DEVICE_IDS.filter((id) => seen.includes(id));
+}
+
+function validateEntry(raw, platform, config) {
+  const value = String(raw?.downloadURL ?? raw ?? "").trim();
+  if (!value) throw new Error(`${config.urlLabel} 下载地址不能为空`);
+  if (value.length > 4096) throw new Error(`${config.urlLabel} 下载地址不能超过 4096 个字符`);
   let download;
-  try { download = new URL(input.downloadURL); } catch { throw new Error(`${config.urlLabel} 下载地址无效`); }
+  try { download = new URL(value); } catch { throw new Error(`${config.urlLabel} 下载地址无效`); }
   if (download.protocol !== "https:") throw new Error(`${config.urlLabel} 下载地址必须使用 HTTPS`);
   const check = validateDownload(download, platform, config);
+  const warnings = [];
+  if (check.unknownExtension) {
+    warnings.push(`地址后缀是 .${check.unknownExtension}，不是 .${config.extension}；提交后会在下载解析阶段校验真实文件`);
+  }
+  if (check.warning) warnings.push(check.warning);
+  return {
+    downloadURL: download.href,
+    devices: normalizeDevices(raw?.devices),
+    warnings,
+  };
+}
+
+function validateApp(input, platform) {
+  const config = PLATFORMS[platform];
+  if (typeof input.name !== "string" || !input.name.trim()) throw new Error("name 为必填项");
+  if (input.name.trim().length > 120) throw new Error("应用名称不能超过 120 个字符");
+
+  // Accept the older single-URL shape so existing links and bookmarks keep working.
+  const rawEntries = Array.isArray(input.entries)
+    ? input.entries
+    : [{ downloadURL: input.downloadURL, devices: input.devices }];
+  if (!rawEntries.length) throw new Error("至少需要填写一个下载地址");
+  if (rawEntries.length > 20) throw new Error(`一条应用最多登记 20 个地址，当前 ${rawEntries.length} 个`);
+
+  const entries = [];
+  const warnings = [];
+  const seen = new Set();
+  for (const raw of rawEntries) {
+    const entry = validateEntry(raw, platform, config);
+    const key = normalizeDownloadURL(entry.downloadURL);
+    if (seen.has(key)) throw new Error("同一个应用下不能重复登记相同的下载地址");
+    seen.add(key);
+    entries.push(entry);
+    for (const warning of entry.warnings) if (!warnings.includes(warning)) warnings.push(warning);
+  }
+
   return {
     name: input.name.trim(),
-    developerName: "",
-    subtitle: "",
-    localizedDescription: "",
-    iconURL: "",
-    category: "utilities",
-    downloadURL: download.href,
-    _warning: [
-      check.unknownExtension
-        ? `地址后缀是 .${check.unknownExtension}，不是 .${config.extension}；提交后会在下载解析阶段校验真实文件`
-        : "",
-      check.warning,
-    ].filter(Boolean).join(" "),
+    originalName: typeof input.originalName === "string" ? input.originalName.trim() : "",
+    entries,
+    warnings,
   };
 }
 
@@ -283,7 +321,7 @@ async function saveCatalog(catalog, sha, env, platform, appName, action = "add")
     binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
   }
   const payload = {
-    message: `content: ${action} ${appName} ${action === "add" ? "to" : "from"} ${config.label} custom source`,
+    message: `content: ${action} ${appName} ${action === "remove" ? "from" : "in"} ${config.label} custom source`,
     content: btoa(binary),
     branch,
     ...(sha ? { sha } : {}),
@@ -291,31 +329,66 @@ async function saveCatalog(catalog, sha, env, platform, appName, action = "add")
   await githubRequest(contentsEndpoint(env, config.file), env, { method: "PUT", body: JSON.stringify(payload) });
 }
 
+function findTargetApp(input, catalog, requestedKeys) {
+  const normalized = (value) => String(value || "").trim().toLowerCase();
+  // Editing targets the entry the client loaded, matched by its previous name.
+  if (input.originalName) {
+    const index = catalog.apps.findIndex((app) => normalized(app.name) === normalized(input.originalName));
+    if (index >= 0) return index;
+  }
+  // Then an app that already owns one of the submitted addresses.
+  const byURL = catalog.apps.findIndex((app) =>
+    (app.versions || []).some((version) => requestedKeys.has(normalizeDownloadURL(version.downloadURL))));
+  if (byURL >= 0) return byURL;
+  // Finally the display name, so adding a build to a known app appends a version.
+  return catalog.apps.findIndex((app) => normalized(app.name) === normalized(input.name));
+}
+
 function queueApp(input, catalog, platform) {
   const config = PLATFORMS[platform];
-  // Prefer an existing entry for the same app so a new build becomes another
-  // version instead of a duplicate row. The submitted name is the only handle
-  // the form provides, so fall back to it before creating a new entry.
-  const byURL = catalog.apps.findIndex((app) =>
-    (app.versions || []).some((version) => normalizeDownloadURL(version.downloadURL) === input.downloadURL));
-  const byName = byURL >= 0 ? -1 : catalog.apps.findIndex(
-    (app) => String(app.name || "").trim().toLowerCase() === input.name.trim().toLowerCase());
-  const index = byURL >= 0 ? byURL : byName;
+  const requested = input.entries.map((entry) => ({
+    ...entry,
+    key: normalizeDownloadURL(entry.downloadURL),
+  }));
+  const requestedKeys = new Set(requested.map((entry) => entry.key));
+  const index = findTargetApp(input, catalog, requestedKeys);
   const existing = index >= 0 ? catalog.apps[index] : null;
-  const versions = [...(existing?.versions || [])];
-  const versionIndex = versions.findIndex((version) => normalizeDownloadURL(version.downloadURL) === input.downloadURL);
-  const queuedVersion = {
-    ...(versionIndex >= 0 ? versions[versionIndex] : {}),
-    version: "pending",
-    buildVersion: "pending",
-    date: new Date().toISOString().slice(0, 10),
-    localizedDescription: `等待 GitHub Actions 下载 ${config.urlLabel} 并读取版本信息。`,
-    downloadURL: input.downloadURL,
-    size: 0,
-  };
-  if (platform === "ios") queuedVersion.minOSVersion = "14.0";
-  if (versionIndex >= 0) versions[versionIndex] = queuedVersion;
-  else versions.unshift(queuedVersion);
+  const priorVersions = existing?.versions || [];
+  const today = new Date().toISOString().slice(0, 10);
+  // Editing replaces the address list the form showed, so a removed row is a
+  // removal. Adding only appends, which keeps existing addresses and versions.
+  const editing = Boolean(input.originalName);
+  const requestedByKey = new Map(requested.map((entry) => [entry.key, entry]));
+  const kept = editing ? [] : priorVersions.filter(
+    (version) => !requestedByKey.has(normalizeDownloadURL(version.downloadURL)));
+
+  // One version record per address. An address that was already resolved keeps
+  // its parsed metadata, so editing device tags does not trigger a re-download.
+  const queued = requested.map((entry) => {
+    const prior = priorVersions.find(
+      (version) => normalizeDownloadURL(version.downloadURL) === entry.key);
+    const resolved = Boolean(prior && prior.version && prior.version !== "pending");
+    const version = { ...(prior || {}) };
+    version.version = resolved ? prior.version : "pending";
+    version.buildVersion = resolved ? (prior.buildVersion || "pending") : "pending";
+    version.date = prior?.date || today;
+    version.localizedDescription = resolved
+      ? (prior.localizedDescription || "")
+      : `等待 GitHub Actions 下载 ${config.urlLabel} 并读取版本信息。`;
+    version.downloadURL = entry.downloadURL;
+    version.size = Number(prior?.size) || 0;
+    if (!resolved) {
+      delete version.metadataError;
+      if (platform === "ios" && !version.minOSVersion) version.minOSVersion = "14.0";
+    }
+    // An explicit device tag overrides what the package manifest reports; an
+    // empty selection clears the override and returns to automatic detection.
+    if (entry.devices && entry.devices.length) version.devices = entry.devices;
+    else delete version.devices;
+    return version;
+  });
+  const versions = [...queued, ...kept];
+
   const app = {
     ...(existing || {}),
     name: input.name,
@@ -326,7 +399,8 @@ function queueApp(input, catalog, platform) {
     iconURL: existing?.iconURL || "",
     category: existing?.category || "utilities",
     versions,
-    appPermissions: existing?.appPermissions || { entitlements: [], privacy: {} },
+    appPermissions: existing?.appPermissions
+      || (platform === "android" ? { permissions: [], privacy: {} } : { entitlements: [], privacy: {} }),
   };
   if (index >= 0) catalog.apps[index] = app;
   else catalog.apps.unshift(app);
@@ -354,6 +428,7 @@ async function handleApi(request, env) {
         urlLabel: value.urlLabel,
         extension: value.extension,
       })),
+      devices: DEVICE_IDS,
     });
   }
 
@@ -361,7 +436,26 @@ async function handleApi(request, env) {
     const platform = resolvePlatform(url.searchParams.get("platform"));
     if (!platform) return json({ error: "未知平台" }, 400);
     const { catalog } = await loadCatalog(env, platform);
-    return json({ platform, apps: catalog.apps });
+    // The admin list only needs the latest state per app, so expose a compact
+    // shape instead of the whole version history it never renders.
+    const apps = catalog.apps.map((app) => ({
+      name: app.name,
+      [PLATFORMS[platform].identifierField]: app[PLATFORMS[platform].identifierField] || "",
+      developerName: app.developerName || "",
+      iconURL: app.iconURL || "",
+      devices: app.devices || [],
+      entries: (app.versions || []).map((version) => ({
+        downloadURL: version.downloadURL || "",
+        version: version.version || "",
+        buildVersion: version.buildVersion || "",
+        date: version.date || "",
+        size: version.size || 0,
+        devices: version.devices || [],
+        metadataError: version.metadataError || "",
+        pending: !version.version || version.version === "pending",
+      })),
+    }));
+    return json({ platform, apps });
   }
 
   if (request.method === "GET" && url.pathname === "/api/catalog") {
@@ -403,8 +497,14 @@ async function handleApi(request, env) {
     const { catalog, sha } = await loadCatalog(env, platform);
     catalog.name ||= "Custom Apps";
     const { app, updated } = queueApp(input, catalog, platform);
-    await saveCatalog(catalog, sha, env, platform, input.name);
-    return json({ app, platform, updated, metadataPending: true, warning: input._warning || "" }, 201);
+    await saveCatalog(catalog, sha, env, platform, input.name, updated ? "update" : "add");
+    return json({
+      app: { name: app.name, entries: app.versions.length },
+      platform,
+      updated,
+      metadataPending: true,
+      warning: input.warnings.join(" "),
+    }, updated ? 200 : 201);
   }
 
   if (request.method === "DELETE" && url.pathname === "/api/apps") {
