@@ -161,12 +161,36 @@ h2 { margin-bottom: 0; font-size: 17px; line-height: 1.4; font-weight: 620; lett
 .device-tag.device-watch { color: oklch(42% 0.11 40); background: oklch(96% 0.02 40); border-color: oklch(90% 0.03 40); }
 .device-tag.device-vision { color: oklch(42% 0.11 200); background: oklch(96% 0.02 200); border-color: oklch(90% 0.03 200); }
 
+/* Confirmation dialog: replaces window.confirm for destructive actions. */
+.confirm-dialog { width: min(430px, calc(100% - 32px)); max-width: none; padding: 0; color: var(--ink); background: transparent; border: 0; overflow: visible; }
+.confirm-dialog::backdrop { background: oklch(22% 0.02 255 / 42%); backdrop-filter: blur(2px); }
+.confirm-dialog:not([open]) { display: none; }
+.confirm-card { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 15px; padding: 22px 22px 19px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: 0 18px 46px oklch(22% 0.03 255 / 22%), 0 2px 6px oklch(22% 0.03 255 / 8%); }
+.confirm-dialog[open] .confirm-card { animation: confirm-in 160ms cubic-bezier(.22, 1, .36, 1); }
+@keyframes confirm-in { from { opacity: 0; transform: translateY(8px) scale(.985); } to { opacity: 1; transform: none; } }
+.confirm-mark { display: grid; width: 38px; height: 38px; place-items: center; color: var(--danger); background: oklch(96% 0.03 28); border: 1px solid oklch(90% 0.05 28); border-radius: 11px; }
+.confirm-mark svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.confirm-card:not(.danger) .confirm-mark { color: var(--accent); background: oklch(96% 0.03 255); border-color: oklch(90% 0.04 255); }
+.confirm-copy { min-width: 0; }
+.confirm-title { margin: 1px 0 0; font-size: 15px; line-height: 1.4; font-weight: 620; letter-spacing: -.01em; }
+.confirm-message { margin: 7px 0 0; color: var(--muted); font-size: 12.5px; line-height: 1.7; overflow-wrap: anywhere; }
+.confirm-detail { margin: 9px 0 0; padding: 8px 10px; color: var(--muted); background: var(--surface-muted); border: 1px solid var(--line); border-radius: var(--radius-sm); font: 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+.confirm-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 8px; margin-top: 3px; }
+.button-ghost { min-height: 38px; padding: 0 14px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); }
+.button-ghost:hover { color: var(--ink); border-color: oklch(80% 0.03 255); }
+.button-danger { min-height: 38px; padding: 0 15px; color: white; background: var(--danger); }
+.button-danger:hover { background: oklch(47% 0.17 28); }
+.button-danger:focus-visible { outline: 3px solid oklch(53% 0.17 28 / 42%); outline-offset: 2px; }
+
 @media (max-width: 760px) {
   .workspace { width: min(100% - 32px, 560px); }
   .page-heading { padding: 40px 0 25px; }
   .entry-layout { grid-template-columns: 1fr; gap: 16px; }
   .form-panel { padding: 21px; }
   .catalog-panel { padding: 20px 21px 8px; }
+  .confirm-card { padding: 20px 19px 17px; gap: 13px; }
+  .confirm-actions { flex-direction: column-reverse; align-items: stretch; }
+  .button-ghost, .button-danger { width: 100%; min-height: 44px; }
 }
 @media (max-width: 420px) {
   .topbar { height: 58px; gap: 8px; padding: 0 12px; }

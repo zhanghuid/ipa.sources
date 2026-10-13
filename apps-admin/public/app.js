@@ -239,7 +239,15 @@ function renderApps(apps) {
 
 async function deleteApp(app, version, button) {
   const label = app.name || "这个应用";
-  if (!window.confirm(`确定删除「${label}」吗？该应用及其全部已登记版本会从自定义源移除。`)) return;
+  const versionCount = (app.versions || []).length;
+  const confirmed = await window.appConfirm({
+    title: `删除「${label}」？`,
+    message: `会从自定义源移除该应用${versionCount > 1 ? `及其 ${versionCount} 个已登记版本` : ""}，下次目录生成后不再出现。`,
+    detail: "此操作不会删除上游发布，如需恢复请重新登记。",
+    confirmLabel: "删除应用",
+    trigger: button,
+  });
+  if (!confirmed) return;
   button.disabled = true;
   button.textContent = "删除中…";
   try {
