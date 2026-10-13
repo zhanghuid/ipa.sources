@@ -2,6 +2,46 @@
   "name": "Custom Apps",
   "apps": [
     {
+      "name": "小猫影视",
+      "packageName": "io.github.d1y.catmovie",
+      "developerName": "Personal source",
+      "subtitle": "",
+      "localizedDescription": "",
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/android/sources/custom/icons/io.github.d1y.catmovie.png",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "2.6.1",
+          "buildVersion": "2001",
+          "date": "2026-10-13",
+          "localizedDescription": "等待 GitHub Actions 下载 APK 并读取版本信息。",
+          "downloadURL": "https://github.com/waifu-project/movie/releases/latest/download/catmovie.apk",
+          "size": 48446688,
+          "minSdk": 24
+        }
+      ],
+      "appPermissions": {
+        "permissions": [
+          "android.permission.ACCESS_NETWORK_STATE",
+          "android.permission.ACCESS_WIFI_STATE",
+          "android.permission.CHANGE_WIFI_MULTICAST_STATE",
+          "android.permission.INTERNET",
+          "android.permission.READ_PHONE_STATE",
+          "android.permission.VIBRATE",
+          "android.permission.WAKE_LOCK",
+          "android.permission.WRITE_EXTERNAL_STORAGE",
+          "io.github.d1y.catmovie.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+        ],
+        "privacy": {}
+      },
+      "_iconExtractionChecked": "apk-icons-v1",
+      "devices": [
+        "phone",
+        "pad"
+      ],
+      "_deviceCheckVersion": "manifest-v1"
+    },
+    {
       "name": "红果桌面版 1.0.13",
       "packageName": "cn.hongguo.tv",
       "developerName": "Personal source",
