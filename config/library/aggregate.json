@@ -2,6 +2,11 @@
   "name": "聚合源",
   "sources": [
     {
+      "title": "源仓库",
+      "url": "https://www.yckceo.com/yuedu/shuyuan/index.html",
+      "status": "unchecked"
+    },
+    {
       "title": "lifves",
       "url": "https://www.lifves.com/Home/book/booksourcelist.html",
       "status": "unchecked"
