@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-platform="ios" data-platform-options="ios android">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,11 +7,13 @@
     <meta name="theme-color" content="#f7f8fa" />
     <meta name="description" content="管理个人应用源中的手动条目。" />
     <title>自有应用源 · 应用管理</title>
-    <link rel="stylesheet" href="/styles.css?v=20261013-multi-entry" />
-    <script src="/copy-catalog-url.js?v=20261013-multi-entry" defer></script>
-    <script src="/confirm-dialog.js?v=20261013-multi-entry" defer></script>
-    <script src="/view-preference.js?v=20261013-multi-entry" defer></script>
-    <script src="/app.js?v=20261013-multi-entry" defer></script>
+    <link rel="stylesheet" href="/styles.css?v=20261013-tab-prepaint" />
+    <!-- Loaded synchronously so the saved tab is on <html> before the first
+         paint. Deferring it painted the default tab, then jumped. -->
+    <script src="/view-preference.js?v=20261013-tab-prepaint"></script>
+    <script src="/copy-catalog-url.js?v=20261013-tab-prepaint" defer></script>
+    <script src="/confirm-dialog.js?v=20261013-tab-prepaint" defer></script>
+    <script src="/app.js?v=20261013-tab-prepaint" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">跳到主要内容</a>
@@ -48,7 +50,7 @@
       </section>
 
       <div class="platform-switch" role="tablist" aria-label="选择平台">
-        <button class="platform-tab active" type="button" role="tab" aria-selected="true" data-platform="ios">
+        <button class="platform-tab" type="button" role="tab" aria-selected="false" data-platform="ios">
           <span class="platform-glyph" aria-hidden="true">iOS</span>
           <span class="platform-name">iOS / tvOS</span>
           <span class="platform-note">IPA</span>

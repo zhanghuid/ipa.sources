@@ -312,6 +312,9 @@ function applyPlatformCopy() {
   const label = document.querySelector("[data-copy-label]");
   if (label) label.textContent = `复制 ${copy.output}`;
   document.querySelector("button[data-copy-catalog-url]")?.setAttribute("data-platform", platform);
+  // Keep <html data-platform> in step so the prepaint highlight stays correct
+  // and the copy button reads the same platform this script renders.
+  document.documentElement.dataset.platform = platform;
   for (const tab of platformTabs) {
     const selected = tab.dataset.platform === platform;
     tab.classList.toggle("active", selected);

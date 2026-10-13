@@ -1,6 +1,10 @@
 function currentPlatform() {
-  const tab = document.querySelector(".platform-tab.active");
-  return tab?.dataset.platform || "ios";
+  // <html data-platform> is set before the first paint and kept current on
+  // every switch, so it stays correct even before the page scripts assign the
+  // .active class (the catalog page only does that after its fetch resolves).
+  return document.documentElement.dataset.platform
+    || document.querySelector(".platform-tab.active")?.dataset.platform
+    || "ios";
 }
 
 document.querySelectorAll("[data-copy-catalog-url]").forEach((button) => {

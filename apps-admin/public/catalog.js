@@ -263,7 +263,10 @@ function updateCounts() {
   count.textContent = String(currentApps().length).padStart(2, "0");
 }
 
-function applyPlatform() {
+function applyPlatformSelection() {
+  // Mirrored onto <html> so the prepaint CSS highlight and the copy button
+  // agree with the tab this script renders, from the first frame onward.
+  document.documentElement.dataset.platform = platform;
   for (const tab of platformTabs) {
     const selected = tab.dataset.platform === platform;
     tab.classList.toggle("active", selected);
@@ -271,10 +274,15 @@ function applyPlatform() {
   }
   const label = document.querySelector("[data-copy-label]");
   if (label) label.textContent = `复制 ${meta().output}`;
+}
+
+function applyPlatform() {
+  applyPlatformSelection();
   updateCounts();
 }
 
 function applyDeviceFilter() {
+  document.documentElement.dataset.device = device;
   for (const chip of deviceChips) {
     const selected = chip.dataset.device === device;
     chip.classList.toggle("active", selected);
@@ -356,4 +364,8 @@ for (const chip of deviceChips) {
   });
 }
 applyDeviceFilter();
+// Tab classes and the copy label normally wait for the catalog fetch; apply the
+// saved choice now so switching and reloading both feel instant. Counts stay
+// blank until real data arrives instead of showing a wrong number.
+applyPlatformSelection();
 loadCatalog();

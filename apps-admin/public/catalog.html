@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-platform="ios" data-platform-options="ios android" data-device="all" data-device-options="all phone pad tv watch vision">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,11 +7,13 @@
     <meta name="theme-color" content="#f7f8fa" />
     <meta name="description" content="浏览自有源中的全部应用和版本。" />
     <title>自有应用源 · 完整目录</title>
-    <link rel="stylesheet" href="/styles.css?v=20261013-multi-entry" />
-    <script src="/copy-catalog-url.js?v=20261013-multi-entry" defer></script>
-    <script src="/confirm-dialog.js?v=20261013-multi-entry" defer></script>
-    <script src="/view-preference.js?v=20261013-multi-entry" defer></script>
-    <script src="/catalog.js?v=20261013-multi-entry" defer></script>
+    <link rel="stylesheet" href="/styles.css?v=20261013-tab-prepaint" />
+    <!-- Loaded synchronously so the saved tab is on <html> before the first
+         paint. Deferring it painted the default tab, then jumped. -->
+    <script src="/view-preference.js?v=20261013-tab-prepaint"></script>
+    <script src="/copy-catalog-url.js?v=20261013-tab-prepaint" defer></script>
+    <script src="/confirm-dialog.js?v=20261013-tab-prepaint" defer></script>
+    <script src="/catalog.js?v=20261013-tab-prepaint" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main">跳到主要内容</a>
@@ -48,7 +50,7 @@
       </section>
 
       <div class="platform-switch" role="tablist" aria-label="选择平台">
-        <button class="platform-tab active" type="button" role="tab" aria-selected="true" data-platform="ios">
+        <button class="platform-tab" type="button" role="tab" aria-selected="false" data-platform="ios">
           <span class="platform-glyph" aria-hidden="true">iOS</span>
           <span class="platform-name">iOS / tvOS</span>
           <span class="platform-note" data-count-for="ios">—</span>
@@ -72,7 +74,7 @@
         </div>
         <div class="device-filter" role="group" aria-label="按端筛选">
           <span class="device-filter-label">端</span>
-          <button class="device-chip active" type="button" data-device="all" aria-pressed="true">全部</button>
+          <button class="device-chip" type="button" data-device="all" aria-pressed="false">全部</button>
           <button class="device-chip" type="button" data-device="phone" aria-pressed="false">手机</button>
           <button class="device-chip" type="button" data-device="pad" aria-pressed="false">平板</button>
           <button class="device-chip" type="button" data-device="tv" aria-pressed="false">TV</button>
