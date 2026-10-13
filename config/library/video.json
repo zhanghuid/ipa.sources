@@ -4,7 +4,8 @@
     {
       "title": "视频源 1",
       "url": "https://9280.kstore.vip/newwex.json",
-      "status": "unchecked"
+      "status": "unchecked",
+      "note": "影视仓、NewBox、Tvbox"
     },
     {
       "title": "VOD 影视源",
