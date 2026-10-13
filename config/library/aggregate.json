@@ -1,4 +1,10 @@
 {
   "name": "聚合源",
-  "sources": []
+  "sources": [
+    {
+      "title": "d1y/kitty",
+      "url": "https://d1y.github.io/kitty/",
+      "status": "unchecked"
+    }
+  ]
 }
