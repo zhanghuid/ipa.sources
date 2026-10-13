@@ -8,6 +8,7 @@ on:
     paths:
       - "config/ios/**"
       - "config/android/**"
+      - "config/library/**"
       - "scripts/*.py"
       - ".github/workflows/update-source.yml"
 
@@ -41,14 +42,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ACCELERATOR_BASE_URL: ${{ vars.ACCELERATOR_BASE_URL }}
         run: python scripts/generate_android.py
+      - name: Generate subscription source feeds
+        run: python scripts/generate_library.py
       - name: Commit catalog changes
         run: |
-          if git diff --quiet -- apps.json android.json config/ios/sources config/android/sources config/android/catalog.json; then
+          if git diff --quiet -- apps.json android.json config/ios/sources config/android/sources config/android/catalog.json sources; then
             echo "Catalogs are up to date"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps.json android.json config/ios/sources config/android/sources config/android/catalog.json
+          git add apps.json android.json config/ios/sources config/android/sources config/android/catalog.json sources
           git commit -m "chore: update app catalogs"
           git push

@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-10-13T10:26:02Z",
+  "categories": [
+    {
+      "id": "live",
+      "name": "直播源",
+      "file": "live.json",
+      "total": 0,
+      "available": 0
+    },
+    {
+      "id": "video",
+      "name": "视频源",
+      "file": "video.json",
+      "total": 0,
+      "available": 0
+    },
+    {
+      "id": "audio",
+      "name": "音频源",
+      "file": "audio.json",
+      "total": 0,
+      "available": 0
+    },
+    {
+      "id": "comic",
+      "name": "漫画源",
+      "file": "comic.json",
+      "total": 0,
+      "available": 0
+    },
+    {
+      "id": "novel",
+      "name": "小说源",
+      "file": "novel.json",
+      "total": 0,
+      "available": 0
+    },
+    {
+      "id": "aggregate",
+      "name": "聚合源",
+      "file": "aggregate.json",
+      "total": 0,
+      "available": 0
+    }
+  ]
+}

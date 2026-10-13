@@ -26,6 +26,18 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 USER_AGENT = "personal-app-source"
 
+# Subscription source categories managed by the admin page. Kept here so the
+# checker and the index generator cannot drift apart; the Worker keeps its own
+# copy because it cannot import Python.
+LIBRARY_CATEGORIES = [
+    ("live", "直播源"),
+    ("video", "视频源"),
+    ("audio", "音频源"),
+    ("comic", "漫画源"),
+    ("novel", "小说源"),
+    ("aggregate", "聚合源"),
+]
+
 
 class Progress:
     """Terminal progress display that also behaves cleanly in GitHub Actions."""

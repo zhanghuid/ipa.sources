@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-CN" data-category="live" data-category-options="live video audio comic novel aggregate">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#f7f8fa" />
+    <meta name="description" content="管理订阅源地址：直播、视频、音频、漫画、小说与聚合源。" />
+    <title>自有应用源 · 订阅源管理</title>
+    <link rel="stylesheet" href="/styles.css?v=20261013-library" />
+    <!-- Loaded synchronously so the saved category is on <html> before the first
+         paint, matching the platform tab behaviour on the app pages. -->
+    <script src="/view-preference.js?v=20261013-library"></script>
+    <script src="/confirm-dialog.js?v=20261013-library" defer></script>
+    <script src="/copy-library-url.js?v=20261013-library" defer></script>
+    <script src="/sources.js?v=20261013-library" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到主要内容</a>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="自有应用源首页">
+        <span class="brand-mark" aria-hidden="true">APP</span>
+        <span>自有应用源</span>
+      </a>
+      <nav class="topbar-nav" aria-label="主导航">
+        <a class="nav-link" href="/">应用管理</a>
+        <a class="nav-link" href="/catalog">完整目录</a>
+        <a class="nav-link active" href="/sources" aria-current="page">订阅源</a>
+      </nav>
+      <div class="topbar-meta"><span class="status-dot"></span>私有管理</div>
+    </header>
+
+    <main id="main" class="workspace">
+      <section class="page-heading" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">LIBRARY / SOURCES</p>
+          <h1 id="page-title">订阅源管理</h1>
+          <p class="lede">登记直播、视频、音频、漫画、小说与聚合订阅地址。这些源与应用目录无关，只做地址登记、状态检测与聚合发布。</p>
+        </div>
+        <div class="heading-actions">
+          <button class="copy-url-button" type="button" data-copy-library-url aria-label="复制当前分类的清单地址" title="复制当前分类的清单地址">
+            <svg aria-hidden="true" viewBox="0 0 16 16"><rect x="5" y="5" width="8" height="9" rx="1.5"></rect><path d="M10.5 5V3.5A1.5 1.5 0 0 0 9 2H4.5A1.5 1.5 0 0 0 3 3.5v7A1.5 1.5 0 0 0 4.5 12H5"></path></svg>
+            <span data-copy-label>复制清单</span>
+          </button>
+          <span class="copy-url-status" data-copy-status role="status" aria-live="polite"></span>
+          <div class="catalog-count" aria-live="polite">
+            <span id="source-count" class="count-number">—</span>
+            <span class="count-label">条已登记</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="platform-switch category-switch" role="tablist" aria-label="选择源分类">
+        <button class="platform-tab category-tab" type="button" role="tab" aria-selected="false" data-category="live">
+          <span class="platform-glyph" aria-hidden="true">LIVE</span>
+          <span class="platform-name">直播源</span>
+          <span class="platform-note" data-count-for="live">—</span>
+        </button>
+        <button class="platform-tab category-tab" type="button" role="tab" aria-selected="false" data-category="video">
+          <span class="platform-glyph" aria-hidden="true">VID</span>
+          <span class="platform-name">视频源</span>
+          <span class="platform-note" data-count-for="video">—</span>
+        </button>
+        <button class="platform-tab category-tab" type="button" role="tab" aria-selected="false" data-category="audio">
+          <span class="platform-glyph" aria-hidden="true">AUD</span>
+          <span class="platform-name">音频源</span>
+          <span class="platform-note" data-count-for="audio">—</span>
+        </button>
+        <button class="platform-tab category-tab" type="button" role="tab" aria-selected="false" data-category="comic">
+          <span class="platform-glyph" aria-hidden="true">COM</span>
+          <span class="platform-name">漫画源</span>
+          <span class="platform-note" data-count-for="comic">—</span>
+        </button>
+        <button class="platform-tab category-tab" type="button" role="tab" aria-selected="false" data-category="novel">
+          <span class="platform-glyph" aria-hidden="true">NOV</span>
+          <span class="platform-name">小说源</span>
+          <span class="platform-note" data-count-for="novel">—</span>
+        </button>
+        <button class="platform-tab category-tab" type="button" role="tab" aria-selected="false" data-category="aggregate">
+          <span class="platform-glyph" aria-hidden="true">AGG</span>
+          <span class="platform-name">聚合源</span>
+          <span class="platform-note" data-count-for="aggregate">—</span>
+        </button>
+      </div>
+
+      <section id="global-entries" class="global-entries" hidden aria-labelledby="global-entries-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">PUBLISHED FEED</p>
+            <h2 id="global-entries-title">聚合入口</h2>
+          </div>
+          <span class="step-mark">GLOBAL</span>
+        </div>
+        <span class="copy-url-status" data-copy-status role="status" aria-live="polite"></span>
+        <div class="global-entry-list">
+          <div class="global-entry">
+            <div class="global-entry-copy">
+              <strong>全量入口 index.json</strong>
+              <code data-global-url="index">—</code>
+            </div>
+            <button class="copy-url-button" type="button" data-copy-global-url="index">
+              <span data-copy-label>复制</span>
+            </button>
+          </div>
+          <div class="global-entry">
+            <div class="global-entry-copy">
+              <strong>仅可用 available.json</strong>
+              <code data-global-url="available">—</code>
+            </div>
+            <button class="copy-url-button" type="button" data-copy-global-url="available">
+              <span data-copy-label>复制</span>
+            </button>
+          </div>
+        </div>
+        <p class="form-footnote">聚合文件由 GitHub Actions 依据已登记源生成；「不可用」只表示最近一次检测未通过，源仍会保留在清单中。</p>
+      </section>
+
+      <section class="entry-layout" aria-label="添加源和已登记源">
+        <form id="source-form" class="form-panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">NEW SOURCE</p>
+              <h2 id="form-title">添加直播源</h2>
+            </div>
+            <span class="step-mark">01</span>
+          </div>
+
+          <label class="field" for="source-title">
+            <span>标题 <span class="required">*</span></span>
+            <input id="source-title" name="title" autocomplete="off" placeholder="例如：央视直播合集" required maxlength="120" />
+          </label>
+
+          <div class="field">
+            <span id="url-field-label">源地址 <span class="required">*</span></span>
+            <input id="source-url" class="entry-url" type="url" inputmode="url" autocomplete="off" placeholder="https://…/live.m3u" aria-describedby="url-field-hint" />
+            <small id="url-field-hint">支持 http 与 https。建议填可直接订阅的地址；检查脚本会每隔一段周期访问一次。</small>
+            <small id="url-field-error" class="field-error" role="alert" hidden></small>
+          </div>
+
+          <label class="field" for="source-note">
+            <span>备注</span>
+            <input id="source-note" name="note" autocomplete="off" placeholder="可选，例如：用于 TVBox" maxlength="500" />
+          </label>
+
+          <div id="form-message" class="form-message" role="status" aria-live="polite" hidden></div>
+          <button id="submit-button" class="button button-primary" type="submit">
+            <span class="button-label">添加到订阅源</span>
+            <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 10h12M10 4l6 6-6 6" /></svg>
+          </button>
+          <button id="cancel-edit-button" class="button button-ghost" type="button" hidden>取消编辑</button>
+          <p class="form-footnote">提交会创建一次 GitHub 提交；运行检查脚本后状态才会更新。</p>
+        </form>
+
+        <section class="catalog-panel" aria-labelledby="source-list-title">
+          <div class="section-heading catalog-heading">
+            <div>
+              <p class="eyebrow">REGISTERED</p>
+              <h2 id="source-list-title">已登记订阅源</h2>
+            </div>
+            <button id="refresh-button" class="icon-button" type="button" aria-label="刷新源列表" title="刷新列表">
+              <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M16.2 8A6.5 6.5 0 0 0 4.8 5.4L3.5 7M3.8 12a6.5 6.5 0 0 0 11.4 2.6l1.3-1.6M3.5 7h3.8M16.5 13h-3.8" /></svg>
+            </button>
+          </div>
+          <div id="source-state" class="catalog-state" aria-live="polite">
+            <span>源列表尚未加载。请确认 Cloudflare Access 登录状态后刷新页面。</span>
+          </div>
+          <div id="source-list" class="app-list" hidden></div>
+        </section>
+      </section>
+
+      <footer class="page-footer">
+        <span>自动维护 · <code id="footer-path">config/library/live.json</code></span>
+        <a href="https://github.com/zhanghuid/ipa.sources" target="_blank" rel="noreferrer">打开仓库 <span aria-hidden="true">↗</span></a>
+      </footer>
+    </main>
+  </body>
+</html>

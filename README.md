@@ -11,6 +11,11 @@ A personal app catalog with two independent platforms. iOS produces an AltSource
 
 Both platforms record a `devices` array so one app can belong to several device classes. GitHub Actions regenerates both catalogs every six hours.
 
+Beside the app catalogs the repository also hosts a small **subscription source
+library** (live / video / audio / comic / novel / aggregate). It is a separate
+feature with its own data files, checker and published feeds; see
+[Subscription sources](#subscription-sources).
+
 ## Device classes
 
 `devices` uses one vocabulary across platforms: `phone`, `pad`, `tv`, `watch`, `mac`, `vision`. The catalog UI filters by these values.
@@ -42,6 +47,63 @@ Icon conversion uses Pillow, which the GitHub Actions workflow installs. Without
 The private admin page is in [`apps-admin/`](apps-admin/). It is a Cloudflare Worker with Static Assets and a small API. Sign in through Cloudflare Access, pick a platform, then enter the app name and a direct HTTPS download URL. The Worker commits a pending entry to that platform's custom source file; GitHub Actions downloads the complete package, extracts its metadata, and regenerates the platform's catalog. Delete uses the same platform-scoped path. On the iOS side, App Store artwork is used as a fallback when no bundle icon is present.
 
 The page has a platform switcher, and the full catalog at `/catalog.html` shows both platforms with device filter chips (phone, pad, TV, watch, vision).
+
+## Subscription sources
+
+The **订阅源** page at `/sources.html` is a second admin surface, independent of
+the app catalogs, for registering subscription addresses by category:
+直播源 `live`, 视频源 `video`, 音频源 `audio`, 漫画源 `comic`, 小说源 `novel`
+and 聚合源 `aggregate`. Each entry is only a title plus a URL (plus an optional
+note); nothing is parsed out of the subscription itself.
+
+| Item | Location |
+| --- | --- |
+| Stored sources | `config/library/<category>.json` |
+| Published full index | `sources/index.json` |
+| Published per category | `sources/live.json` … |
+| Published available-only | `sources/available.json` |
+
+A URL may live in exactly one category; the Worker rejects a duplicate that
+already exists elsewhere in the library. `http` and `https` are both accepted
+(`http` adds a non-blocking warning), but localhost and private hosts are
+rejected because a client could never import them. Entries can be disabled by
+hand without deleting them; a disabled entry is skipped by the checker and the
+published feeds.
+
+### Availability checks
+
+`scripts/check_sources.py` probes every enabled entry and writes the result back
+into `config/library/*.json`. It is **stdlib-only** and deliberately never
+inspects content, so do not expect it to notice a source that answers `200`
+with a login or error page.
+
+- A probe issues `GET` with `Range: bytes=0-0`, waits for the response headers
+  and closes the connection, so a multi-gigabyte subscription is never
+  downloaded. `HEAD` is not used; many hosts answer it with 405/403 while
+  serving `GET` normally.
+- `2xx`/`3xx` counts as available. Everything else (4xx, 5xx, timeout, DNS or
+  connection error) is a failure.
+- One failure marks the source `suspected`; it becomes `unavailable` after two
+  consecutive failures (`--threshold`) and returns to `available` as soon as a
+  probe succeeds.
+- The run must happen from a network path that resembles the clients. Run it
+  from your own machine rather than GitHub Actions, otherwise hosts that block
+  overseas datacentre IPs will be reported as down.
+
+```bash
+python scripts/check_sources.py                 # check all, write, commit and push
+python scripts/check_sources.py --dry-run       # print only, change nothing
+python scripts/check_sources.py --category live --url https://…/a.m3u
+python scripts/check_sources.py --no-commit     # write files, skip git
+python scripts/check_sources.py --concurrency 8 --timeout 15 --threshold 2
+```
+
+Writing status files changes `config/library/**`, which triggers the
+**Update app sources** workflow. That workflow runs
+`scripts/generate_library.py` and commits the regenerated `sources/` feeds, so
+you do not run the generator by hand. The process exits non-zero when any
+source is `unavailable`, which makes it usable from a launchd job or any other
+scheduler; a schedule every other day is a reasonable default.
 
 ### Multiple addresses and editing
 
@@ -129,6 +191,7 @@ Requires Python 3.10+ and network access to the configured catalog URLs and GitH
 ```bash
 python scripts/generate_ios.py
 python scripts/generate_android.py   # WebP icon conversion needs Pillow
+python scripts/generate_library.py   # publish the subscription source feeds
 ```
 
 Set `GITHUB_TOKEN` to raise the unauthenticated API rate limit when generating outside Actions. Set `ACCELERATOR_BASE_URL` locally to preview accelerated download URLs.

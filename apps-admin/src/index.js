@@ -59,6 +59,47 @@ const TEMPORARY_ASSET_MESSAGE =
 // Device classes shared with the catalog UI and the generators.
 const DEVICE_IDS = ["phone", "pad", "tv", "watch", "mac", "vision"];
 
+// Subscription sources are independent of the iOS/Android app catalogs. Each
+// category keeps its own file under config/library; scripts/generate_library.py
+// projects them into the importable sources/*.json artifacts.
+const LIBRARY_CATEGORIES = [
+  { id: "live", label: "直播源", name: "直播源" },
+  { id: "video", label: "视频源", name: "视频源" },
+  { id: "audio", label: "音频源", name: "音频源" },
+  { id: "comic", label: "漫画源", name: "漫画源" },
+  { id: "novel", label: "小说源", name: "小说源" },
+  { id: "aggregate", label: "聚合源", name: "聚合源" },
+];
+
+const LIBRARY_STATUSES = ["unchecked", "available", "suspected", "unavailable", "disabled"];
+const MAX_LIBRARY_TITLE = 120;
+const MAX_LIBRARY_ENTRIES_PER_CATEGORY = 500;
+
+// Local-only targets are never importable by a client, so they are rejected
+// instead of being stored as permanently "unavailable" entries.
+const LOCAL_HOST_PATTERN = /^(localhost|127(\.\d{1,3}){3}|0\.0\.0\.0|\[?::1\]?|.*\.local|.*\.internal)$/i;
+
+function libraryCategory(value) {
+  const id = String(value || "").trim().toLowerCase();
+  return LIBRARY_CATEGORIES.find((item) => item.id === id) || null;
+}
+
+function libraryFile(category) {
+  return `config/library/${category.id}.json`;
+}
+
+function publicRoot(env) {
+  const override = String(env.PUBLIC_BASE_URL || "").trim().replace(/\/+$/, "");
+  if (override) return override;
+  // The published feeds live in the repository, not in the Worker's asset
+  // directory, so fall back to the raw GitHub base the app catalogs also use.
+  const owner = String(env.GITHUB_OWNER || "").trim();
+  const repo = String(env.GITHUB_REPO || "").trim();
+  const branch = String(env.GITHUB_BRANCH || "main").trim();
+  if (!owner || !repo) return "";
+  return `https://raw.githubusercontent.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(branch)}`;
+}
+
 function resolvePlatform(value) {
   const key = String(value || "ios").trim().toLowerCase();
   return PLATFORMS[key] ? key : null;
@@ -416,6 +457,230 @@ function catalogURL(env, platform) {
   return `https://raw.githubusercontent.com/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(branch)}/${config.output}`;
 }
 
+/** Sources may be plain http (many are); only clearly non-web targets are rejected. */
+function validateSourceURL(raw) {
+  const value = String(raw || "").trim();
+  if (!value) throw new Error("源地址不能为空");
+  if (value.length > 4096) throw new Error("源地址不能超过 4096 个字符");
+  let url;
+  try { url = new URL(value); } catch { throw new Error("源地址无效"); }
+  if (url.protocol !== "http:" && url.protocol !== "https:") {
+    throw new Error("源地址必须是 http 或 https 链接");
+  }
+  if (LOCAL_HOST_PATTERN.test(url.hostname)) {
+    throw new Error("不能登记本机或内网地址，客户端无法访问");
+  }
+  url.hash = "";
+  const warning = url.protocol === "http:" ? "该地址使用 http，部分客户端可能拒绝加载" : "";
+  return { url: url.href, warning };
+}
+
+function validateSourceInput(input) {
+  if (typeof input.title !== "string" || !input.title.trim()) throw new Error("标题为必填项");
+  const title = input.title.trim();
+  if (title.length > MAX_LIBRARY_TITLE) throw new Error(`标题不能超过 ${MAX_LIBRARY_TITLE} 个字符`);
+  const { url, warning } = validateSourceURL(input.url);
+  const note = typeof input.note === "string" ? input.note.trim().slice(0, 500) : "";
+  return { title, url, note, warning };
+}
+
+function normalizeLibraryURL(value) {
+  try {
+    const url = new URL(String(value || "").trim());
+    url.hash = "";
+    url.protocol = url.protocol.toLowerCase();
+    url.hostname = url.hostname.toLowerCase();
+    return url.href;
+  } catch {
+    return String(value || "").trim();
+  }
+}
+
+function loadLibraryCatalog(body, category) {
+  const catalog = decodeContents(body);
+  if (!Array.isArray(catalog.sources)) throw new Error(`${libraryFile(category)} 缺少 sources 数组`);
+  catalog.name ||= category.name;
+  return { catalog, sha: body.sha };
+}
+
+async function loadLibrary(env, category) {
+  const branch = env.GITHUB_BRANCH || "main";
+  const { response, body } = await githubRequest(
+    `${contentsEndpoint(env, libraryFile(category))}?ref=${encodeURIComponent(branch)}`, env
+  );
+  if (response.status === 404) return { catalog: { name: category.name, sources: [] }, sha: null };
+  return loadLibraryCatalog(body, category);
+}
+
+async function saveLibrary(catalog, sha, env, category, entryTitle, action) {
+  const branch = env.GITHUB_BRANCH || "main";
+  const bytes = encoder.encode(`${JSON.stringify(catalog, null, 2)}\n`);
+  let binary = "";
+  for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+    binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
+  }
+  const payload = {
+    message: `content: ${action} ${entryTitle} ${action === "remove" ? "from" : "in"} ${category.label} library`,
+    content: btoa(binary),
+    branch,
+    ...(sha ? { sha } : {}),
+  };
+  await githubRequest(contentsEndpoint(env, libraryFile(category)), env, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+/** Compact shape for the admin list. Probe bookkeeping is included so the page
+ *  can show why a source is marked unavailable. */
+function libraryView(entry) {
+  const status = entry.enabled === false ? "disabled" : String(entry.status || "unchecked");
+  return {
+    title: entry.title || "",
+    url: entry.url || "",
+    note: entry.note || "",
+    enabled: entry.enabled !== false,
+    status: LIBRARY_STATUSES.includes(status) ? status : "unchecked",
+    lastCheckedAt: entry.lastCheckedAt || "",
+    lastOkAt: entry.lastOkAt || "",
+    httpStatus: Number.isFinite(entry.httpStatus) ? entry.httpStatus : null,
+    latencyMs: Number.isFinite(entry.latencyMs) ? entry.latencyMs : null,
+    failStreak: Number(entry.failStreak) || 0,
+    error: entry.error || "",
+  };
+}
+
+function libraryURLs(env) {
+  const root = publicRoot(env);
+  const suffix = (file) => (root ? `${root}/sources/${file}` : `/sources/${file}`);
+  return {
+    base: root,
+    files: {
+      index: suffix("index.json"),
+      available: suffix("available.json"),
+    },
+    categories: Object.fromEntries(
+      LIBRARY_CATEGORIES.map((category) => [category.id, suffix(`${category.id}.json`)]),
+    ),
+  };
+}
+
+async function handleLibraryApi(request, env, url) {
+  if (request.method === "GET" && url.pathname === "/api/library/config") {
+    return json({
+      categories: LIBRARY_CATEGORIES.map((category) => ({
+        id: category.id,
+        label: category.label,
+        file: libraryFile(category),
+      })),
+      statuses: LIBRARY_STATUSES,
+      urls: libraryURLs(env),
+    });
+  }
+
+  if (request.method === "GET" && url.pathname === "/api/library") {
+    const category = libraryCategory(url.searchParams.get("category"));
+    if (!category) return json({ error: "未知分类" }, 400);
+    const { catalog } = await loadLibrary(env, category);
+    return json({
+      category: category.id,
+      label: category.label,
+      file: libraryFile(category),
+      sources: catalog.sources.map(libraryView),
+    });
+  }
+
+  if (request.method === "POST" && url.pathname === "/api/library") {
+    let payload;
+    try { payload = await request.json(); }
+    catch { return json({ error: "提交内容无效" }, 400); }
+    const category = libraryCategory(payload.category);
+    if (!category) return json({ error: "未知分类" }, 400);
+    let input;
+    try { input = validateSourceInput(payload); }
+    catch (error) { return json({ error: error.message }, 400); }
+
+    const { catalog, sha } = await loadLibrary(env, category);
+    const key = normalizeLibraryURL(input.url);
+    const originalKey = payload.originalUrl ? normalizeLibraryURL(payload.originalUrl) : "";
+    const requestedKey = originalKey || key;
+    const current = catalog.sources.findIndex((entry) => normalizeLibraryURL(entry.url) === requestedKey);
+
+    // A URL may live in exactly one category, so check the whole library, not
+    // just the file being edited.
+    for (const other of LIBRARY_CATEGORIES) {
+      const source = other.id === category.id ? catalog : (await loadLibrary(env, other)).catalog;
+      const clash = source.sources.find((entry) => {
+        if (other.id === category.id && current >= 0 && entry === catalog.sources[current]) return false;
+        return normalizeLibraryURL(entry.url) === key;
+      });
+      if (clash) {
+        return json({ error: `该地址已登记在「${other.label}」中：${clash.title}` }, 409);
+      }
+    }
+
+    const existing = current >= 0 ? catalog.sources[current] : null;
+    const entry = { ...(existing || {}), title: input.title, url: input.url };
+    if (input.note) entry.note = input.note;
+    else delete entry.note;
+
+    if (!existing) {
+      // Never probed yet; the checker writes the first real status.
+      entry.status = "unchecked";
+      catalog.sources.unshift(entry);
+    } else {
+      catalog.sources[current] = entry;
+    }
+
+    await saveLibrary(catalog, sha, env, category, input.title, existing ? "update" : "add");
+    return json({
+      category: category.id,
+      source: libraryView(catalog.sources[current >= 0 ? current : 0]),
+      updated: Boolean(existing),
+      warning: input.warning,
+    }, existing ? 200 : 201);
+  }
+
+  if (request.method === "DELETE" && url.pathname === "/api/library") {
+    let input;
+    try { input = await request.json(); }
+    catch { return json({ error: "删除请求内容无效" }, 400); }
+    const category = libraryCategory(input.category);
+    if (!category) return json({ error: "未知分类" }, 400);
+    const target = String(input.url || "").trim();
+    if (!target) return json({ error: "缺少要删除的源地址" }, 400);
+
+    const { catalog, sha } = await loadLibrary(env, category);
+    const key = normalizeLibraryURL(target);
+    const index = catalog.sources.findIndex((entry) => normalizeLibraryURL(entry.url) === key);
+    if (index < 0) return json({ error: "该源已不存在，请刷新列表后重试" }, 404);
+    const [deleted] = catalog.sources.splice(index, 1);
+    await saveLibrary(catalog, sha, env, category, deleted.title || deleted.url, "remove");
+    return json({ deleted: deleted.title || deleted.url, category: category.id });
+  }
+
+  if (request.method === "PATCH" && url.pathname === "/api/library") {
+    let input;
+    try { input = await request.json(); }
+    catch { return json({ error: "请求内容无效" }, 400); }
+    const category = libraryCategory(input.category);
+    if (!category) return json({ error: "未知分类" }, 400);
+    const target = String(input.url || "").trim();
+    if (!target) return json({ error: "缺少源地址" }, 400);
+    if (typeof input.enabled !== "boolean") return json({ error: "enabled 必须是布尔值" }, 400);
+
+    const { catalog, sha } = await loadLibrary(env, category);
+    const key = normalizeLibraryURL(target);
+    const index = catalog.sources.findIndex((entry) => normalizeLibraryURL(entry.url) === key);
+    if (index < 0) return json({ error: "该源已不存在，请刷新列表后重试" }, 404);
+    catalog.sources[index].enabled = input.enabled;
+    await saveLibrary(catalog, sha, env, category, catalog.sources[index].title || target, "update");
+    return json({ category: category.id, source: libraryView(catalog.sources[index]) });
+  }
+
+  return null;
+}
+
 async function handleApi(request, env) {
   await requireAccess(request, env);
   const url = new URL(request.url);
@@ -537,6 +802,9 @@ async function handleApi(request, env) {
     await saveCatalog(catalog, sha, env, platform, deleted.name, "remove");
     return json({ deleted: deleted.name, platform });
   }
+
+  const libraryResponse = await handleLibraryApi(request, env, url);
+  if (libraryResponse) return libraryResponse;
 
   return json({ error: "Not found" }, 404);
 }

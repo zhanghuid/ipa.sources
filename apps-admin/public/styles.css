@@ -192,6 +192,54 @@ html[data-device="vision"] .device-filter .device-chip[data-device="vision"] { c
 .device-tag.device-watch { color: oklch(42% 0.11 40); background: oklch(96% 0.02 40); border-color: oklch(90% 0.03 40); }
 .device-tag.device-vision { color: oklch(42% 0.11 200); background: oklch(96% 0.02 200); border-color: oklch(90% 0.03 200); }
 
+/* ---- Subscription sources (/sources) -------------------------------------
+   The page reuses the platform-switch, app-row and form-panel components; the
+   rules below only add what is genuinely new: the category tabs, the aggregate
+   entry panel, and the availability badges. */
+
+/* Same pre-paint trick as the platform tabs: the saved category is already on
+   <html> when the first frame paints, so the right tab is highlighted. */
+.category-switch { overflow-x: auto; scrollbar-width: thin; }
+.category-tab { flex: 0 0 auto; }
+.category-tab.active,
+html[data-category="live"] .category-tab[data-category="live"],
+html[data-category="video"] .category-tab[data-category="video"],
+html[data-category="audio"] .category-tab[data-category="audio"],
+html[data-category="comic"] .category-tab[data-category="comic"],
+html[data-category="novel"] .category-tab[data-category="novel"],
+html[data-category="aggregate"] .category-tab[data-category="aggregate"] { color: var(--ink); background: var(--surface); border-color: var(--line); box-shadow: 0 1px 2px oklch(20% 0.02 250 / 8%); }
+.category-tab .platform-glyph { width: 42px; background: oklch(40% 0.03 255); }
+html[data-category="video"] .category-tab[data-category="video"] .platform-glyph,
+html[data-category="aggregate"] .category-tab[data-category="aggregate"] .platform-glyph { background: oklch(49% 0.15 255); }
+html[data-category="audio"] .category-tab[data-category="audio"] .platform-glyph { background: oklch(52% 0.12 150); }
+html[data-category="comic"] .category-tab[data-category="comic"] .platform-glyph { background: oklch(55% 0.13 40); }
+html[data-category="novel"] .category-tab[data-category="novel"] .platform-glyph { background: oklch(52% 0.11 330); }
+
+/* Standalone URL input (the app form only styles inputs inside .entry-head). */
+.entry-url { width: 100%; min-height: 42px; padding: 10px 12px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); outline: none; font-size: 13px; font-weight: 400; transition: border-color 140ms ease, box-shadow 140ms ease; }
+.entry-url::placeholder { color: oklch(69% 0.018 255); }
+.entry-url:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px oklch(49% 0.15 255 / 16%); }
+.entry-url[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 3px oklch(53% 0.17 28 / 12%); }
+
+.global-entries { margin-bottom: 20px; padding: 22px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: 0 1px 3px oklch(20% 0.02 250 / 8%); }
+.global-entries .section-heading { margin-bottom: 16px; }
+#global-entries .copy-url-status { display: block; min-height: 15px; margin-bottom: 10px; }
+.global-entry-list { display: grid; gap: 10px; }
+.global-entry { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; background: var(--surface-muted); border: 1px solid var(--line); border-radius: var(--radius-md); }
+.global-entry-copy { display: grid; min-width: 0; gap: 4px; }
+.global-entry-copy strong { font-size: 12px; font-weight: 580; }
+.global-entry-copy code { color: var(--muted); font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; overflow-wrap: anywhere; }
+.global-entry .copy-url-button { flex: 0 0 auto; }
+
+.source-row { grid-template-columns: 62px minmax(0, 1fr) auto; }
+.status-badge { display: inline-grid; min-width: 56px; height: 26px; place-items: center; padding: 0 8px; color: var(--muted); background: var(--surface-muted); border: 1px solid var(--line); border-radius: 999px; font: 600 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
+.status-badge.status-available { color: oklch(38% 0.1 150); background: oklch(96% 0.035 150); border-color: oklch(88% 0.06 150); }
+.status-badge.status-suspected { color: oklch(42% 0.11 70); background: oklch(96% 0.035 70); border-color: oklch(88% 0.06 70); }
+.status-badge.status-unavailable { color: var(--danger); background: oklch(97% 0.025 28); border-color: oklch(90% 0.06 28); }
+.status-badge.status-disabled { color: var(--muted); background: var(--surface); border-style: dashed; }
+.source-status-line { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.source-note { display: -webkit-box; overflow: hidden; margin: 6px 0 0; color: var(--muted); font-size: 11px; line-height: 1.5; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+
 /* Confirmation dialog: replaces window.confirm for destructive actions. */
 .confirm-dialog { width: min(430px, calc(100% - 32px)); max-width: none; padding: 0; color: var(--ink); background: transparent; border: 0; overflow: visible; }
 .confirm-dialog::backdrop { background: oklch(22% 0.02 255 / 42%); backdrop-filter: blur(2px); }
@@ -256,6 +304,16 @@ html[data-device="vision"] .device-filter .device-chip[data-device="vision"] { c
   .platform-tab .platform-name { font-size: 12px; }
   .platform-tab .platform-note { display: none; }
   .platform-glyph { width: 32px; height: 26px; font-size: 9px; }
+  /* Category tabs scroll instead of shrinking: six labels do not fit a phone. */
+  .category-switch { flex-wrap: nowrap; }
+  .category-tab { flex: 0 0 auto; padding: 7px 10px; }
+  .category-tab .platform-note { display: inline; font-size: 10px; }
+  .category-tab .platform-glyph { width: 34px; }
+  .global-entries { padding: 18px 16px; }
+  .global-entry { flex-direction: column; align-items: stretch; gap: 9px; }
+  .global-entry .copy-url-button { justify-content: center; }
+  .source-row { grid-template-columns: minmax(0, 1fr); }
+  .source-row .status-badge { justify-self: start; }
   .device-filter { gap: 5px; }
   .device-chip { min-height: 28px; padding: 0 10px; }
   .full-app-info .device-tags { margin-top: 6px; }
