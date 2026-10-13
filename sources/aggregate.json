@@ -1,9 +1,14 @@
 {
   "name": "聚合源",
   "category": "aggregate",
-  "generatedAt": "2026-10-13T11:33:20Z",
-  "total": 2,
+  "generatedAt": "2026-10-13T11:33:50Z",
+  "total": 3,
   "sources": [
+    {
+      "title": "「阅读」APP 源",
+      "url": "https://legado.aoaostar.com/",
+      "status": "unchecked"
+    },
     {
       "title": "Zoo.ink",
       "url": "https://zoo.ink/tvbox.html",
