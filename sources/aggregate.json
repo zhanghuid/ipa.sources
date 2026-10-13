@@ -1,9 +1,14 @@
 {
   "name": "聚合源",
   "category": "aggregate",
-  "generatedAt": "2026-10-13T11:34:21Z",
-  "total": 4,
+  "generatedAt": "2026-10-13T11:34:53Z",
+  "total": 5,
   "sources": [
+    {
+      "title": "lifves",
+      "url": "https://www.lifves.com/Home/book/booksourcelist.html",
+      "status": "unchecked"
+    },
     {
       "title": "Yiove 书源仓库",
       "url": "https://shuyuan.yiove.com/",
