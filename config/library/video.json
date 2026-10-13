@@ -1,4 +1,10 @@
 {
   "name": "视频源",
-  "sources": []
+  "sources": [
+    {
+      "title": "VOD 影视源",
+      "url": "https://d1y.github.io/kitty/vod.json",
+      "status": "unchecked"
+    }
+  ]
 }
