@@ -1,9 +1,14 @@
 {
   "name": "聚合源",
   "category": "aggregate",
-  "generatedAt": "2026-10-13T11:33:50Z",
-  "total": 3,
+  "generatedAt": "2026-10-13T11:34:21Z",
+  "total": 4,
   "sources": [
+    {
+      "title": "Yiove 书源仓库",
+      "url": "https://shuyuan.yiove.com/",
+      "status": "unchecked"
+    },
     {
       "title": "「阅读」APP 源",
       "url": "https://legado.aoaostar.com/",
