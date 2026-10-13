@@ -203,6 +203,40 @@ def write_json_atomic(path: Path, data: object) -> None:
     temporary.replace(path)
 
 
+def classify_archive(names: list[str]) -> str:
+    """Identify an app archive by its internal layout.
+
+    IPAs and APKs are both ZIP containers, so the archive members are the only
+    reliable signal. Used to report a platform/format mismatch precisely instead
+    of a generic parse failure.
+    """
+    ipa_layout = any(
+        re.fullmatch(r"Payload/[^/]+\.app/Info\.plist", name) for name in names
+    )
+    apk_layout = any(
+        name in ("AndroidManifest.xml", "resources.arsc") for name in names
+    )
+    if ipa_layout and not apk_layout:
+        return "ipa"
+    if apk_layout and not ipa_layout:
+        return "apk"
+    if ipa_layout and apk_layout:
+        return "ambiguous"
+    return "unknown"
+
+
+def format_mismatch_message(label: str, expected: str, actual: str) -> str | None:
+    """Explain a wrong-platform upload, or return None when the file looks right."""
+    if actual == "unknown" or actual == "ambiguous" or actual == expected:
+        return None
+    other = "IPA" if actual == "ipa" else "APK"
+    platform = "iOS" if actual == "ipa" else "Android"
+    return (
+        f"{label}: this looks like an {other} file. "
+        f"Submit it on the {platform} platform instead."
+    )
+
+
 def matches(filename: str, patterns: list[str]) -> bool:
     return any(fnmatch.fnmatch(filename.lower(), pattern.lower()) for pattern in patterns)
 

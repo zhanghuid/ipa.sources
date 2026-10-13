@@ -20,8 +20,10 @@ from scripts.shared import (
     Progress,
     accelerated_url,
     branch_name,
+    classify_archive,
     download_to_tempfile,
     fetch_catalog,
+    format_mismatch_message,
     latest_version_date,
     release_versions,
     repository_slug,
@@ -48,6 +50,9 @@ def apk_metadata_for(url: str, label: str) -> dict:
     try:
         try:
             with zipfile.ZipFile(temporary.name) as archive:
+                mismatch = format_mismatch_message(label, "apk", classify_archive(archive.namelist()))
+                if mismatch:
+                    raise ValueError(mismatch)
                 metadata = apk_metadata(archive)
         except (zipfile.BadZipFile, ApkParseError, KeyError, OSError, RuntimeError, ValueError) as error:
             raise ValueError(f"{label}: unable to parse APK manifest: {error}") from error

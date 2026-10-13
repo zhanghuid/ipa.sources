@@ -10,6 +10,7 @@ const PLATFORMS = {
     extension: "ipa",
     urlLabel: "IPA",
     identifierField: "bundleIdentifier",
+    rejectedExtensions: ["apk", "apks", "xapk"],
   },
   android: {
     label: "Android",
@@ -18,8 +19,20 @@ const PLATFORMS = {
     extension: "apk",
     urlLabel: "APK",
     identifierField: "packageName",
+    rejectedExtensions: ["ipa"],
   },
 };
+
+// Web pages that look like a download link but never serve the archive itself.
+const STORE_PAGES = [
+  { host: "apps.apple.com", reason: "App Store 应用页面不是可直接下载的 IPA 文件" },
+  { host: "itunes.apple.com", reason: "iTunes 页面不是可直接下载的 IPA 文件" },
+  { host: "testflight.apple.com", reason: "TestFlight 邀请链接不是可直接下载的 IPA 文件" },
+  { host: "play.google.com", reason: "Google Play 页面不是可直接下载的 APK 文件" },
+];
+
+// Split/bundle formats are zip containers too, but not a single installable APK.
+const UNSUPPORTED_ANDROID_EXTENSIONS = { apks: true, xapk: true };
 
 function resolvePlatform(value) {
   const key = String(value || "ios").trim().toLowerCase();
@@ -61,6 +74,32 @@ async function requireAccess(request, env) {
   }
 }
 
+function fileExtension(pathname) {
+  const last = pathname.split("/").filter(Boolean).pop() || "";
+  const match = last.match(/\.([A-Za-z0-9]{1,10})$/);
+  return match ? match[1].toLowerCase() : "";
+}
+
+function validateDownload(download, platform, config) {
+  const hostname = download.hostname.toLowerCase();
+  const store = STORE_PAGES.find((page) => hostname === page.host || hostname.endsWith(`.${page.host}`));
+  if (store) throw new Error(store.reason);
+
+  const extension = fileExtension(download.pathname);
+  const other = platform === "android" ? "IPA" : "APK";
+  if (config.rejectedExtensions.includes(extension)) {
+    throw new Error(`当前是 ${config.label} 平台，但地址指向 ${other} 文件（.${extension}）`);
+  }
+  if (platform === "android" && UNSUPPORTED_ANDROID_EXTENSIONS[extension]) {
+    throw new Error(`暂不支持 .${extension} 分包格式，请填写单独的 APK 直链`);
+  }
+  // A matching extension is strong evidence; no extension is common for redirect
+  // endpoints, so it stays allowed and the generator verifies the real file later.
+  if (extension === config.extension) return { extension, confident: true };
+  if (!extension) return { extension, confident: false };
+  return { extension, confident: false, unknownExtension: extension };
+}
+
 function validateApp(input, platform) {
   const config = PLATFORMS[platform];
   const fields = ["name", "downloadURL"];
@@ -74,13 +113,7 @@ function validateApp(input, platform) {
   let download;
   try { download = new URL(input.downloadURL); } catch { throw new Error(`${config.urlLabel} 下载地址无效`); }
   if (download.protocol !== "https:") throw new Error(`${config.urlLabel} 下载地址必须使用 HTTPS`);
-  // Reject only a clearly wrong archive extension. Plenty of valid links have no
-  // extension at all (redirect endpoints), so an unknown suffix must stay allowed.
-  const mismatched = platform === "android" ? /\.ipa$/i : /\.apk$/i;
-  if (mismatched.test(download.pathname)) {
-    const other = platform === "android" ? "IPA" : "APK";
-    throw new Error(`当前是 ${config.label} 平台，但地址指向 ${other} 文件`);
-  }
+  const check = validateDownload(download, platform, config);
   return {
     name: input.name.trim(),
     developerName: "",
@@ -89,6 +122,9 @@ function validateApp(input, platform) {
     iconURL: "",
     category: "utilities",
     downloadURL: download.href,
+    _warning: check.unknownExtension
+      ? `地址后缀是 .${check.unknownExtension}，不是 .${config.extension}；提交后会在下载解析阶段校验真实文件`
+      : "",
   };
 }
 
@@ -296,7 +332,7 @@ async function handleApi(request, env) {
     catalog.name ||= "Custom Apps";
     const { app, updated } = queueApp(input, catalog, platform);
     await saveCatalog(catalog, sha, env, platform, input.name);
-    return json({ app, platform, updated, metadataPending: true }, 201);
+    return json({ app, platform, updated, metadataPending: true, warning: input._warning || "" }, 201);
   }
 
   if (request.method === "DELETE" && url.pathname === "/api/apps") {

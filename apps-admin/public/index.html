@@ -77,6 +77,7 @@
             <span id="url-field-label">IPA 下载地址 <span class="required">*</span></span>
             <input id="ipa-url" name="downloadURL" type="url" inputmode="url" placeholder="https://…/app.ipa" required />
             <small id="url-field-hint">需为可直接下载的 HTTPS 链接。提交后由 GitHub Actions 下载 IPA 并读取 Bundle ID、版本与图标。</small>
+            <small id="url-field-error" class="field-error" role="alert" hidden></small>
           </label>
 
           <div id="form-message" class="form-message" role="status" aria-live="polite" hidden></div>

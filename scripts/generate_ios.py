@@ -22,8 +22,10 @@ from scripts.shared import (
     Progress,
     accelerated_url,
     branch_name,
+    classify_archive,
     download_to_tempfile,
     fetch_catalog,
+    format_mismatch_message,
     latest_version_date,
     release_versions,
     repository_slug,
@@ -210,6 +212,9 @@ def ipa_metadata(url: str, label: str) -> dict:
         try:
             with zipfile.ZipFile(temporary.name) as archive:
                 names = archive.namelist()
+                mismatch = format_mismatch_message(label, "ipa", classify_archive(names))
+                if mismatch:
+                    raise ValueError(mismatch)
                 plist_names = [
                     name for name in names
                     if re.fullmatch(r"Payload/[^/]+\.app/Info\.plist", name)

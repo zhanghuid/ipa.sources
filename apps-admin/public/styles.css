@@ -62,6 +62,9 @@ h2 { margin-bottom: 0; font-size: 17px; line-height: 1.4; font-weight: 620; lett
 .field input::placeholder { color: oklch(69% 0.018 255); }
 .field input:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px oklch(49% 0.15 255 / 16%); }
 .field small { color: var(--muted); font-size: 11px; font-weight: 400; line-height: 1.65; }
+.field-error { color: var(--danger) !important; font-weight: 500 !important; }
+.field input[aria-invalid="true"] { border-color: var(--danger); box-shadow: 0 0 0 3px oklch(53% 0.17 28 / 12%); }
+.field input[aria-invalid="true"]:focus-visible { border-color: var(--danger); box-shadow: 0 0 0 3px oklch(53% 0.17 28 / 18%); }
 .form-message { margin-top: 18px; padding: 10px 12px; color: var(--danger); background: oklch(97% 0.025 28); border-radius: var(--radius-sm); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
 .form-message.success { color: oklch(38% 0.1 150); background: oklch(96% 0.035 150); }
 .button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 10px; border: 0; border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; font-weight: 580; transition: background-color 130ms ease, transform 130ms ease, opacity 130ms ease; }

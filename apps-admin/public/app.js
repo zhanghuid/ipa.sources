@@ -8,6 +8,7 @@ const refreshButton = document.querySelector("#refresh-button");
 const formTitle = document.querySelector("#form-title");
 const urlFieldLabel = document.querySelector("#url-field-label");
 const urlFieldHint = document.querySelector("#url-field-hint");
+const urlFieldError = document.querySelector("#url-field-error");
 const urlInput = document.querySelector("#ipa-url");
 const footerPath = document.querySelector("#footer-path");
 const platformTabs = [...document.querySelectorAll(".platform-tab")];
@@ -24,6 +25,8 @@ const PLATFORM_COPY = {
     path: "config/ios/sources/custom/ipas.json",
     output: "apps.json",
     identifier: "bundleIdentifier",
+    rejected: ["apk", "apks", "xapk"],
+    storeHint: "App Store / TestFlight 页面不是 IPA 直链",
   },
   android: {
     title: "添加 Android 应用",
@@ -33,13 +36,65 @@ const PLATFORM_COPY = {
     path: "config/android/sources/custom/apks.json",
     output: "android.json",
     identifier: "packageName",
+    rejected: ["ipa"],
+    storeHint: "Google Play 页面不是 APK 直链",
   },
 };
+
+const STORE_HOSTS = [
+  ["apps.apple.com", "App Store 应用页面不是可直接下载的 IPA 文件，请填写 IPA 直链"],
+  ["itunes.apple.com", "iTunes 页面不是可直接下载的 IPA 文件，请填写 IPA 直链"],
+  ["testflight.apple.com", "TestFlight 邀请链接不是可直接下载的 IPA 文件，请填写 IPA 直链"],
+  ["play.google.com", "Google Play 页面不是可直接下载的 APK 文件，请填写 APK 直链"],
+];
+
+function urlProblem(raw, platform) {
+  const copy = PLATFORM_COPY[platform];
+  let url;
+  try {
+    url = new URL(String(raw || "").trim());
+  } catch {
+    return "下载地址无效，请填写完整的 HTTPS 链接";
+  }
+  if (url.protocol !== "https:") return `${copy.field} 必须使用 HTTPS`;
+  const hostname = url.hostname.toLowerCase();
+  const store = STORE_HOSTS.find(([host]) => hostname === host || hostname.endsWith(`.${host}`));
+  if (store) return store[1];
+  const last = url.pathname.split("/").filter(Boolean).pop() || "";
+  const match = last.match(/\.([A-Za-z0-9]{1,10})$/);
+  const extension = match ? match[1].toLowerCase() : "";
+  if (copy.rejected.includes(extension)) {
+    const other = platform === "android" ? "iOS / IPA" : "Android / APK";
+    return `当前是 ${platform === "android" ? "Android" : "iOS"} 平台，但这个地址是 .${extension}（属于 ${other}）`;
+  }
+  if (platform === "android" && (extension === "apks" || extension === "xapk")) {
+    return `暂不支持 .${extension} 分包格式，请填写单独的 APK 直链`;
+  }
+  return "";
+}
 
 function setMessage(text, kind = "error") {
   message.textContent = text;
   message.className = `form-message${kind === "success" ? " success" : ""}`;
   message.hidden = false;
+}
+
+function setUrlError(text) {
+  urlFieldError.textContent = text || "";
+  urlFieldError.hidden = !text;
+  urlInput.setAttribute("aria-invalid", text ? "true" : "false");
+}
+
+function checkUrlField() {
+  const value = urlInput.value.trim();
+  // Stay quiet until there is something to judge, so the field does not nag mid-typing.
+  if (!value) {
+    setUrlError("");
+    return "";
+  }
+  const problem = urlProblem(value, platform);
+  setUrlError(problem);
+  return problem;
 }
 
 function latestVersion(app) {
@@ -53,6 +108,7 @@ function applyPlatformCopy() {
   urlFieldHint.textContent = copy.hint;
   urlInput.placeholder = copy.placeholder;
   footerPath.textContent = copy.path;
+  checkUrlField();
   const label = document.querySelector("[data-copy-label]");
   if (label) label.textContent = `复制 ${copy.output}`;
   document.querySelector("button[data-copy-catalog-url]")?.setAttribute("data-platform", platform);
@@ -226,6 +282,12 @@ async function loadApps() {
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
   message.hidden = true;
+  const problem = checkUrlField();
+  if (problem) {
+    setMessage(problem);
+    urlInput.focus();
+    return;
+  }
   submitButton.disabled = true;
   submitButton.querySelector(".button-label").textContent = "提交并排入解析…";
   const data = Object.fromEntries(new FormData(form));
@@ -237,7 +299,8 @@ form.addEventListener("submit", async (event) => {
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || `提交失败 (${response.status})`);
-    setMessage(`${result.updated ? "已更新" : "已添加"} ${result.app.name}，GitHub Actions 将自动下载并读取版本信息。`, "success");
+    const summary = `${result.updated ? "已更新" : "已添加"} ${result.app.name}，GitHub Actions 将自动下载并读取版本信息。`;
+    setMessage(result.warning ? `${summary}（${result.warning}）` : summary, "success");
     form.reset();
     await loadApps();
   } catch (error) {
@@ -258,6 +321,8 @@ for (const tab of platformTabs) {
   });
 }
 
+urlInput.addEventListener("input", checkUrlField);
+urlInput.addEventListener("blur", checkUrlField);
 refreshButton.addEventListener("click", loadApps);
 window.addEventListener("platform-change", (event) => {
   if (event.detail) {
