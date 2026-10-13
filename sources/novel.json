@@ -1,7 +1,13 @@
 {
   "name": "小说源",
   "category": "novel",
-  "generatedAt": "2026-10-13T11:15:25Z",
-  "total": 0,
-  "sources": []
+  "generatedAt": "2026-10-13T11:31:31Z",
+  "total": 1,
+  "sources": [
+    {
+      "title": "「阅读」自用书源分享",
+      "url": "https://gh.catmak.name/https://raw.githubusercontent.com/XIU2/Yuedu/master/shuyuan",
+      "status": "unchecked"
+    }
+  ]
 }
