@@ -2,6 +2,11 @@
   "name": "聚合源",
   "sources": [
     {
+      "title": "「阅读」APP 源",
+      "url": "https://legado.aoaostar.com/",
+      "status": "unchecked"
+    },
+    {
       "title": "Zoo.ink",
       "url": "https://zoo.ink/tvbox.html",
       "status": "unchecked"
