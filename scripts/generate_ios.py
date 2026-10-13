@@ -430,6 +430,10 @@ def merge_catalogs(named_catalogs: list[tuple[str, dict]], accelerator: str, def
                     versions_by_key[key] = (date, dict(version))
         versions = [value[1] for value in versions_by_key.values()]
         versions.sort(key=lambda item: (str(item.get("date", "")), str(item.get("version", ""))), reverse=True)
+        # A failed metadata fetch is a retry signal recorded in the source file; it
+        # must not reach the published catalog.
+        for version in versions:
+            version.pop("metadataError", None)
         if accelerator:
             for version in versions:
                 download_url = version.get("downloadURL", "")

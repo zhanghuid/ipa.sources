@@ -7,7 +7,7 @@
       "developerName": "Personal source",
       "subtitle": "",
       "localizedDescription": "",
-      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/sources/custom/icons/com.tvbox.yingxia.ios.png",
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/ios/sources/custom/icons/com.tvbox.yingxia.ios.png",
       "category": "utilities",
       "versions": [
         {
@@ -17,7 +17,8 @@
           "localizedDescription": "",
           "downloadURL": "https://download.getmegaportal.com/yingxia/1.2.2/Yingxia-1.2.2-ios.ipa",
           "size": 67222921,
-          "minOSVersion": "18.0"
+          "minOSVersion": "18.0",
+          "metadataError": "Unable to download IPA (URLError); check URL access."
         }
       ],
       "appPermissions": {

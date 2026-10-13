@@ -2584,7 +2584,7 @@
       "developerName": "Personal source",
       "subtitle": "",
       "localizedDescription": "",
-      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/sources/custom/icons/com.tvbox.yingxia.ios.png",
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/ios/sources/custom/icons/com.tvbox.yingxia.ios.png",
       "category": "utilities",
       "versions": [
         {
@@ -2600,7 +2600,12 @@
       "appPermissions": {
         "entitlements": [],
         "privacy": {}
-      }
+      },
+      "platform": "ios",
+      "devices": [
+        "phone",
+        "pad"
+      ]
     },
     {
       "name": "uz",
