@@ -42,6 +42,14 @@
       "category": "entertainment",
       "versions": [
         {
+          "version": "6.3.0",
+          "buildVersion": "6.3.99",
+          "date": "2026-10-13",
+          "localizedDescription": "上游源文件：ani-6.3.0.ipa",
+          "downloadURL": "https://github.com/open-ani/animeko/releases/download/v6.3.0/ani-6.3.0.ipa",
+          "size": 46485035
+        },
+        {
           "version": "6.2.0",
           "buildVersion": "6.2.99",
           "date": "2026-09-26",
