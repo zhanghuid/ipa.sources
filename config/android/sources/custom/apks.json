@@ -2,6 +2,40 @@
   "name": "Custom Apps",
   "apps": [
     {
+      "name": "红果桌面版 1.0.13",
+      "packageName": "cn.hongguo.tv",
+      "developerName": "Personal source",
+      "subtitle": "",
+      "localizedDescription": "",
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/android/sources/custom/icons/cn.hongguo.tv.png",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "0.5.4-standalone-arm64",
+          "buildVersion": "14",
+          "date": "2026-10-13",
+          "localizedDescription": "等待 GitHub Actions 下载 APK 并读取版本信息。",
+          "downloadURL": "https://github.com/waligoraamodio288-rgb/hongguo-desktop-releases/releases/download/tv-v0.5.4/HongguoTV-0.5.4-arm64.apk",
+          "size": 4076575,
+          "minSdk": 21
+        }
+      ],
+      "appPermissions": {
+        "permissions": [
+          "android.permission.INTERNET",
+          "android.permission.REQUEST_INSTALL_PACKAGES"
+        ],
+        "privacy": {}
+      },
+      "_iconExtractionChecked": "apk-icons-v1",
+      "devices": [
+        "tv",
+        "phone",
+        "pad"
+      ],
+      "_deviceCheckVersion": "manifest-v1"
+    },
+    {
       "name": "小猫影视",
       "packageName": "",
       "developerName": "Personal source",
