@@ -1,22 +1,53 @@
-# Personal IPA Source
+# Personal App Source
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/zhanghuid/ipa.sources/tree/main/apps-admin)
 
-An AltSource-compatible catalog generated from repository-scoped source files. The source registry is [`config/sources/index.json`](config/sources/index.json); each upstream catalog is synced into `config/sources/<owner>/<repo>.json`, then merged into [`apps.json`](apps.json). GitHub Actions fetches both catalogs every six hours. Duplicate apps are identified by bundle ID; duplicate versions are identified by version and build, and the entry with the newer release date is kept. App details come from the catalog with the latest dated version.
+A personal app catalog with two independent platforms. iOS produces an AltSource-compatible [`apps.json`](apps.json); Android produces [`android.json`](android.json). Each platform has its own source registry, parser, generated output, and icon folder, so nothing has to be modelled as a special case of the other.
+
+| Platform | Config | Custom submissions | Output | Identifier |
+| --- | --- | --- | --- | --- |
+| iOS / tvOS | `config/ios/catalog.json` | `config/ios/sources/custom/ipas.json` | `apps.json` | Bundle ID |
+| Android | `config/android/catalog.json` | `config/android/sources/custom/apks.json` | `android.json` | Package name |
+
+Both platforms record a `devices` array so one app can belong to several device classes. GitHub Actions regenerates both catalogs every six hours.
+
+## Device classes
+
+`devices` uses one vocabulary across platforms: `phone`, `pad`, `tv`, `watch`, `mac`, `vision`. The catalog UI filters by these values.
+
+- iOS: read from `UIDeviceFamily` in the IPA's `Info.plist` (1=phone, 2=pad, 3=tv, 4=watch, 6=mac, 7=vision).
+- Android: derived from `uses-feature` declarations in the binary `AndroidManifest.xml`. `android.software.leanback`, or a `android.hardware.touchscreen` that is not required, marks a TV app.
+
+Override anything in `deviceOverrides`, keyed by Bundle ID or package name, when a manifest is wrong or missing.
 
 ## Add or edit apps
 
-Add or edit upstream catalog sources in [`config/sources/index.json`](config/sources/index.json), using a file path grouped by owner/repository. The generator downloads and stores each latest upstream JSON at that path before merging. Manually submitted apps live in [`config/sources/custom/ipas.json`](config/sources/custom/ipas.json) and are merged automatically. You can also add directly tracked GitHub Release apps under `apps` in [`config/apps.json`](config/apps.json); each entry needs a display name, bundle ID, upstream repository (`owner/repo`), and one or more `assetPatterns`. Patterns use shell-style wildcards and match asset filenames case-insensitively. `excludePatterns` can remove unwanted variants. `versionsToKeep` is the number of upstream releases to retain; all matching IPA files in those releases are included.
+Add upstream catalog sources in `config/<platform>/sources/index.json`, using a file path grouped by owner/repository. The generator downloads and stores each latest upstream JSON at that path before merging.
+
+Directly tracked GitHub Release apps live under `apps` in the platform's `catalog.json`. Each entry needs a display name, an upstream repository (`owner/repo`), and one or more `assetPatterns`. Patterns use shell-style wildcards and match asset filenames case-insensitively. `excludePatterns` removes unwanted variants. `versionsToKeep` is the number of upstream releases to retain.
+
+For Android, tracked entries do not need a package name up front: the generator downloads the newest matching APK once, reads its manifest, then caches the package name, device classes, launcher icon, per-asset `versionCode`, and `minSdk` back into `config/android/catalog.json`. This costs one APK download per app when its newest asset changes.
+
+## How metadata is extracted
+
+Neither parser uses HTTP Range requests, so no host has to support partial downloads. Both download the complete file and parse it locally; downloads are limited to 2 GiB.
+
+- **iOS**: unzip the IPA, read `Payload/*.app/Info.plist`, and take `CFBundleIdentifier`, `CFBundleShortVersionString`, `CFBundleVersion`, `MinimumOSVersion`, and `UIDeviceFamily`. The largest declared primary icon PNG is extracted, and Apple's CgBI PNG variant is converted to a standard PNG.
+- **Android**: read `AndroidManifest.xml` and `resources.arsc`, both binary formats, using the self-contained reader in `scripts/apk_metadata.py`. It resolves the launcher icon through the resource table, follows adaptive-icon layers, and converts WebP icons to PNG.
+
+Icon conversion uses Pillow, which the GitHub Actions workflow installs. Without Pillow the parsers still work and skip non-PNG icons.
 
 ### Submit apps through the Cloudflare page
 
-The private admin page is in [`apps-admin/`](apps-admin/). It is a Cloudflare Worker with Static Assets and a small API. Sign in through Cloudflare Access and enter the app name and a direct HTTPS IPA URL. The Worker commits a pending entry to `config/sources/custom/ipas.json`; GitHub Actions downloads the complete IPA, reads its `Info.plist` to fill in the bundle ID, version, build, minimum iOS version, and file size, extracts the largest declared primary PNG icon when one is present, then regenerates `apps.json`. Extracted icons are stored under `config/sources/custom/icons/`; App Store artwork is used as a fallback. This does not depend on the IPA host supporting HTTP Range requests. IPA downloads are limited to 2 GiB.
+The private admin page is in [`apps-admin/`](apps-admin/). It is a Cloudflare Worker with Static Assets and a small API. Sign in through Cloudflare Access, pick a platform, then enter the app name and a direct HTTPS download URL. The Worker commits a pending entry to that platform's custom source file; GitHub Actions downloads the complete package, extracts its metadata, and regenerates the platform's catalog. Delete uses the same platform-scoped path. On the iOS side, App Store artwork is used as a fallback when no bundle icon is present.
+
+The page has a platform switcher, and the full catalog at `/catalog.html` shows both platforms with device filter chips (phone, pad, TV, watch, vision).
 
 Use the **Deploy to Cloudflare** button above for a guided first deployment. Cloudflare creates a separate GitHub repository containing the self-contained Worker from `apps-admin/` (the folder contents become the new repository root) and connects it to Workers Builds. The source repository must be public for this button to work. The initial deployment uses a `workers.dev` address and safe placeholder settings; complete the setup below before using the admin API.
 
 After the button deploys the Worker:
 
-1. In the newly created GitHub repository, edit its root `wrangler.jsonc`: set `GITHUB_OWNER`, `GITHUB_REPO`, and `GITHUB_BRANCH` to the source repository that contains your `apps.json` and `config/sources/custom/ipas.json`. Push the change to deploy the Worker with your source repository configured.
+1. In the newly created GitHub repository, edit its root `wrangler.jsonc`: set `GITHUB_OWNER`, `GITHUB_REPO`, and `GITHUB_BRANCH` to the source repository that contains your generated catalogs and `config/*/sources/custom/` files. Push the change to deploy the Worker with your source repository configured.
 2. In Cloudflare Zero Trust, create an Access application for the deployed `workers.dev` hostname and allow only your identity. You can use GitHub as the identity provider. Copy its team issuer and audience tag into `ACCESS_ISSUER` and `ACCESS_AUD` in `wrangler.jsonc`, then push the change to redeploy. Configure Access before using the admin API.
 3. Create a fine-grained GitHub token limited to the source repository with **Contents: Read and write**, then add it to the Worker as the `GITHUB_TOKEN` secret. Never commit this token.
 
@@ -66,7 +97,8 @@ https://raw.githubusercontent.com/<owner>/<repository>/main/apps.json
 Requires Python 3.10+ and network access to the configured catalog URLs and GitHub API:
 
 ```bash
-python scripts/generate_source.py
+python scripts/generate_ios.py
+python scripts/generate_android.py   # WebP icon conversion needs Pillow
 ```
 
 Set `GITHUB_TOKEN` to raise the unauthenticated API rate limit when generating outside Actions. Set `ACCELERATOR_BASE_URL` locally to preview accelerated download URLs.

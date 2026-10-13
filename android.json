@@ -1,0 +1,162 @@
+{
+  "name": "HUID Android Source",
+  "subtitle": "Personal APK library",
+  "description": "Personal Android catalog, automatically synced from upstream GitHub releases.",
+  "iconURL": "",
+  "website": "",
+  "tintColor": "#3DDC84",
+  "platform": "android",
+  "apps": [
+    {
+      "name": "SmartTube",
+      "packageName": "org.smarttube.stable",
+      "developerName": "yuliskov",
+      "subtitle": "Android TV 播放器",
+      "localizedDescription": "面向 Android TV 的开源 YouTube 客户端，支持无广告播放与 4K。",
+      "upstream": {
+        "repo": "yuliskov/SmartTube",
+        "assetPatterns": [
+          "*arm64-v8a.apk"
+        ],
+        "excludePatterns": [
+          "*beta*",
+          "*debug*"
+        ]
+      },
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/android/sources/custom/icons/org.smarttube.stable.png",
+      "category": "entertainment",
+      "devices": [
+        "tv"
+      ],
+      "versions": [
+        {
+          "version": "32.56",
+          "buildVersion": "2446",
+          "date": "2026-09-23",
+          "localizedDescription": "上游源文件：SmartTube_stable_32.56_arm64-v8a.apk\n\n- Restored Not interested and Don't recommend channel context menu items\r\n- Fixed Hide shorts in the News section (this option should be rechecked to apply)\r\n- Fixes rare playback stutters caused by background sync\r\n- Increased thumbnail resolution\r\n\r\nDownloader code: 28544 | [F-Droid](https://f-droid.org/packages/app.smarttube.fdroid/) | [Translation](https://jtbrinkmann.de/tools/android-strings.xml-translator.html)\n\t\t\t\n## 🛡️ VirusTotal Analysis\n\n| Build Variant | VirusTotal Status | Detailed Report |\n| :--- | :--- | :--- |\n| [SmartTube_stable_32.56_arm64-v8a.apk](https://github.com/yuliskov/SmartTube/releases/download/32.56s/SmartTube_stable_32.56_arm64-v8a.apk) | [![](https://badges.cssnr.com/vt/id/cc53f1aedac52ea0d4e77803acd580e32e7e5179adc96b55db7267b63a16c864?start=green&end=red&n=8&v=1790206128)](https://www.virustotal.com/gui/file/cc53f1aedac52ea0d4e77803acd580e32e7e5179adc96b55db7267b63a16c864/detection) | [View Report](https://www.virustotal.com/gui/file/cc53f1aedac52ea0d4e77803acd580e32e7e5179adc96b55db7267b63a16c864/detection) |\n| [SmartTube_stable_32.56_armeabi-v7a.apk](https://github.com/yuliskov/SmartTube/releases/download/32.56s/SmartTube_stable_32.56_armeabi-v7a.apk) | [![](https://badges.cssnr.com/vt/id/d2e9bc90b95aa6232fbf647e63003ccb9051d1aad53531c103aa997e443457b6?start=green&end=red&n=8&v=1790206128)](https://www.virustotal.com/gui/file/d2e9bc90b95aa6232fbf647e63003ccb9051d1aad53531c103aa997e443457b6/detection) | [View Report](https://www.virustotal.com/gui/file/d2e9bc90b95aa6232fbf647e63003ccb9051d1aad53531c103aa997e443457b6/detection) |\n| [SmartTube_stable_32.56_universal.apk](https://github.com/yuliskov/SmartTube/releases/download/32.56s/SmartTube_stable_32.56_universal.apk) | [![](https://badges.cssnr.com/vt/id/4a35b90940612e048e4e9cb9e10379f7db1e84f30375994129f10a571ee04ce5?start=green&end=red&n=8&v=1790206129)](https://www.virustotal.com/gui/file/4a35b90940612e048e4e9cb9e10379f7db1e84f30375994129f10a571ee04ce5/detection) | [View Report](https://www.virustotal.com/gui/file/4a35b90940612e048e4e9cb9e10379f7db1e84f30375994129f10a571ee04ce5/detection) |\n| [SmartTube_stable_32.56_x86.apk](https://github.com/yuliskov/SmartTube/releases/download/32.56s/SmartTube_stable_32.56_x86.apk) | [![](https://badges.cssnr.com/vt/id/b3887fb9e7482d7b9c6d0bfc5a1dbb120e678aa8a9bc54a1363a8135a698cb5a?start=green&end=red&n=8&v=1790206129)](https://www.virustotal.com/gui/file/b3887fb9e7482d7b9c6d0bfc5a1dbb120e678aa8a9bc54a1363a8135a698cb5a/detection) | [View Report](https://www.virustotal.com/gui/file/b3887fb9e7482d7b9c6d0bfc5a1dbb120e678aa8a9bc54a1363a8135a698cb5a/detection) |",
+          "downloadURL": "https://gh-proxy.org/https://github.com/yuliskov/SmartTube/releases/download/32.56s/SmartTube_stable_32.56_arm64-v8a.apk",
+          "size": 26260353,
+          "assetName": "SmartTube_stable_32.56_arm64-v8a.apk",
+          "minSdk": 17
+        },
+        {
+          "version": "32.47",
+          "buildVersion": "1",
+          "date": "2026-09-13",
+          "localizedDescription": "上游源文件：SmartTube_stable_32.47_arm64-v8a.apk\n\n- Fixed private and member-only videos not playing\r\n- Fixed volume gradually drifting lower over time on some devices\r\n- Blocked channels list is now sorted alphabetically, making it easier to find specific entries\r\n- Fixed subtitles not displaying\r\n- Various minor bug fixes\r\n\r\nDownloader code: 28544 | [F-Droid](https://f-droid.org/packages/app.smarttube.fdroid/)\n\t\t\t\n## 🛡️ VirusTotal Analysis\n\n| Build Variant | VirusTotal Status | Detailed Report |\n| :--- | :--- | :--- |\n| [SmartTube_stable_32.47_arm64-v8a.apk](https://github.com/yuliskov/SmartTube/releases/download/32.47s/SmartTube_stable_32.47_arm64-v8a.apk) | [![](https://badges.cssnr.com/vt/id/65717d4fe7173e0e92857e84fde7c53a035cac314975c582dc7e59d9699e4c6e?start=green&end=red&n=8&v=1789342419)](https://www.virustotal.com/gui/file/65717d4fe7173e0e92857e84fde7c53a035cac314975c582dc7e59d9699e4c6e/detection) | [View Report](https://www.virustotal.com/gui/file/65717d4fe7173e0e92857e84fde7c53a035cac314975c582dc7e59d9699e4c6e/detection) |\n| [SmartTube_stable_32.47_armeabi-v7a.apk](https://github.com/yuliskov/SmartTube/releases/download/32.47s/SmartTube_stable_32.47_armeabi-v7a.apk) | [![](https://badges.cssnr.com/vt/id/9408be95767b8fc6a870a205549d121b448a2e5abbdc730f7b40d32da7c16968?start=green&end=red&n=8&v=1789342419)](https://www.virustotal.com/gui/file/9408be95767b8fc6a870a205549d121b448a2e5abbdc730f7b40d32da7c16968/detection) | [View Report](https://www.virustotal.com/gui/file/9408be95767b8fc6a870a205549d121b448a2e5abbdc730f7b40d32da7c16968/detection) |\n| [SmartTube_stable_32.47_universal.apk](https://github.com/yuliskov/SmartTube/releases/download/32.47s/SmartTube_stable_32.47_universal.apk) | [![](https://badges.cssnr.com/vt/id/cfb9dbcfbfa9b957eaffb88063c9d1aab80302fea1e80855f3db43a224b7bc49?start=green&end=red&n=8&v=1789342419)](https://www.virustotal.com/gui/file/cfb9dbcfbfa9b957eaffb88063c9d1aab80302fea1e80855f3db43a224b7bc49/detection) | [View Report](https://www.virustotal.com/gui/file/cfb9dbcfbfa9b957eaffb88063c9d1aab80302fea1e80855f3db43a224b7bc49/detection) |\n| [SmartTube_stable_32.47_x86.apk](https://github.com/yuliskov/SmartTube/releases/download/32.47s/SmartTube_stable_32.47_x86.apk) | [![](https://badges.cssnr.com/vt/id/7173a503cdb2c549cf1d4801360da07ae4dde0e566120489328693a79558428b?start=green&end=red&n=8&v=1789342419)](https://www.virustotal.com/gui/file/7173a503cdb2c549cf1d4801360da07ae4dde0e566120489328693a79558428b/detection) | [View Report](https://www.virustotal.com/gui/file/7173a503cdb2c549cf1d4801360da07ae4dde0e566120489328693a79558428b/detection) |",
+          "downloadURL": "https://gh-proxy.org/https://github.com/yuliskov/SmartTube/releases/download/32.47s/SmartTube_stable_32.47_arm64-v8a.apk",
+          "size": 26254606,
+          "assetName": "SmartTube_stable_32.47_arm64-v8a.apk"
+        },
+        {
+          "version": "32.38",
+          "buildVersion": "1",
+          "date": "2026-09-01",
+          "localizedDescription": "上游源文件：SmartTube_stable_32.38_arm64-v8a.apk\n\n- Playback and history fixes\r\n- Misc crash fixes\r\n- Note: restricted and member-only videos not fixed yet\r\n\r\nDownloader code: **28544** | [F-Droid](https://f-droid.org/packages/app.smarttube.fdroid/)\n\t\t\t\n## 🛡️ VirusTotal Analysis\n\n| Build Variant | VirusTotal Status | Detailed Report |\n| :--- | :--- | :--- |\n| [SmartTube_stable_32.38_arm64-v8a.apk](https://github.com/yuliskov/SmartTube/releases/download/32.38s/SmartTube_stable_32.38_arm64-v8a.apk) | [![](https://badges.cssnr.com/vt/id/c26c39c9e9ea0133380e3ce02a6b81171cef8e723acfeb195ae0c725333bc668?start=green&end=red&n=8&v=1788229436)](https://www.virustotal.com/gui/file/c26c39c9e9ea0133380e3ce02a6b81171cef8e723acfeb195ae0c725333bc668/detection) | [View Report](https://www.virustotal.com/gui/file/c26c39c9e9ea0133380e3ce02a6b81171cef8e723acfeb195ae0c725333bc668/detection) |\n| [SmartTube_stable_32.38_armeabi-v7a.apk](https://github.com/yuliskov/SmartTube/releases/download/32.38s/SmartTube_stable_32.38_armeabi-v7a.apk) | [![](https://badges.cssnr.com/vt/id/dc60736df752f2a7a8dbc877fbcfa5542e3b09a0ba090c6ded6eab3a20611c64?start=green&end=red&n=8&v=1788229436)](https://www.virustotal.com/gui/file/dc60736df752f2a7a8dbc877fbcfa5542e3b09a0ba090c6ded6eab3a20611c64/detection) | [View Report](https://www.virustotal.com/gui/file/dc60736df752f2a7a8dbc877fbcfa5542e3b09a0ba090c6ded6eab3a20611c64/detection) |\n| [SmartTube_stable_32.38_universal.apk](https://github.com/yuliskov/SmartTube/releases/download/32.38s/SmartTube_stable_32.38_universal.apk) | [![](https://badges.cssnr.com/vt/id/fd31cdba1c66352c7c42757cab420f9cabcc3485fbe30b1de0fe13f2adf33c90?start=green&end=red&n=8&v=1788229436)](https://www.virustotal.com/gui/file/fd31cdba1c66352c7c42757cab420f9cabcc3485fbe30b1de0fe13f2adf33c90/detection) | [View Report](https://www.virustotal.com/gui/file/fd31cdba1c66352c7c42757cab420f9cabcc3485fbe30b1de0fe13f2adf33c90/detection) |\n| [SmartTube_stable_32.38_x86.apk](https://github.com/yuliskov/SmartTube/releases/download/32.38s/SmartTube_stable_32.38_x86.apk) | [![](https://badges.cssnr.com/vt/id/1c7042e41ef7ee27ece725713a443cefe7b5dd463ee6e29a2dc29c7a414265f5?start=green&end=red&n=8&v=1788229436)](https://www.virustotal.com/gui/file/1c7042e41ef7ee27ece725713a443cefe7b5dd463ee6e29a2dc29c7a414265f5/detection) | [View Report](https://www.virustotal.com/gui/file/1c7042e41ef7ee27ece725713a443cefe7b5dd463ee6e29a2dc29c7a414265f5/detection) |",
+          "downloadURL": "https://gh-proxy.org/https://github.com/yuliskov/SmartTube/releases/download/32.38s/SmartTube_stable_32.38_arm64-v8a.apk",
+          "size": 26230067,
+          "assetName": "SmartTube_stable_32.38_arm64-v8a.apk"
+        },
+        {
+          "version": "32.10",
+          "buildVersion": "1",
+          "date": "2026-08-07",
+          "localizedDescription": "上游源文件：SmartTube_stable_32.10_arm64-v8a.apk\n\n- When selecting NotInterested, now you can choose between two reasons: I already watched the video, or I don't like it\r\n- YouTube Live Stream Latency Mitigator. This feature actively monitors playback delay on live streams and gently catches up to the true live edge whenever a lag or buffer occurs. (Note: Enabled by default; toggle options will be added if requested)\r\n- Playback error fixes\r\n\r\nDownloader code: 28544 | [F-Droid release](https://f-droid.org/packages/app.smarttube.fdroid/)\n\t\t\t\n## 🛡️ VirusTotal Analysis\n\n| Build Variant | VirusTotal Status | Detailed Report |\n| :--- | :--- | :--- |\n| [SmartTube_stable_32.10_arm64-v8a.apk](https://github.com/yuliskov/SmartTube/releases/download/32.10s/SmartTube_stable_32.10_arm64-v8a.apk) | [![](https://badges.cssnr.com/vt/id/af60484ce65e37d883e2a825b12e59b9aa358a8b4a9cb56427b03f0d8a08271d?start=green&end=red&n=8&v=1786119840)](https://www.virustotal.com/gui/file/af60484ce65e37d883e2a825b12e59b9aa358a8b4a9cb56427b03f0d8a08271d/detection) | [View Report](https://www.virustotal.com/gui/file/af60484ce65e37d883e2a825b12e59b9aa358a8b4a9cb56427b03f0d8a08271d/detection) |\n| [SmartTube_stable_32.10_armeabi-v7a.apk](https://github.com/yuliskov/SmartTube/releases/download/32.10s/SmartTube_stable_32.10_armeabi-v7a.apk) | [![](https://badges.cssnr.com/vt/id/61e335a9816621feaa0b2aacdc17f68e652773fe33304ec091b14fac36f95025?start=green&end=red&n=8&v=1786119840)](https://www.virustotal.com/gui/file/61e335a9816621feaa0b2aacdc17f68e652773fe33304ec091b14fac36f95025/detection) | [View Report](https://www.virustotal.com/gui/file/61e335a9816621feaa0b2aacdc17f68e652773fe33304ec091b14fac36f95025/detection) |\n| [SmartTube_stable_32.10_universal.apk](https://github.com/yuliskov/SmartTube/releases/download/32.10s/SmartTube_stable_32.10_universal.apk) | [![](https://badges.cssnr.com/vt/id/48044b306ded06cab939e81ad53be76a9c7b44c82a29c8bcaac8c2d8687b1579?start=green&end=red&n=8&v=1786119840)](https://www.virustotal.com/gui/file/48044b306ded06cab939e81ad53be76a9c7b44c82a29c8bcaac8c2d8687b1579/detection) | [View Report](https://www.virustotal.com/gui/file/48044b306ded06cab939e81ad53be76a9c7b44c82a29c8bcaac8c2d8687b1579/detection) |\n| [SmartTube_stable_32.10_x86.apk](https://github.com/yuliskov/SmartTube/releases/download/32.10s/SmartTube_stable_32.10_x86.apk) | [![](https://badges.cssnr.com/vt/id/e7d2ded517859a730fca9ea636662b5227f471a4ad59e24e8b768f3b580c9edc?start=green&end=red&n=8&v=1786119840)](https://www.virustotal.com/gui/file/e7d2ded517859a730fca9ea636662b5227f471a4ad59e24e8b768f3b580c9edc/detection) | [View Report](https://www.virustotal.com/gui/file/e7d2ded517859a730fca9ea636662b5227f471a4ad59e24e8b768f3b580c9edc/detection) |",
+          "downloadURL": "https://gh-proxy.org/https://github.com/yuliskov/SmartTube/releases/download/32.10s/SmartTube_stable_32.10_arm64-v8a.apk",
+          "size": 26215133,
+          "assetName": "SmartTube_stable_32.10_arm64-v8a.apk"
+        },
+        {
+          "version": "31.94",
+          "buildVersion": "1",
+          "date": "2026-06-12",
+          "localizedDescription": "上游源文件：SmartTube_stable_31.94_arm64-v8a.apk\n\n- Playback error fixes\r\n- Fire TV Cube crash fixes\r\n- Added a new option to improve VPN compatibility: Settings/General/Network settings/Enable Conscrypt\n\t\t\t\n## 🛡️ VirusTotal Analysis\n\n| Build Variant | VirusTotal Status | Detailed Report |\n| :--- | :--- | :--- |\n| [SmartTube_stable_31.94_arm64-v8a.apk](https://github.com/yuliskov/SmartTube/releases/download/31.94s/SmartTube_stable_31.94_arm64-v8a.apk) | [![](https://badges.cssnr.com/vt/id/b19b1cef82886bbd57a763ff476e2cbd40723b3f927f1fb9bb4fb86e09771a0d?start=green&end=red&n=8&v=1781286407)](https://www.virustotal.com/gui/file/b19b1cef82886bbd57a763ff476e2cbd40723b3f927f1fb9bb4fb86e09771a0d/detection) | [View Report](https://www.virustotal.com/gui/file/b19b1cef82886bbd57a763ff476e2cbd40723b3f927f1fb9bb4fb86e09771a0d/detection) |\n| [SmartTube_stable_31.94_armeabi-v7a.apk](https://github.com/yuliskov/SmartTube/releases/download/31.94s/SmartTube_stable_31.94_armeabi-v7a.apk) | [![](https://badges.cssnr.com/vt/id/9705f4452c52fc563b6f31f6164eb4d2007f0f611f46de28184a83e412fd908c?start=green&end=red&n=8&v=1781286407)](https://www.virustotal.com/gui/file/9705f4452c52fc563b6f31f6164eb4d2007f0f611f46de28184a83e412fd908c/detection) | [View Report](https://www.virustotal.com/gui/file/9705f4452c52fc563b6f31f6164eb4d2007f0f611f46de28184a83e412fd908c/detection) |\n| [SmartTube_stable_31.94_universal.apk](https://github.com/yuliskov/SmartTube/releases/download/31.94s/SmartTube_stable_31.94_universal.apk) | [![](https://badges.cssnr.com/vt/id/a56d1685b4fce55b47a58ecc8dae485cd1c183e60ff47cdab398ce4a0ae86f18?start=green&end=red&n=8&v=1781286407)](https://www.virustotal.com/gui/file/a56d1685b4fce55b47a58ecc8dae485cd1c183e60ff47cdab398ce4a0ae86f18/detection) | [View Report](https://www.virustotal.com/gui/file/a56d1685b4fce55b47a58ecc8dae485cd1c183e60ff47cdab398ce4a0ae86f18/detection) |\n| [SmartTube_stable_31.94_x86.apk](https://github.com/yuliskov/SmartTube/releases/download/31.94s/SmartTube_stable_31.94_x86.apk) | [![](https://badges.cssnr.com/vt/id/1d916f91bb403fd53eee15d177a4b2709fa52856c93c73f71c82f9f8d18e32b5?start=green&end=red&n=8&v=1781286407)](https://www.virustotal.com/gui/file/1d916f91bb403fd53eee15d177a4b2709fa52856c93c73f71c82f9f8d18e32b5/detection) | [View Report](https://www.virustotal.com/gui/file/1d916f91bb403fd53eee15d177a4b2709fa52856c93c73f71c82f9f8d18e32b5/detection) |",
+          "downloadURL": "https://gh-proxy.org/https://github.com/yuliskov/SmartTube/releases/download/31.94s/SmartTube_stable_31.94_arm64-v8a.apk",
+          "size": 26195095,
+          "assetName": "SmartTube_stable_31.94_arm64-v8a.apk"
+        }
+      ],
+      "appPermissions": {
+        "permissions": [],
+        "privacy": {}
+      },
+      "platform": "android"
+    },
+    {
+      "name": "NewPipe",
+      "packageName": "org.schabi.newpipe",
+      "developerName": "Team NewPipe",
+      "subtitle": "轻量流媒体前端",
+      "localizedDescription": "开源流媒体前端，支持 YouTube、SoundCloud 等平台的播放与后台音频。",
+      "upstream": {
+        "repo": "TeamNewPipe/NewPipe",
+        "assetPatterns": [
+          "*.apk"
+        ],
+        "excludePatterns": [
+          "*debug*"
+        ]
+      },
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/android/sources/custom/icons/org.schabi.newpipe.png",
+      "category": "entertainment",
+      "devices": [
+        "tv",
+        "phone",
+        "pad"
+      ],
+      "versions": [
+        {
+          "version": "0.29.1",
+          "buildVersion": "1015",
+          "date": "2026-08-15",
+          "localizedDescription": "上游源文件：NewPipe_v0.29.1.apk\n\nThis is a hotfix release that fixes media.ccc.de live streams. Happy hacking!",
+          "downloadURL": "https://gh-proxy.org/https://github.com/TeamNewPipe/NewPipe/releases/download/v0.29.1/NewPipe_v0.29.1.apk",
+          "size": 11507122,
+          "assetName": "NewPipe_v0.29.1.apk",
+          "minSdk": 23
+        },
+        {
+          "version": "0.29.0",
+          "buildVersion": "1",
+          "date": "2026-07-22",
+          "localizedDescription": "上游源文件：NewPipe_v0.29.0.apk\n\n:warning: :warning: This release drops support for Android 5, see [this blogpost](https://newpipe.net/blog/pinned/announcement/drop-android-5/) and #13438 :warning: :warning:\r\n\r\n### Fixed\r\n- Fix SecurityException when opening downloaded files in other app #13391\r\n- Fix playback not working after player enters idle state #13390\r\n- Fix video playback when exiting popup to main screen #13437\r\n- Fix repeat mode UI out-of-sync when switching videos #13504\r\n- Fix crash when seeking to the end of special videos (again) #13594\r\n- Force keyboard dismissal on non-touch devices #13337\r\n- Fixed importing subscriptions #13608\r\n\r\n### Translation / Localization\r\n- Translation updates #13455, #13589\r\n- Multi Platform Translation updates: #13588\r\n\r\n### Development\r\n- Update dependencies and plugins #13425 #13444 #13505 #13531 #13611\r\n- Bump `minSdk` from 21 (Android 5.0) to 23 (Android 6) #13425 #13441\r\n- Update dependencies and build with JDK 21 #13454 \r\n- Introduce compose multiplatform #13507 \r\n- Compose rewrite #13486 #13652\r\n\r\n### NewPipe Extractor\r\n\r\nThis release comes with additional bug fixes from [NewPipe Extractor 0.26.4](https://github.com/TeamNewPipe/NewPipeExtractor/releases/tag/v0.26.4).",
+          "downloadURL": "https://gh-proxy.org/https://github.com/TeamNewPipe/NewPipe/releases/download/v0.29.0/NewPipe_v0.29.0.apk",
+          "size": 11507122,
+          "assetName": "NewPipe_v0.29.0.apk"
+        },
+        {
+          "version": "0.28.8",
+          "buildVersion": "1",
+          "date": "2026-06-09",
+          "localizedDescription": "上游源文件：NewPipe_v0.28.8.apk\n\nThis release fixes issues that were caused by YouTube enforcing its SABR protocol, **except for videos made for kids** due to a limitation of the workaround. Most notable were missing video resolutions, no separate audio stream available and the sole availability of MP4 360p stream with audio. This workaround is a community effort. Thanks to all the people involved! #13591\r\n\r\nThis release is shipped with [NewPipe Extractor v0.26.3](https://github.com/TeamNewPipe/NewPipeExtractor/releases/tag/v0.26.3) which contains the mentioned workaround as well as a few other fixes, including no videos extracted on YouTube playlists and Bandcamp search returning no results.",
+          "downloadURL": "https://gh-proxy.org/https://github.com/TeamNewPipe/NewPipe/releases/download/v0.28.8/NewPipe_v0.28.8.apk",
+          "size": 10901946,
+          "assetName": "NewPipe_v0.28.8.apk"
+        },
+        {
+          "version": "0.28.7",
+          "buildVersion": "1",
+          "date": "2026-05-23",
+          "localizedDescription": "上游源文件：NewPipe_v0.28.7.apk\n\nThis is a small hotfix update to make YouTube usable again. It is necessary, because there were changes by YouTube.\r\nNewPipe is able to extract items in channel tabs again thanks to @AudricV's and @Ecomont's efforts.\r\n\r\nFurther changes from [NewPipe Extractor v0.26.2](https://github.com/TeamNewPipe/NewPipeExtractor/releases/tag/v0.26.2) that are included in this release:\r\n- [YouTube] Fixed duration and live stream display in related videos\r\n- [SoundCloud] Fixed comments crash by handling null page URLs\r\n\r\nNewPipe will drop Android 5 support in the next release.",
+          "downloadURL": "https://gh-proxy.org/https://github.com/TeamNewPipe/NewPipe/releases/download/v0.28.7/NewPipe_v0.28.7.apk",
+          "size": 10885562,
+          "assetName": "NewPipe_v0.28.7.apk"
+        },
+        {
+          "version": "0.28.6",
+          "buildVersion": "1",
+          "date": "2026-05-01",
+          "localizedDescription": "上游源文件：NewPipe_v0.28.6.apk\n\nThis release only adds a popup to inform users that the next version, *v0.28.7*, will **drop support for Android 5**.\r\n\r\nRead more in the [blogpost](https://newpipe.net/blog/pinned/announcement/drop-android-5/) and in https://github.com/TeamNewPipe/NewPipe/issues/13438.",
+          "downloadURL": "https://gh-proxy.org/https://github.com/TeamNewPipe/NewPipe/releases/download/v0.28.6/NewPipe_v0.28.6.apk",
+          "size": 10885562,
+          "assetName": "NewPipe_v0.28.6.apk"
+        }
+      ],
+      "appPermissions": {
+        "permissions": [],
+        "privacy": {}
+      },
+      "platform": "android"
+    }
+  ]
+}

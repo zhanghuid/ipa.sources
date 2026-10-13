@@ -1,4 +1,4 @@
-name: Update IPA source
+name: Update app sources
 
 on:
   schedule:
@@ -6,40 +6,49 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "config/apps.json"
-      - "config/sources/index.json"
-      - "config/sources/custom/**"
-      - "scripts/generate_source.py"
+      - "config/ios/**"
+      - "config/android/**"
+      - "scripts/*.py"
       - ".github/workflows/update-source.yml"
 
 permissions:
   contents: write
 
 concurrency:
-  group: update-ipa-source
+  group: update-app-sources
   cancel-in-progress: false
 
 jobs:
   update:
+    name: Generate catalogs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Generate catalog
+      - name: Install icon conversion dependency
+        run: python -m pip install --disable-pip-version-check "pillow>=10,<13"
+      - name: Generate iOS catalog
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ACCELERATOR_BASE_URL: ${{ vars.ACCELERATOR_BASE_URL }}
-        run: python scripts/generate_source.py
+        run: python scripts/generate_ios.py
+      - name: Generate Android catalog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ACCELERATOR_BASE_URL: ${{ vars.ACCELERATOR_BASE_URL }}
+        run: python scripts/generate_android.py
       - name: Commit catalog changes
         run: |
-          if git diff --quiet -- apps.json config/sources; then
-            echo "Catalog is up to date"
+          if git diff --quiet -- apps.json android.json config/ios/sources config/android/sources config/android/catalog.json; then
+            echo "Catalogs are up to date"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps.json config/sources
-          git commit -m "chore: update IPA catalog"
+          git add apps.json android.json config/ios/sources config/android/sources config/android/catalog.json
+          git commit -m "chore: update app catalogs"
           git push

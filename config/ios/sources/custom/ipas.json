@@ -7,7 +7,7 @@
       "developerName": "Personal source",
       "subtitle": "",
       "localizedDescription": "",
-      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/sources/custom/icons/com.uzvideoapp2.png",
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/ios/sources/custom/icons/com.uzvideoapp2.png",
       "category": "utilities",
       "versions": [
         {
@@ -24,7 +24,12 @@
         "entitlements": [],
         "privacy": {}
       },
-      "_iconExtractionChecked": "cgbi-v1"
+      "_iconExtractionChecked": "cgbi-v2",
+      "devices": [
+        "phone",
+        "pad"
+      ],
+      "_deviceCheckVersion": "family-v1"
     },
     {
       "name": "yida",
@@ -32,7 +37,7 @@
       "developerName": "Personal source",
       "subtitle": "",
       "localizedDescription": "",
-      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/sources/custom/icons/com.xinqiu.yidaapp.png",
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/ios/sources/custom/icons/com.xinqiu.yidaapp.png",
       "category": "utilities",
       "versions": [
         {
@@ -49,7 +54,12 @@
         "entitlements": [],
         "privacy": {}
       },
-      "_iconExtractionChecked": "cgbi-v1"
+      "_iconExtractionChecked": "cgbi-v2",
+      "devices": [
+        "phone",
+        "pad"
+      ],
+      "_deviceCheckVersion": "family-v1"
     },
     {
       "name": "echoTv",
@@ -57,7 +67,7 @@
       "developerName": "Personal source",
       "subtitle": "",
       "localizedDescription": "",
-      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/sources/custom/icons/com.hoowhoami.echotv.png",
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/ios/sources/custom/icons/com.hoowhoami.echotv.png",
       "category": "utilities",
       "versions": [
         {
@@ -74,7 +84,12 @@
         "entitlements": [],
         "privacy": {}
       },
-      "_iconExtractionChecked": "cgbi-v1"
+      "_iconExtractionChecked": "cgbi-v2",
+      "devices": [
+        "phone",
+        "pad"
+      ],
+      "_deviceCheckVersion": "family-v1"
     }
   ]
 }

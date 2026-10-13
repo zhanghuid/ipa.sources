@@ -4,7 +4,7 @@ import unittest
 import zipfile
 import zlib
 
-from scripts.generate_source import extract_icon_png, normalize_cgbi_png, png_chunks, png_dimensions
+from scripts.generate_ios import extract_icon_png, normalize_cgbi_png, png_chunks, png_dimensions
 
 
 def png_chunk(kind: bytes, data: bytes) -> bytes:

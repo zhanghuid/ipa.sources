@@ -18,7 +18,6 @@
     "GITHUB_OWNER": "zhanghuid",
     "GITHUB_REPO": "ipa.sources",
     "GITHUB_BRANCH": "main",
-    "GITHUB_FILE_PATH": "config/sources/custom/ipas.json",
     "ACCESS_ISSUER": "https://ttys.cloudflareaccess.com",
     "ACCESS_AUD": "e746918f2137ae4f6ce35d022c1af4032472b51220fb7579e8641f4354e73d0e"
   },

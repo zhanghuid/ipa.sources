@@ -1,0 +1,84 @@
+{
+  "source": {
+    "name": "HUID Android Source",
+    "subtitle": "Personal APK library",
+    "description": "Personal Android catalog, automatically synced from upstream GitHub releases.",
+    "iconURL": "",
+    "website": "",
+    "tintColor": "#3DDC84"
+  },
+  "defaults": {
+    "developerName": "Upstream",
+    "category": "utilities",
+    "versionsToKeep": 10
+  },
+  "acceleratorBaseURL": "https://gh-proxy.org/",
+  "defaultDevices": [
+    "phone",
+    "pad"
+  ],
+  "deviceOverrides": {},
+  "apps": [
+    {
+      "name": "SmartTube",
+      "repo": "yuliskov/SmartTube",
+      "assetPatterns": [
+        "*arm64-v8a.apk"
+      ],
+      "excludePatterns": [
+        "*beta*",
+        "*debug*"
+      ],
+      "developerName": "yuliskov",
+      "subtitle": "Android TV 播放器",
+      "localizedDescription": "面向 Android TV 的开源 YouTube 客户端，支持无广告播放与 4K。",
+      "category": "entertainment",
+      "versionsToKeep": 5,
+      "packageName": "org.smarttube.stable",
+      "devices": [
+        "tv"
+      ],
+      "minSdk": 17,
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/android/sources/custom/icons/org.smarttube.stable.png",
+      "_parsedAsset": "SmartTube_stable_32.56_arm64-v8a.apk",
+      "_parseVersion": "apk-icons-v1",
+      "_assets": {
+        "SmartTube_stable_32.56_arm64-v8a.apk": {
+          "versionCode": "2446",
+          "minSdk": 17
+        }
+      }
+    },
+    {
+      "name": "NewPipe",
+      "repo": "TeamNewPipe/NewPipe",
+      "assetPatterns": [
+        "*.apk"
+      ],
+      "excludePatterns": [
+        "*debug*"
+      ],
+      "developerName": "Team NewPipe",
+      "subtitle": "轻量流媒体前端",
+      "localizedDescription": "开源流媒体前端，支持 YouTube、SoundCloud 等平台的播放与后台音频。",
+      "category": "entertainment",
+      "versionsToKeep": 5,
+      "packageName": "org.schabi.newpipe",
+      "devices": [
+        "tv",
+        "phone",
+        "pad"
+      ],
+      "minSdk": 23,
+      "iconURL": "https://raw.githubusercontent.com/zhanghuid/ipa.sources/main/config/android/sources/custom/icons/org.schabi.newpipe.png",
+      "_parsedAsset": "NewPipe_v0.29.1.apk",
+      "_parseVersion": "apk-icons-v1",
+      "_assets": {
+        "NewPipe_v0.29.1.apk": {
+          "versionCode": "1015",
+          "minSdk": 23
+        }
+      }
+    }
+  ]
+}

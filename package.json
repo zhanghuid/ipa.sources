@@ -5,6 +5,8 @@
   "description": "Personal AltSource-compatible IPA catalog",
   "scripts": {
     "release": "bumpp --commit --tag --push",
+    "generate": "python3 scripts/generate_ios.py && python3 scripts/generate_android.py",
+    "test": "python3 -m unittest discover -s tests",
     "admin:dev": "wrangler dev --config wrangler.production.jsonc",
     "admin:deploy": "wrangler deploy --config wrangler.production.jsonc"
   },

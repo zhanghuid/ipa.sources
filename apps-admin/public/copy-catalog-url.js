@@ -1,10 +1,16 @@
+function currentPlatform() {
+  const tab = document.querySelector(".platform-tab.active");
+  return tab?.dataset.platform || "ios";
+}
+
 document.querySelectorAll("[data-copy-catalog-url]").forEach((button) => {
   let resetTimer;
 
   button.addEventListener("click", async () => {
     const label = button.querySelector("[data-copy-label]");
     const status = button.parentElement.querySelector("[data-copy-status]");
-    const originalLabel = "复制 apps.json";
+    const platform = currentPlatform();
+    const originalLabel = label.textContent;
     button.disabled = true;
     status.textContent = "";
     status.classList.remove("error");
@@ -12,13 +18,14 @@ document.querySelectorAll("[data-copy-catalog-url]").forEach((button) => {
     try {
       const response = await fetch("/api/catalog-url", { headers: { Accept: "application/json" } });
       const result = await response.json();
-      if (!response.ok || !result.url) throw new Error(result.error || "获取目录地址失败");
+      const url = result.urls?.[platform] || result.url;
+      if (!response.ok || !url) throw new Error(result.error || "获取目录地址失败");
 
       if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(result.url);
+        await navigator.clipboard.writeText(url);
       } else {
         const input = document.createElement("textarea");
-        input.value = result.url;
+        input.value = url;
         input.setAttribute("readonly", "");
         input.style.position = "fixed";
         input.style.opacity = "0";
@@ -26,11 +33,12 @@ document.querySelectorAll("[data-copy-catalog-url]").forEach((button) => {
         input.select();
         const copied = document.execCommand("copy");
         input.remove();
-        if (!copied) throw new Error("浏览器不允许复制，请手动复制：" + result.url);
+        if (!copied) throw new Error("浏览器不允许复制，请手动复制：" + url);
       }
 
+      const name = url.split("/").pop();
       label.textContent = "已复制";
-      status.textContent = "apps.json 地址已复制到剪贴板";
+      status.textContent = `${name} 地址已复制到剪贴板`;
     } catch (error) {
       label.textContent = "复制失败";
       status.textContent = error.message || "复制失败，请重试";

@@ -138,6 +138,24 @@ h2 { margin-bottom: 0; font-size: 17px; line-height: 1.4; font-weight: 620; lett
 .version-download:hover { border-color: var(--accent); background: var(--surface); }
 .version-description { grid-column: 1 / -1; margin: -2px 0 0; font-size: 11px; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
 .full-empty-state { border-top: 1px solid var(--line); }
+.platform-switch { display: flex; gap: 8px; margin-bottom: 20px; padding: 4px; background: var(--surface-muted); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.platform-tab { display: inline-flex; align-items: center; gap: 9px; flex: 0 1 auto; min-height: 52px; padding: 0 16px; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: var(--radius-md); cursor: pointer; transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease; }
+.platform-tab:hover { color: var(--ink); }
+.platform-tab.active { color: var(--ink); background: var(--surface); border-color: var(--line); box-shadow: 0 1px 2px oklch(20% 0.02 250 / 8%); }
+.platform-glyph { display: grid; place-items: center; width: 38px; height: 30px; color: white; background: var(--ink); border-radius: 8px; font: 700 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .02em; }
+.platform-tab[data-platform="android"] .platform-glyph { background: oklch(52% 0.12 150); }
+.platform-name { font-size: 13px; font-weight: 580; }
+.platform-note { color: var(--muted); font: 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.device-filter { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; }
+.device-filter-label { margin-right: 2px; color: var(--muted); font-size: 11px; }
+.device-chip { min-height: 30px; padding: 0 11px; color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; cursor: pointer; font-size: 11px; transition: background-color 130ms ease, color 130ms ease, border-color 130ms ease; }
+.device-chip:hover { color: var(--ink); border-color: oklch(80% 0.03 255); }
+.device-chip.active { color: white; background: var(--accent); border-color: var(--accent); }
+.device-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+.device-tag { padding: 2px 7px; color: var(--muted); background: var(--surface-muted); border: 1px solid var(--line); border-radius: 999px; font: 10px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.device-tag.device-tv { color: oklch(42% 0.11 285); background: oklch(96% 0.02 285); border-color: oklch(90% 0.03 285); }
+.device-tag.device-watch { color: oklch(42% 0.11 40); background: oklch(96% 0.02 40); border-color: oklch(90% 0.03 40); }
+.device-tag.device-vision { color: oklch(42% 0.11 200); background: oklch(96% 0.02 200); border-color: oklch(90% 0.03 200); }
 
 @media (max-width: 760px) {
   .workspace { width: min(100% - 32px, 560px); }
@@ -174,6 +192,14 @@ h2 { margin-bottom: 0; font-size: 17px; line-height: 1.4; font-weight: 620; lett
   .version-row { grid-template-columns: minmax(0, 1fr); gap: 9px; padding: 11px 12px; }
   .version-download { justify-self: start; }
   .version-description { grid-column: 1; }
+  .platform-switch { gap: 4px; border-radius: var(--radius-md); }
+  .platform-tab { flex: 1 1 0; min-width: 0; padding: 8px 9px; gap: 7px; }
+  .platform-tab .platform-name { font-size: 12px; }
+  .platform-tab .platform-note { display: none; }
+  .platform-glyph { width: 32px; height: 26px; font-size: 9px; }
+  .device-filter { gap: 5px; }
+  .device-chip { min-height: 28px; padding: 0 10px; }
+  .full-app-info .device-tags { margin-top: 6px; }
 }
 @media (hover: hover) {
   .copy-url-button:hover:not(:disabled) { background: oklch(93% 0.045 255); border-color: oklch(80% 0.075 255); }

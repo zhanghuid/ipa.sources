@@ -15,7 +15,6 @@
     "GITHUB_OWNER": "YOUR_GITHUB_USERNAME",
     "GITHUB_REPO": "YOUR_GITHUB_REPOSITORY",
     "GITHUB_BRANCH": "main",
-    "GITHUB_FILE_PATH": "config/sources/custom/ipas.json",
     "ACCESS_ISSUER": "https://YOUR-TEAM.cloudflareaccess.com",
     "ACCESS_AUD": "SET-YOUR-CLOUDFLARE-ACCESS-AUDIENCE"
   },

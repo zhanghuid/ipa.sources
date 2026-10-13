@@ -5,8 +5,36 @@ const count = document.querySelector("#app-count");
 const message = document.querySelector("#form-message");
 const submitButton = document.querySelector("#submit-button");
 const refreshButton = document.querySelector("#refresh-button");
+const formTitle = document.querySelector("#form-title");
+const urlFieldLabel = document.querySelector("#url-field-label");
+const urlFieldHint = document.querySelector("#url-field-hint");
+const urlInput = document.querySelector("#ipa-url");
+const footerPath = document.querySelector("#footer-path");
+const platformTabs = [...document.querySelectorAll(".platform-tab")];
 let activeCatalogRequest;
 let catalogRequestId = 0;
+let platform = "ios";
+
+const PLATFORM_COPY = {
+  ios: {
+    title: "添加 iOS 应用",
+    field: "IPA 下载地址",
+    hint: "需为可直接下载的 HTTPS 链接。提交后由 GitHub Actions 下载 IPA 并读取 Bundle ID、版本与图标。",
+    placeholder: "https://…/app.ipa",
+    path: "config/ios/sources/custom/ipas.json",
+    output: "apps.json",
+    identifier: "bundleIdentifier",
+  },
+  android: {
+    title: "添加 Android 应用",
+    field: "APK 下载地址",
+    hint: "需为可直接下载的 HTTPS 链接。提交后由 GitHub Actions 下载 APK 并读取包名、版本与图标。",
+    placeholder: "https://…/app.apk",
+    path: "config/android/sources/custom/apks.json",
+    output: "android.json",
+    identifier: "packageName",
+  },
+};
 
 function setMessage(text, kind = "error") {
   message.textContent = text;
@@ -18,15 +46,37 @@ function latestVersion(app) {
   return [...(app.versions || [])].sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))[0] || {};
 }
 
+function applyPlatformCopy() {
+  const copy = PLATFORM_COPY[platform];
+  formTitle.textContent = copy.title;
+  urlFieldLabel.innerHTML = `${copy.field} <span class="required">*</span>`;
+  urlFieldHint.textContent = copy.hint;
+  urlInput.placeholder = copy.placeholder;
+  footerPath.textContent = copy.path;
+  const label = document.querySelector("[data-copy-label]");
+  if (label) label.textContent = `复制 ${copy.output}`;
+  document.querySelector("button[data-copy-catalog-url]")?.setAttribute("data-platform", platform);
+  for (const tab of platformTabs) {
+    const selected = tab.dataset.platform === platform;
+    tab.classList.toggle("active", selected);
+    tab.setAttribute("aria-selected", String(selected));
+  }
+}
+
 function renderApps(apps) {
   state.hidden = true;
   list.hidden = false;
   list.replaceChildren();
   count.textContent = String(apps.length).padStart(2, "0");
+  const copy = PLATFORM_COPY[platform];
   if (!apps.length) {
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.innerHTML = "<strong>还没有手动登记的应用</strong><span>提交一条 IPA 下载地址后，应用会显示在这里。</span>";
+    const strong = document.createElement("strong");
+    strong.textContent = `还没有手动登记的 ${copy.title.replace("添加 ", "")}`;
+    const span = document.createElement("span");
+    span.textContent = `提交一条 ${copy.field} 后，应用会显示在这里。`;
+    empty.append(strong, span);
     list.append(empty);
     return;
   }
@@ -55,18 +105,18 @@ function renderApps(apps) {
     const versionLabel = document.createElement("span");
     versionLabel.className = "app-version";
     versionLabel.textContent = `v${version.version || "—"}`;
-    const bundle = document.createElement("span");
-    bundle.textContent = app.bundleIdentifier;
-    bundle.title = app.bundleIdentifier;
-    meta.append(versionLabel, bundle);
+    const identifier = document.createElement("span");
+    identifier.textContent = app[copy.identifier] || "元数据待解析";
+    identifier.title = identifier.textContent;
+    meta.append(versionLabel, identifier);
     info.append(title, meta);
     const link = document.createElement("a");
     link.className = "source-link";
     link.href = version.downloadURL || "#";
     link.target = "_blank";
     link.rel = "noreferrer";
-    link.textContent = "IPA ↗";
-    link.setAttribute("aria-label", `打开 ${app.name} 的 IPA 下载链接`);
+    link.textContent = `${copy.field.slice(0, 3)} ↗`;
+    link.setAttribute("aria-label", `打开 ${app.name} 的下载链接`);
     const actions = document.createElement("div");
     actions.className = "app-row-actions";
     const deleteButton = document.createElement("button");
@@ -91,8 +141,10 @@ async function deleteApp(app, version, button) {
       method: "DELETE",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
+        platform,
         name: app.name,
         bundleIdentifier: app.bundleIdentifier || "",
+        packageName: app.packageName || "",
         downloadURL: version.downloadURL || "",
       }),
     });
@@ -133,7 +185,7 @@ async function loadApps() {
       }, 20_000);
     });
     const request = (async () => {
-      const response = await fetch("/api/apps", {
+      const response = await fetch(`/api/apps?platform=${encodeURIComponent(platform)}`, {
         headers: { Accept: "application/json" },
         signal: controller.signal,
       });
@@ -181,11 +233,11 @@ form.addEventListener("submit", async (event) => {
     const response = await fetch("/api/apps", {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, platform }),
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || `提交失败 (${response.status})`);
-    setMessage(`${result.updated ? "已更新" : "已添加"} ${result.app.name}，GitHub Actions 将自动下载 IPA 并读取版本信息。`, "success");
+    setMessage(`${result.updated ? "已更新" : "已添加"} ${result.app.name}，GitHub Actions 将自动下载并读取版本信息。`, "success");
     form.reset();
     await loadApps();
   } catch (error) {
@@ -196,5 +248,23 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
+for (const tab of platformTabs) {
+  tab.addEventListener("click", () => {
+    if (tab.dataset.platform === platform) return;
+    platform = tab.dataset.platform;
+    message.hidden = true;
+    applyPlatformCopy();
+    loadApps();
+  });
+}
+
 refreshButton.addEventListener("click", loadApps);
+window.addEventListener("platform-change", (event) => {
+  if (event.detail) {
+    platform = event.detail;
+    applyPlatformCopy();
+    loadApps();
+  }
+});
+applyPlatformCopy();
 loadApps();

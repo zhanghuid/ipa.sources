@@ -4,7 +4,26 @@ const count = document.querySelector("#app-count");
 const resultCount = document.querySelector("#result-count");
 const search = document.querySelector("#search-apps");
 const refreshButton = document.querySelector("#refresh-button");
-let allApps = [];
+const platformTabs = [...document.querySelectorAll(".platform-tab")];
+const deviceChips = [...document.querySelectorAll(".device-chip")];
+let catalogs = { ios: [], android: [] };
+let platform = "ios";
+let device = "all";
+
+const PLATFORM_META = {
+  ios: { output: "apps.json", identifier: "bundleIdentifier", archive: "IPA" },
+  android: { output: "android.json", identifier: "packageName", archive: "APK" },
+};
+
+const DEVICE_LABELS = { phone: "手机", pad: "平板", tv: "TV", watch: "手表", mac: "Mac", vision: "头显" };
+
+function currentApps() {
+  return catalogs[platform] || [];
+}
+
+function meta() {
+  return PLATFORM_META[platform];
+}
 
 function latestVersion(app) {
   return [...(app.versions || [])].sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")))[0] || {};
@@ -27,13 +46,19 @@ function makeDownload(version, appName) {
   link.href = url;
   link.target = "_blank";
   link.rel = "noopener noreferrer";
-  link.textContent = "下载 IPA ↗";
+  link.textContent = `下载 ${meta().archive} ↗`;
   link.setAttribute("aria-label", `下载 ${appName} v${version.version || "未知"}`);
   return link;
 }
 
+function devicesOf(app) {
+  const devices = (app.devices || []).filter(Boolean);
+  return devices.length ? devices : ["phone", "pad"];
+}
+
 function isCustomApp(app) {
-  return app.developerName === "Personal source" || String(app.iconURL || "").includes("/config/sources/custom/icons/");
+  return app.developerName === "Personal source"
+    || String(app.iconURL || "").includes("/sources/custom/icons/");
 }
 
 async function deleteCustomApp(app, button) {
@@ -46,16 +71,19 @@ async function deleteCustomApp(app, button) {
       method: "DELETE",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
+        platform,
         name: app.name,
         bundleIdentifier: app.bundleIdentifier || "",
+        packageName: app.packageName || "",
         downloadURL: latestVersion(app).downloadURL || "",
       }),
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || `删除失败 (${response.status})`);
-    allApps = allApps.filter((item) => item !== app);
-    count.textContent = String(allApps.length).padStart(2, "0");
+    catalogs[platform] = currentApps().filter((item) => item !== app);
+    updateCounts();
     renderApps();
+    state.hidden = true;
     resultCount.textContent = `已从自定义源删除 ${result.deleted}；目录生成文件会在自动同步后更新。`;
   } catch (error) {
     state.hidden = false;
@@ -70,7 +98,7 @@ function makeIcon(app) {
   const icon = document.createElement("div");
   icon.className = "app-icon catalog-app-icon";
   icon.setAttribute("aria-hidden", "true");
-  const initials = String(app.name || "IPA").slice(0, 2).toUpperCase();
+  const initials = String(app.name || "APP").slice(0, 2).toUpperCase();
   if (safeDownloadURL(app.iconURL)) {
     const image = document.createElement("img");
     image.src = app.iconURL;
@@ -82,6 +110,18 @@ function makeIcon(app) {
   return icon;
 }
 
+function makeDeviceTags(app) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "device-tags";
+  for (const value of devicesOf(app)) {
+    const tag = document.createElement("span");
+    tag.className = `device-tag device-${value}`;
+    tag.textContent = DEVICE_LABELS[value] || value;
+    wrapper.append(tag);
+  }
+  return wrapper;
+}
+
 function makeVersionRow(version, appName) {
   const row = document.createElement("div");
   row.className = "version-row";
@@ -91,11 +131,13 @@ function makeVersionRow(version, appName) {
   heading.className = "version-heading";
   const versionName = document.createElement("strong");
   versionName.textContent = `v${version.version || "未知"}`;
-  const meta = document.createElement("span");
-  const build = version.buildVersion ? `Build ${version.buildVersion}` : "";
-  const date = version.date || "日期未知";
-  meta.textContent = [build, date].filter(Boolean).join(" · ");
-  heading.append(versionName, meta);
+  const metaLine = document.createElement("span");
+  const parts = [];
+  if (version.buildVersion) parts.push(platform === "android" ? `versionCode ${version.buildVersion}` : `Build ${version.buildVersion}`);
+  if (version.date) parts.push(version.date);
+  if (version.size) parts.push(formatSize(version.size));
+  metaLine.textContent = parts.join(" · ");
+  heading.append(versionName, metaLine);
   detail.append(heading);
   row.append(detail);
   const description = version.localizedDescription || version.versionDescription;
@@ -110,20 +152,43 @@ function makeVersionRow(version, appName) {
   return row;
 }
 
+function formatSize(bytes) {
+  const value = Number(bytes);
+  if (!Number.isFinite(value) || value <= 0) return "";
+  const units = ["B", "KiB", "MiB", "GiB"];
+  let index = 0;
+  let size = value;
+  while (size >= 1024 && index < units.length - 1) {
+    size /= 1024;
+    index += 1;
+  }
+  return `${size.toFixed(size >= 100 || index === 0 ? 0 : 1)} ${units[index]}`;
+}
+
+function matchesQuery(app, query) {
+  if (!query) return true;
+  return [app.name, app[meta().identifier], app.developerName, app.subtitle]
+    .some((value) => String(value || "").toLocaleLowerCase().includes(query));
+}
+
 function renderApps() {
   const query = search.value.trim().toLocaleLowerCase();
-  const apps = allApps.filter((app) => [app.name, app.bundleIdentifier, app.developerName, app.subtitle]
-    .some((value) => String(value || "").toLocaleLowerCase().includes(query)));
+  const apps = currentApps().filter((app) =>
+    matchesQuery(app, query) && (device === "all" || devicesOf(app).includes(device)));
   list.replaceChildren();
   list.hidden = false;
-  resultCount.textContent = query ? `显示 ${apps.length} / ${allApps.length} 个应用` : "";
+  const total = currentApps().length;
+  const filters = [query ? "搜索" : "", device !== "all" ? `${DEVICE_LABELS[device] || device} 端` : ""].filter(Boolean);
+  resultCount.textContent = filters.length ? `显示 ${apps.length} / ${total} 个应用（${filters.join(" + ")}）` : "";
   if (!apps.length) {
     const empty = document.createElement("div");
     empty.className = "empty-state full-empty-state";
     const heading = document.createElement("strong");
-    heading.textContent = query ? "没有匹配的应用" : "目录中还没有应用";
+    heading.textContent = total ? "没有匹配的应用" : "该平台目录还没有应用";
     const text = document.createElement("span");
-    text.textContent = query ? "尝试其他名称、Bundle ID 或开发者。" : "生成 apps.json 后，应用会显示在这里。";
+    text.textContent = total
+      ? "尝试其他关键词，或切换端筛选。"
+      : `生成 ${meta().output} 后，应用会显示在这里。`;
     empty.append(heading, text);
     list.append(empty);
     return;
@@ -139,8 +204,8 @@ function renderApps() {
     title.textContent = app.name || "未命名应用";
     const subtitle = document.createElement("p");
     subtitle.className = "full-app-subtitle";
-    subtitle.textContent = [app.developerName, app.bundleIdentifier].filter(Boolean).join(" · ");
-    info.append(title, subtitle);
+    subtitle.textContent = [app.developerName, app[meta().identifier]].filter(Boolean).join(" · ");
+    info.append(title, subtitle, makeDeviceTags(app));
     const versions = [...(app.versions || [])].sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
     const latest = latestVersion(app);
     const summary = document.createElement("div");
@@ -169,7 +234,7 @@ function renderApps() {
       const details = document.createElement("details");
       details.className = "version-history";
       const toggle = document.createElement("summary");
-      toggle.textContent = "查看版本";
+      toggle.textContent = `查看版本（${versions.length}）`;
       const history = document.createElement("div");
       history.className = "version-list";
       versions.forEach((version) => history.append(makeVersionRow(version, app.name || "应用")));
@@ -178,6 +243,25 @@ function renderApps() {
     }
     list.append(article);
   }
+}
+
+function updateCounts() {
+  for (const tab of platformTabs) {
+    const target = tab.querySelector("[data-count-for]") || tab.querySelector(".platform-note");
+    if (target) target.textContent = String((catalogs[tab.dataset.platform] || []).length);
+  }
+  count.textContent = String(currentApps().length).padStart(2, "0");
+}
+
+function applyPlatform() {
+  for (const tab of platformTabs) {
+    const selected = tab.dataset.platform === platform;
+    tab.classList.toggle("active", selected);
+    tab.setAttribute("aria-selected", String(selected));
+  }
+  const label = document.querySelector("[data-copy-label]");
+  if (label) label.textContent = `复制 ${meta().output}`;
+  updateCounts();
 }
 
 async function loadCatalog() {
@@ -204,7 +288,7 @@ async function loadCatalog() {
       }, 25_000);
     });
     const request = (async () => {
-      const response = await fetch("/api/catalog", {
+      const response = await fetch("/api/catalog?platform=all", {
         headers: { Accept: "application/json" },
         signal: controller.signal,
       });
@@ -218,9 +302,12 @@ async function loadCatalog() {
     })();
     const { response, result } = await Promise.race([request, timeout]).finally(() => clearTimeout(timeoutId));
     if (!response.ok) throw new Error(result.error || `读取失败 (${response.status})`);
-    allApps = result.apps || [];
-    count.textContent = String(allApps.length).padStart(2, "0");
+    catalogs = {
+      ios: result.platforms?.ios?.apps || [],
+      android: result.platforms?.android?.apps || [],
+    };
     state.hidden = true;
+    applyPlatform();
     renderApps();
   } catch (error) {
     state.className = "catalog-state error";
@@ -233,4 +320,23 @@ async function loadCatalog() {
 
 search.addEventListener("input", renderApps);
 refreshButton.addEventListener("click", loadCatalog);
+for (const tab of platformTabs) {
+  tab.addEventListener("click", () => {
+    if (tab.dataset.platform === platform) return;
+    platform = tab.dataset.platform;
+    applyPlatform();
+    renderApps();
+  });
+}
+for (const chip of deviceChips) {
+  chip.addEventListener("click", () => {
+    device = chip.dataset.device;
+    for (const item of deviceChips) {
+      const selected = item === chip;
+      item.classList.toggle("active", selected);
+      item.setAttribute("aria-pressed", String(selected));
+    }
+    renderApps();
+  });
+}
 loadCatalog();
