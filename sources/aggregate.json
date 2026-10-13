@@ -1,9 +1,14 @@
 {
   "name": "聚合源",
   "category": "aggregate",
-  "generatedAt": "2026-10-13T11:34:53Z",
-  "total": 5,
+  "generatedAt": "2026-10-13T11:35:15Z",
+  "total": 6,
   "sources": [
+    {
+      "title": "源仓库",
+      "url": "https://www.yckceo.com/yuedu/shuyuan/index.html",
+      "status": "unchecked"
+    },
     {
       "title": "lifves",
       "url": "https://www.lifves.com/Home/book/booksourcelist.html",
