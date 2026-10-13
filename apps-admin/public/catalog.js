@@ -7,8 +7,10 @@ const refreshButton = document.querySelector("#refresh-button");
 const platformTabs = [...document.querySelectorAll(".platform-tab")];
 const deviceChips = [...document.querySelectorAll(".device-chip")];
 let catalogs = { ios: [], android: [] };
-let platform = "ios";
-let device = "all";
+const platformIds = platformTabs.map((tab) => tab.dataset.platform);
+const deviceIds = deviceChips.map((chip) => chip.dataset.device);
+let platform = window.viewPreference?.read("platform", platformIds, "ios") || "ios";
+let device = window.viewPreference?.read("device", deviceIds, "all") || "all";
 
 const PLATFORM_META = {
   ios: { output: "apps.json", identifier: "bundleIdentifier", archive: "IPA" },
@@ -272,6 +274,14 @@ function applyPlatform() {
   updateCounts();
 }
 
+function applyDeviceFilter() {
+  for (const chip of deviceChips) {
+    const selected = chip.dataset.device === device;
+    chip.classList.toggle("active", selected);
+    chip.setAttribute("aria-pressed", String(selected));
+  }
+}
+
 async function loadCatalog() {
   state.hidden = false;
   state.className = "catalog-state";
@@ -332,6 +342,7 @@ for (const tab of platformTabs) {
   tab.addEventListener("click", () => {
     if (tab.dataset.platform === platform) return;
     platform = tab.dataset.platform;
+    window.viewPreference?.write("platform", platform);
     applyPlatform();
     renderApps();
   });
@@ -339,12 +350,10 @@ for (const tab of platformTabs) {
 for (const chip of deviceChips) {
   chip.addEventListener("click", () => {
     device = chip.dataset.device;
-    for (const item of deviceChips) {
-      const selected = item === chip;
-      item.classList.toggle("active", selected);
-      item.setAttribute("aria-pressed", String(selected));
-    }
+    window.viewPreference?.write("device", device);
+    applyDeviceFilter();
     renderApps();
   });
 }
+applyDeviceFilter();
 loadCatalog();

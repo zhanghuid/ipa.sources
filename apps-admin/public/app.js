@@ -14,7 +14,9 @@ const footerPath = document.querySelector("#footer-path");
 const platformTabs = [...document.querySelectorAll(".platform-tab")];
 let activeCatalogRequest;
 let catalogRequestId = 0;
-let platform = "ios";
+const platformIds = platformTabs.map((tab) => tab.dataset.platform);
+// Reloading keeps the tab you were last on instead of jumping back to iOS.
+let platform = window.viewPreference?.read("platform", platformIds, "ios") || "ios";
 
 const PLATFORM_COPY = {
   ios: {
@@ -373,6 +375,7 @@ for (const tab of platformTabs) {
   tab.addEventListener("click", () => {
     if (tab.dataset.platform === platform) return;
     platform = tab.dataset.platform;
+    window.viewPreference?.write("platform", platform);
     message.hidden = true;
     applyPlatformCopy();
     loadApps();
@@ -385,6 +388,7 @@ refreshButton.addEventListener("click", loadApps);
 window.addEventListener("platform-change", (event) => {
   if (event.detail) {
     platform = event.detail;
+    window.viewPreference?.write("platform", platform);
     applyPlatformCopy();
     loadApps();
   }
