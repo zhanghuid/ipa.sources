@@ -17,15 +17,19 @@
           "localizedDescription": "",
           "downloadURL": "https://download.getmegaportal.com/yingxia/1.2.2/Yingxia-1.2.2-ios.ipa",
           "size": 67222921,
-          "minOSVersion": "18.0",
-          "metadataError": "Unable to download IPA (URLError); check URL access."
+          "minOSVersion": "18.0"
         }
       ],
       "appPermissions": {
         "entitlements": [],
         "privacy": {}
       },
-      "_iconExtractionChecked": "cgbi-v1"
+      "_iconExtractionChecked": "cgbi-v2",
+      "devices": [
+        "phone",
+        "pad"
+      ],
+      "_deviceCheckVersion": "family-v1"
     },
     {
       "name": "uz",

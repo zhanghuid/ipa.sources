@@ -2601,11 +2601,11 @@
         "entitlements": [],
         "privacy": {}
       },
-      "platform": "ios",
       "devices": [
         "phone",
         "pad"
-      ]
+      ],
+      "platform": "ios"
     },
     {
       "name": "uz",
