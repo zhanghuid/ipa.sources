@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-13T11:35:15Z",
+  "generatedAt": "2026-10-13T11:37:04Z",
   "categories": [
     {
       "id": "live",
@@ -12,7 +12,7 @@
       "id": "video",
       "name": "视频源",
       "file": "video.json",
-      "total": 1,
+      "total": 2,
       "available": 0
     },
     {
