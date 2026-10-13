@@ -2,6 +2,11 @@
   "name": "聚合源",
   "sources": [
     {
+      "title": "Zoo.ink",
+      "url": "https://zoo.ink/tvbox.html",
+      "status": "unchecked"
+    },
+    {
       "title": "d1y/kitty",
       "url": "https://d1y.github.io/kitty/",
       "status": "unchecked"
