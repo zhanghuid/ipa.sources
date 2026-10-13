@@ -2,6 +2,29 @@
   "name": "Custom Apps",
   "apps": [
     {
+      "name": "小猫影视",
+      "packageName": "",
+      "developerName": "Personal source",
+      "subtitle": "",
+      "localizedDescription": "",
+      "iconURL": "",
+      "category": "utilities",
+      "versions": [
+        {
+          "version": "pending",
+          "buildVersion": "pending",
+          "date": "2026-10-13",
+          "localizedDescription": "等待 GitHub Actions 下载 APK 并读取版本信息。",
+          "downloadURL": "https://github.com/waifu-project/movie/releases/latest/download/catmovie.apk",
+          "size": 0
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      }
+    },
+    {
       "name": "红果桌面版 1.0.13",
       "packageName": "cn.hongguo.tv",
       "developerName": "Personal source",
