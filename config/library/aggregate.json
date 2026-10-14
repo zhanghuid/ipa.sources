@@ -2,6 +2,11 @@
   "name": "聚合源",
   "sources": [
     {
+      "title": "订阅直播中心",
+      "url": "https://iptv-hub-q7m2.web.zaka.live/",
+      "status": "unchecked"
+    },
+    {
       "title": "TVBox Interface / TVBox 接口 / OK影视",
       "url": "https://github.com/cluntop/tvbox",
       "status": "available",
