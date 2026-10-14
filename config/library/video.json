@@ -6,22 +6,22 @@
       "url": "https://9280.kstore.vip/newwex.json",
       "status": "available",
       "note": "影视仓、NewBox、Tvbox",
-      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "lastCheckedAt": "2026-10-14T02:20:14Z",
       "httpStatus": 206,
-      "latencyMs": 316,
+      "latencyMs": 1650,
       "failStreak": 0,
-      "lastOkAt": "2026-10-14T02:17:14Z",
+      "lastOkAt": "2026-10-14T02:20:14Z",
       "error": ""
     },
     {
       "title": "VOD 影视源",
       "url": "https://d1y.github.io/kitty/vod.json",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "lastCheckedAt": "2026-10-14T02:20:14Z",
       "httpStatus": 206,
-      "latencyMs": 132,
+      "latencyMs": 78,
       "failStreak": 0,
-      "lastOkAt": "2026-10-14T02:17:14Z",
+      "lastOkAt": "2026-10-14T02:20:14Z",
       "error": ""
     }
   ]

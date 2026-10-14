@@ -1,14 +1,14 @@
 {
   "name": "视频源",
   "category": "video",
-  "generatedAt": "2026-10-14T02:17:22Z",
+  "generatedAt": "2026-10-14T02:20:21Z",
   "total": 2,
   "sources": [
     {
       "title": "视频源 1",
       "url": "https://9280.kstore.vip/newwex.json",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "lastCheckedAt": "2026-10-14T02:20:14Z",
       "httpStatus": 206,
       "note": "影视仓、NewBox、Tvbox"
     },
@@ -16,7 +16,7 @@
       "title": "VOD 影视源",
       "url": "https://d1y.github.io/kitty/vod.json",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "lastCheckedAt": "2026-10-14T02:20:14Z",
       "httpStatus": 206
     }
   ]

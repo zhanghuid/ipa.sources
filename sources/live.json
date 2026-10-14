@@ -1,14 +1,14 @@
 {
   "name": "直播源",
   "category": "live",
-  "generatedAt": "2026-10-14T02:17:22Z",
+  "generatedAt": "2026-10-14T02:20:21Z",
   "total": 1,
   "sources": [
     {
       "title": "电视直播",
       "url": "https://d1y.github.io/kitty/lives.json",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "lastCheckedAt": "2026-10-14T02:20:14Z",
       "httpStatus": 206
     }
   ]
