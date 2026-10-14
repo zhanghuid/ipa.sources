@@ -2,6 +2,11 @@
   "name": "聚合源",
   "sources": [
     {
+      "title": "TVBox Interface / TVBox 接口 / OK影视",
+      "url": "https://github.com/cluntop/tvbox",
+      "status": "unchecked"
+    },
+    {
       "title": "香菜布丁",
       "url": "https://132130.com/",
       "note": "软件发布页面",
