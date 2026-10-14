@@ -5,47 +5,71 @@
       "title": "TVBox 18+ 接口",
       "url": "https://clun.top/fun.jsonTVBox",
       "note": "TVBox",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
+      "httpStatus": 200,
+      "latencyMs": 261,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:21:51Z",
+      "error": ""
     },
     {
       "title": "TVBox PG 接口",
       "url": "https://clun.top/jsm.json",
       "note": "TVBox",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
+      "httpStatus": 200,
+      "latencyMs": 321,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:21:51Z",
+      "error": ""
     },
     {
       "title": "TVBox 张佬 接口",
       "url": "https://clun.top/aa.json",
       "note": "TVBox",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
+      "httpStatus": 200,
+      "latencyMs": 277,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:21:51Z",
+      "error": ""
     },
     {
       "title": "TVBox 自用 接口",
       "url": "https://clun.top/box.json",
       "note": "TVBox",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
+      "httpStatus": 200,
+      "latencyMs": 533,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:21:51Z",
+      "error": ""
     },
     {
       "title": "视频源 1",
       "url": "https://9280.kstore.vip/newwex.json",
       "status": "available",
       "note": "影视仓、NewBox、Tvbox",
-      "lastCheckedAt": "2026-10-14T02:20:14Z",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
       "httpStatus": 206,
-      "latencyMs": 1650,
+      "latencyMs": 288,
       "failStreak": 0,
-      "lastOkAt": "2026-10-14T02:20:14Z",
+      "lastOkAt": "2026-10-14T02:21:51Z",
       "error": ""
     },
     {
       "title": "VOD 影视源",
       "url": "https://d1y.github.io/kitty/vod.json",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:20:14Z",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
       "httpStatus": 206,
-      "latencyMs": 78,
+      "latencyMs": 43,
       "failStreak": 0,
-      "lastOkAt": "2026-10-14T02:20:14Z",
+      "lastOkAt": "2026-10-14T02:21:51Z",
       "error": ""
     }
   ]

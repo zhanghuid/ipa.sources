@@ -1,14 +1,14 @@
 {
   "name": "聚合源",
   "category": "aggregate",
-  "generatedAt": "2026-10-14T02:20:21Z",
+  "generatedAt": "2026-10-14T02:21:58Z",
   "total": 7,
   "sources": [
     {
       "title": "香菜布丁",
       "url": "https://132130.com/",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:20:14Z",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
       "httpStatus": 200,
       "note": "软件发布页面"
     },
@@ -16,42 +16,42 @@
       "title": "源仓库",
       "url": "https://www.yckceo.com/yuedu/shuyuan/index.html",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:20:14Z",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
       "httpStatus": 200
     },
     {
       "title": "lifves",
       "url": "https://www.lifves.com/Home/book/booksourcelist.html",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:20:14Z",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
       "httpStatus": 200
     },
     {
       "title": "Yiove 书源仓库",
       "url": "https://shuyuan.yiove.com/",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:20:14Z",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
       "httpStatus": 206
     },
     {
       "title": "「阅读」APP 源",
       "url": "https://legado.aoaostar.com/",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:20:14Z",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
       "httpStatus": 206
     },
     {
       "title": "Zoo.ink",
       "url": "https://zoo.ink/tvbox.html",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:20:14Z",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
       "httpStatus": 200
     },
     {
       "title": "d1y/kitty",
       "url": "https://d1y.github.io/kitty/",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:20:14Z",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
       "httpStatus": 206
     }
   ]

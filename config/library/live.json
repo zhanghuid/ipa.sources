@@ -5,11 +5,11 @@
       "title": "电视直播",
       "url": "https://d1y.github.io/kitty/lives.json",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:20:14Z",
+      "lastCheckedAt": "2026-10-14T02:21:51Z",
       "httpStatus": 206,
-      "latencyMs": 62,
+      "latencyMs": 59,
       "failStreak": 0,
-      "lastOkAt": "2026-10-14T02:20:14Z",
+      "lastOkAt": "2026-10-14T02:21:51Z",
       "error": ""
     }
   ]
