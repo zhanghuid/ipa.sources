@@ -2,6 +2,12 @@
   "name": "聚合源",
   "sources": [
     {
+      "title": "香菜布丁",
+      "url": "https://132130.com/",
+      "note": "软件发布页面",
+      "status": "unchecked"
+    },
+    {
       "title": "源仓库",
       "url": "https://www.yckceo.com/yuedu/shuyuan/index.html",
       "status": "unchecked"
