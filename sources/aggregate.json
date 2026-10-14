@@ -1,9 +1,15 @@
 {
   "name": "聚合源",
   "category": "aggregate",
-  "generatedAt": "2026-10-13T22:46:00Z",
-  "total": 6,
+  "generatedAt": "2026-10-14T02:14:59Z",
+  "total": 7,
   "sources": [
+    {
+      "title": "香菜布丁",
+      "url": "https://132130.com/",
+      "status": "unchecked",
+      "note": "软件发布页面"
+    },
     {
       "title": "源仓库",
       "url": "https://www.yckceo.com/yuedu/shuyuan/index.html",

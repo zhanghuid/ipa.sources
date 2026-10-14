@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-13T22:46:00Z",
+  "generatedAt": "2026-10-14T02:14:59Z",
   "categories": [
     {
       "id": "live",
@@ -40,7 +40,7 @@
       "id": "aggregate",
       "name": "聚合源",
       "file": "aggregate.json",
-      "total": 6,
+      "total": 7,
       "available": 0
     }
   ]
