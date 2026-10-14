@@ -2,6 +2,12 @@
   "name": "视频源",
   "sources": [
     {
+      "title": "TVBox 18+ 接口",
+      "url": "https://clun.top/fun.jsonTVBox",
+      "note": "TVBox",
+      "status": "unchecked"
+    },
+    {
       "title": "TVBox PG 接口",
       "url": "https://clun.top/jsm.json",
       "note": "TVBox",
