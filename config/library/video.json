@@ -6,11 +6,11 @@
       "url": "https://clun.top/fun.jsonTVBox",
       "note": "TVBox",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 200,
-      "latencyMs": 135,
+      "latencyMs": 276,
       "failStreak": 0,
-      "lastOkAt": "2026-10-14T04:55:20Z",
+      "lastOkAt": "2026-10-14T16:11:16Z",
       "error": ""
     },
     {
@@ -18,11 +18,11 @@
       "url": "https://clun.top/jsm.json",
       "note": "TVBox",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 200,
-      "latencyMs": 121,
+      "latencyMs": 413,
       "failStreak": 0,
-      "lastOkAt": "2026-10-14T04:55:20Z",
+      "lastOkAt": "2026-10-14T16:11:16Z",
       "error": ""
     },
     {
@@ -30,11 +30,11 @@
       "url": "https://clun.top/aa.json",
       "note": "TVBox",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 200,
-      "latencyMs": 127,
+      "latencyMs": 391,
       "failStreak": 0,
-      "lastOkAt": "2026-10-14T04:55:20Z",
+      "lastOkAt": "2026-10-14T16:11:16Z",
       "error": ""
     },
     {
@@ -42,11 +42,11 @@
       "url": "https://clun.top/box.json",
       "note": "TVBox",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 200,
-      "latencyMs": 95,
+      "latencyMs": 677,
       "failStreak": 0,
-      "lastOkAt": "2026-10-14T04:55:20Z",
+      "lastOkAt": "2026-10-14T16:11:16Z",
       "error": ""
     },
     {
@@ -54,22 +54,22 @@
       "url": "https://9280.kstore.vip/newwex.json",
       "status": "available",
       "note": "影视仓、NewBox、Tvbox",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 206,
-      "latencyMs": 1013,
+      "latencyMs": 445,
       "failStreak": 0,
-      "lastOkAt": "2026-10-14T04:55:20Z",
+      "lastOkAt": "2026-10-14T16:11:16Z",
       "error": ""
     },
     {
       "title": "VOD 影视源",
       "url": "https://d1y.github.io/kitty/vod.json",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 206,
-      "latencyMs": 32,
+      "latencyMs": 1111,
       "failStreak": 0,
-      "lastOkAt": "2026-10-14T04:55:20Z",
+      "lastOkAt": "2026-10-14T16:11:16Z",
       "error": ""
     }
   ]

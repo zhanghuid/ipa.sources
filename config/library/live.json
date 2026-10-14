@@ -4,17 +4,23 @@
     {
       "title": "订阅直播中心",
       "url": "https://iptv-hub-q7m2.web.zaka.live/playlist.m3u",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
+      "httpStatus": 206,
+      "latencyMs": 1030,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T16:11:16Z",
+      "error": ""
     },
     {
       "title": "电视直播",
       "url": "https://d1y.github.io/kitty/lives.json",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 206,
-      "latencyMs": 46,
+      "latencyMs": 311,
       "failStreak": 0,
-      "lastOkAt": "2026-10-14T04:55:20Z",
+      "lastOkAt": "2026-10-14T16:11:16Z",
       "error": ""
     }
   ]

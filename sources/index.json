@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-14T11:53:59Z",
+  "generatedAt": "2026-10-14T16:11:19Z",
   "categories": [
     {
       "id": "live",
       "name": "直播源",
       "file": "live.json",
-      "total": 1,
-      "available": 1
+      "total": 2,
+      "available": 2
     },
     {
       "id": "video",
@@ -40,8 +40,8 @@
       "id": "aggregate",
       "name": "聚合源",
       "file": "aggregate.json",
-      "total": 8,
-      "available": 8
+      "total": 9,
+      "available": 9
     }
   ]
 }

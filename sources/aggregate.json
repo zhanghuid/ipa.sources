@@ -1,21 +1,28 @@
 {
   "name": "聚合源",
   "category": "aggregate",
-  "generatedAt": "2026-10-14T11:53:59Z",
-  "total": 8,
+  "generatedAt": "2026-10-14T16:11:19Z",
+  "total": 9,
   "sources": [
+    {
+      "title": "订阅直播中心",
+      "url": "https://iptv-hub-q7m2.web.zaka.live/",
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
+      "httpStatus": 200
+    },
     {
       "title": "TVBox Interface / TVBox 接口 / OK影视",
       "url": "https://github.com/cluntop/tvbox",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 206
     },
     {
       "title": "香菜布丁",
       "url": "https://132130.com/",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 200,
       "note": "软件发布页面"
     },
@@ -23,42 +30,42 @@
       "title": "源仓库",
       "url": "https://www.yckceo.com/yuedu/shuyuan/index.html",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 200
     },
     {
       "title": "lifves",
       "url": "https://www.lifves.com/Home/book/booksourcelist.html",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 200
     },
     {
       "title": "Yiove 书源仓库",
       "url": "https://shuyuan.yiove.com/",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 206
     },
     {
       "title": "「阅读」APP 源",
       "url": "https://legado.aoaostar.com/",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 206
     },
     {
       "title": "Zoo.ink",
       "url": "https://zoo.ink/tvbox.html",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 200
     },
     {
       "title": "d1y/kitty",
       "url": "https://d1y.github.io/kitty/",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T04:55:20Z",
+      "lastCheckedAt": "2026-10-14T16:11:16Z",
       "httpStatus": 206
     }
   ]
