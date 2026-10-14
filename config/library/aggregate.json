@@ -5,37 +5,79 @@
       "title": "香菜布丁",
       "url": "https://132130.com/",
       "note": "软件发布页面",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "httpStatus": 200,
+      "latencyMs": 530,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:17:14Z",
+      "error": ""
     },
     {
       "title": "源仓库",
       "url": "https://www.yckceo.com/yuedu/shuyuan/index.html",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "httpStatus": 200,
+      "latencyMs": 8011,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:17:14Z",
+      "error": ""
     },
     {
       "title": "lifves",
       "url": "https://www.lifves.com/Home/book/booksourcelist.html",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "httpStatus": 200,
+      "latencyMs": 1279,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:17:14Z",
+      "error": ""
     },
     {
       "title": "Yiove 书源仓库",
       "url": "https://shuyuan.yiove.com/",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "httpStatus": 206,
+      "latencyMs": 580,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:17:14Z",
+      "error": ""
     },
     {
       "title": "「阅读」APP 源",
       "url": "https://legado.aoaostar.com/",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "httpStatus": 206,
+      "latencyMs": 186,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:17:14Z",
+      "error": ""
     },
     {
       "title": "Zoo.ink",
       "url": "https://zoo.ink/tvbox.html",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "httpStatus": 200,
+      "latencyMs": 1428,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:17:14Z",
+      "error": ""
     },
     {
       "title": "d1y/kitty",
       "url": "https://d1y.github.io/kitty/",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "httpStatus": 206,
+      "latencyMs": 116,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:17:14Z",
+      "error": ""
     }
   ]
 }

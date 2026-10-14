@@ -4,7 +4,13 @@
     {
       "title": "「阅读」自用书源分享",
       "url": "https://gh-proxy.org/https://raw.githubusercontent.com/XIU2/Yuedu/master/shuyuan",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "httpStatus": 206,
+      "latencyMs": 542,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:17:14Z",
+      "error": ""
     }
   ]
 }

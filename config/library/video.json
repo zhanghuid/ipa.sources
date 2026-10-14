@@ -4,13 +4,25 @@
     {
       "title": "视频源 1",
       "url": "https://9280.kstore.vip/newwex.json",
-      "status": "unchecked",
-      "note": "影视仓、NewBox、Tvbox"
+      "status": "available",
+      "note": "影视仓、NewBox、Tvbox",
+      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "httpStatus": 206,
+      "latencyMs": 316,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:17:14Z",
+      "error": ""
     },
     {
       "title": "VOD 影视源",
       "url": "https://d1y.github.io/kitty/vod.json",
-      "status": "unchecked"
+      "status": "available",
+      "lastCheckedAt": "2026-10-14T02:17:14Z",
+      "httpStatus": 206,
+      "latencyMs": 132,
+      "failStreak": 0,
+      "lastOkAt": "2026-10-14T02:17:14Z",
+      "error": ""
     }
   ]
 }

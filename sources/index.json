@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-10-14T02:14:59Z",
+  "generatedAt": "2026-10-14T02:17:22Z",
   "categories": [
     {
       "id": "live",
       "name": "直播源",
       "file": "live.json",
       "total": 1,
-      "available": 0
+      "available": 1
     },
     {
       "id": "video",
       "name": "视频源",
       "file": "video.json",
       "total": 2,
-      "available": 0
+      "available": 2
     },
     {
       "id": "audio",
@@ -34,14 +34,14 @@
       "name": "小说源",
       "file": "novel.json",
       "total": 1,
-      "available": 0
+      "available": 1
     },
     {
       "id": "aggregate",
       "name": "聚合源",
       "file": "aggregate.json",
       "total": 7,
-      "available": 0
+      "available": 7
     }
   ]
 }
