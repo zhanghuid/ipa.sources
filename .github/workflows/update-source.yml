@@ -42,6 +42,36 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ACCELERATOR_BASE_URL: ${{ vars.ACCELERATOR_BASE_URL }}
         run: python scripts/generate_android.py
+      - name: Decide whether the source check is due
+        id: due
+        # Catalogs regenerate every six hours, but availability is only checked
+        # once every other day: the odd day-of-year is skipped and only the first
+        # slot of a due day runs. Probing four times a day would let a six-hour
+        # blip mark a source unavailable, and `sources/available.json` drops
+        # those, so clients would lose a working source over a short outage.
+        # Manual runs and pushes always check.
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          elif [ $(( $(date -u +%j) % 2 )) -eq 0 ] && [ "$(date -u +%H)" -lt 6 ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Check subscription source availability
+        if: steps.due.outputs.run == 'true'
+        # Runs before the feeds are generated so `sources/*.json` already carry
+        # the fresh status. The runner is an overseas datacentre, so hosts that
+        # only serve Chinese IPs can be misreported here; set the repository
+        # variable SOURCE_CHECK_PROXY to route the probes through a proxy.
+        # A non-zero exit means at least one source is unavailable. Keep the job
+        # going anyway: a broken source must not block the catalog commit.
+        continue-on-error: true
+        env:
+          SOURCE_CHECK_PROXY: ${{ vars.SOURCE_CHECK_PROXY }}
+        # Chinese hosts answer slowly from overseas (~10s to first byte), so the
+        # runner gets a longer per-attempt timeout than the local default.
+        run: python scripts/check_sources.py --no-commit --timeout 25 --attempts 3
       - name: Generate subscription source feeds
         run: python scripts/generate_library.py
       - name: Commit catalog changes
@@ -49,12 +79,12 @@ jobs:
         # this job on a detached HEAD where `git push` has no branch to push to.
         if: github.ref_type == 'branch'
         run: |
-          if git diff --quiet -- apps.json android.json config/ios/sources config/android/sources config/android/catalog.json sources; then
+          if git diff --quiet -- apps.json android.json config/ios/sources config/android/sources config/android/catalog.json config/library sources; then
             echo "Catalogs are up to date"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps.json android.json config/ios/sources config/android/sources config/android/catalog.json sources
+          git add apps.json android.json config/ios/sources config/android/sources config/android/catalog.json config/library sources
           git commit -m "chore: update app catalogs"
           git push

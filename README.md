@@ -83,12 +83,15 @@ with a login or error page.
   serving `GET` normally.
 - `2xx`/`3xx` counts as available. Everything else (4xx, 5xx, timeout, DNS or
   connection error) is a failure.
+- A transient failure is retried up to `--attempts` times (default 3) with a
+  growing backoff. Only transport errors and 408/425/429/5xx are retried; other
+  4xx answers are definitive and come back at once.
 - One failure marks the source `suspected`; it becomes `unavailable` after two
   consecutive failures (`--threshold`) and returns to `available` as soon as a
   probe succeeds.
-- The run must happen from a network path that resembles the clients. Run it
-  from your own machine rather than GitHub Actions, otherwise hosts that block
-  overseas datacentre IPs will be reported as down.
+- The result is only as meaningful as the network path that produced it. Hosts
+  that serve only Chinese IPs are reported as down when probed from overseas,
+  which is why the GitHub Actions step can be pointed at a proxy (below).
 
 ```bash
 python scripts/check_sources.py                 # check all, write, commit and push
@@ -96,14 +99,37 @@ python scripts/check_sources.py --dry-run       # print only, change nothing
 python scripts/check_sources.py --category live --url https://…/a.m3u
 python scripts/check_sources.py --no-commit     # write files, skip git
 python scripts/check_sources.py --concurrency 8 --timeout 15 --threshold 2
+python scripts/check_sources.py --attempts 3 --proxy http://127.0.0.1:7890
 ```
 
-Writing status files changes `config/library/**`, which triggers the
-**Update app sources** workflow. That workflow runs
-`scripts/generate_library.py` and commits the regenerated `sources/` feeds, so
-you do not run the generator by hand. The process exits non-zero when any
-source is `unavailable`, which makes it usable from a launchd job or any other
-scheduler; a schedule every other day is a reasonable default.
+`--proxy` (or the `SOURCE_CHECK_PROXY` environment variable) routes every probe
+through an HTTP(S) proxy, so an overseas runner can be made to see what a
+Chinese client sees. Without it, `HTTP_PROXY`/`HTTPS_PROXY` are honoured the way
+urllib normally behaves.
+
+### Scheduled checks in GitHub Actions
+
+The **Update app sources** workflow runs `scripts/check_sources.py --no-commit`
+every six hours, immediately before `scripts/generate_library.py`. The checker
+rewrites `config/library/*.json`, the generator then republishes `sources/`, and
+the workflow's commit step lands both in one commit. Because the checker writes
+into `config/library`, that path is part of the commit step's `git diff` guard
+and `git add` list; without it the status updates would be regenerated and
+discarded on every run.
+
+The check step uses `continue-on-error: true`. The checker exits non-zero when a
+source is `unavailable`, and that must be visible without blocking the catalog
+commit — a dead subscription source should never stop app updates. To have the
+runner probe from a Chinese address, set the repository **variable**
+`SOURCE_CHECK_PROXY` to the proxy URL; it is read through the same variable by
+the workflow step.
+
+Writing status files changes `config/library/**`, which itself triggers this
+workflow. When running the checker by hand, `python scripts/check_sources.py`
+performs its own commit and push; the workflow uses `--no-commit` and lets the
+shared commit step handle it. The process exits non-zero when any source is
+`unavailable`, which makes it usable from a launchd job or any other scheduler;
+a schedule every other day is a reasonable default.
 
 ### Multiple addresses and editing
 

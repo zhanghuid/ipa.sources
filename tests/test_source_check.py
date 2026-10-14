@@ -6,6 +6,7 @@ import tempfile
 import threading
 import time
 import unittest
+import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from unittest import mock
@@ -52,6 +53,14 @@ class Handler(BaseHTTPRequestHandler):
             else:
                 body = b"#EXTM3U\n"
                 self.send_response(200)
+        elif path == "/flaky3.m3u":
+            # Outlasts one run of three attempts, then recovers.
+            if Handler.counter[path] <= 3:
+                body = b"down"
+                self.send_response(503)
+            else:
+                body = b"#EXTM3U\n"
+                self.send_response(200)
         else:
             body = b"?"
             self.send_response(404)
@@ -80,27 +89,73 @@ class LocalServer:
 class ProbeTests(unittest.TestCase):
     def test_available_redirect_and_failures(self) -> None:
         with LocalServer() as server:
-            self.assertEqual(check_sources.probe(f"{server.base}/ok.m3u").status, 200)
-            moved = check_sources.probe(f"{server.base}/moved.m3u")
+            self.assertEqual(check_sources.probe(f"{server.base}/ok.m3u", backoff=0).status, 200)
+            moved = check_sources.probe(f"{server.base}/moved.m3u", backoff=0)
             self.assertTrue(moved.ok)
             self.assertEqual(moved.status, 200)
             for path in ("missing.m3u", "forbidden.m3u", "broken.m3u"):
-                result = check_sources.probe(f"{server.base}/{path}")
+                result = check_sources.probe(f"{server.base}/{path}", backoff=0)
                 self.assertFalse(result.ok, path)
                 self.assertGreaterEqual(result.status, 400)
 
     def test_timeout_is_reported_as_failure(self) -> None:
         with LocalServer() as server:
-            result = check_sources.probe(f"{server.base}/slow.m3u", timeout=0.1)
+            result = check_sources.probe(f"{server.base}/slow.m3u", timeout=0.1, attempts=1)
             self.assertFalse(result.ok)
             self.assertIsNone(result.status)
             self.assertEqual(result.error, "超时")
 
     def test_connection_error_is_a_failure(self) -> None:
         # Nothing is listening on this port.
-        result = check_sources.probe("http://127.0.0.1:9/never.m3u", timeout=1)
+        result = check_sources.probe("http://127.0.0.1:9/never.m3u", timeout=1, attempts=1)
         self.assertFalse(result.ok)
         self.assertIsNone(result.status)
+
+
+class RetryTests(unittest.TestCase):
+    def test_transient_failure_is_retried_until_it_succeeds(self) -> None:
+        with LocalServer() as server:
+            result = check_sources.probe(f"{server.base}/flaky.m3u", backoff=0)
+        # The route fails its first request and recovers, so the retry wins.
+        self.assertTrue(result.ok)
+        self.assertEqual(result.status, 200)
+        self.assertEqual(result.attempts, 2)
+
+    def test_client_errors_are_not_retried(self) -> None:
+        # A 404/403 is a definitive answer; retrying only wastes the budget.
+        with LocalServer() as server:
+            for path in ("missing.m3u", "forbidden.m3u"):
+                result = check_sources.probe(f"{server.base}/{path}", backoff=0)
+                self.assertFalse(result.ok, path)
+                self.assertFalse(result.retryable, path)
+                self.assertEqual(result.attempts, 1, path)
+
+    def test_server_errors_exhaust_the_attempt_budget(self) -> None:
+        with LocalServer() as server:
+            result = check_sources.probe(f"{server.base}/broken.m3u", attempts=3, backoff=0)
+            served = Handler.counter["/broken.m3u"]
+        self.assertFalse(result.ok)
+        self.assertTrue(result.retryable)
+        self.assertEqual(result.attempts, 3)
+        self.assertEqual(served, 3)
+
+    def test_attempts_of_one_disables_retrying(self) -> None:
+        with LocalServer() as server:
+            result = check_sources.probe(f"{server.base}/flaky.m3u", attempts=1)
+        self.assertFalse(result.ok)
+        self.assertEqual(result.attempts, 1)
+
+    def test_retry_backoff_sleeps_between_attempts(self) -> None:
+        with LocalServer() as server, mock.patch.object(check_sources.time, "sleep") as sleep:
+            result = check_sources.probe(f"{server.base}/broken.m3u", attempts=3, backoff=2.0)
+        self.assertEqual(result.attempts, 3)
+        self.assertEqual([call.args[0] for call in sleep.call_args_list], [2.0, 4.0])
+
+    def test_proxy_reaches_the_opener(self) -> None:
+        opener = check_sources.build_opener("http://127.0.0.1:7890")
+        handler = next(h for h in opener.handlers if isinstance(h, urllib.request.ProxyHandler))
+        self.assertEqual(handler.proxies.get("https"), "http://127.0.0.1:7890")
+        self.assertEqual(handler.proxies.get("http"), "http://127.0.0.1:7890")
 
 
 class ApplyProbeTests(unittest.TestCase):
@@ -172,7 +227,7 @@ class CheckAllTests(unittest.TestCase):
                 {"title": "失效", "url": f"{server.base}/missing.m3u"},
                 {"title": "停用", "url": f"{server.base}/ok.m3u?off", "enabled": False},
             ])
-            report = check_sources.check_all(["live"], concurrency=2)
+            report = check_sources.check_all(["live"], concurrency=2, backoff=0)
 
         self.assertEqual(report["checked"], 2)
         self.assertEqual(report["counts"]["available"], 1)
@@ -193,7 +248,7 @@ class CheckAllTests(unittest.TestCase):
             original = [{"title": "正常", "url": f"{server.base}/ok.m3u"}]
             self.write_category("live", original)
             before = (self.library_dir / "live.json").read_text(encoding="utf-8")
-            report = check_sources.check_all(["live"], dry_run=True)
+            report = check_sources.check_all(["live"], dry_run=True, backoff=0)
 
         self.assertTrue(report["dry_run"])
         self.assertEqual(report["written"], [])
@@ -203,8 +258,8 @@ class CheckAllTests(unittest.TestCase):
     def test_second_run_marks_a_persistently_broken_source_unavailable(self) -> None:
         with LocalServer() as server:
             self.write_category("video", [{"title": "坏源", "url": f"{server.base}/broken.m3u"}])
-            check_sources.check_all(["video"], threshold=1)
-            report = check_sources.check_all(["video"], threshold=1)
+            check_sources.check_all(["video"], threshold=1, backoff=0)
+            report = check_sources.check_all(["video"], threshold=1, backoff=0)
 
         self.assertEqual(report["counts"]["unavailable"], 1)
         stored = json.loads((self.library_dir / "video.json").read_text(encoding="utf-8"))
@@ -212,15 +267,17 @@ class CheckAllTests(unittest.TestCase):
 
     def test_recovery_returns_the_source_to_available(self) -> None:
         with LocalServer() as server:
-            self.write_category("audio", [{"title": "抖动", "url": f"{server.base}/flaky.m3u"}])
-            first = check_sources.check_all(["audio"])
-            second = check_sources.check_all(["audio"])
+            # Outlasts the first run's attempts, so the first run fails and the
+            # second one succeeds.
+            self.write_category("audio", [{"title": "抖动", "url": f"{server.base}/flaky3.m3u"}])
+            first = check_sources.check_all(["audio"], backoff=0)
+            second = check_sources.check_all(["audio"], backoff=0)
 
-        self.assertEqual(first["counts"]["suspected"], 1)
         self.assertEqual(second["counts"]["available"], 1)
         stored = json.loads((self.library_dir / "audio.json").read_text(encoding="utf-8"))
         self.assertEqual(stored["sources"][0]["status"], "available")
         self.assertEqual(stored["sources"][0]["failStreak"], 0)
+        self.assertEqual(first["counts"]["suspected"], 1)
 
 
 if __name__ == "__main__":

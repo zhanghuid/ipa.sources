@@ -12,15 +12,26 @@ soon as the response headers arrive, so a multi-gigabyte subscription file is
 never downloaded. ``HEAD`` is not used at all: many small hosts answer 405/403
 to HEAD while serving GET normally.
 
+Transient failures are retried (``--attempts``, default 3) with a growing
+backoff, because a single dropped TLS handshake or an overloaded edge node is
+not evidence that a source is gone. Definitive answers are not retried: a 4xx
+other than 408/429 comes back immediately.
+
 A single failure is only ``suspected``. A source becomes ``unavailable`` after
 ``--threshold`` consecutive failures and returns to ``available`` automatically
 as soon as a probe succeeds again.
+
+Probes go out from wherever this script runs, so the result is only as
+meaningful as that network path. ``--proxy`` (or the ``SOURCE_CHECK_PROXY``
+environment variable) routes every probe through an HTTP(S) proxy, which is how
+an overseas CI runner can be made to see what a Chinese client sees.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import threading
@@ -41,6 +52,12 @@ TIMEOUT_SECONDS = 15.0
 MAX_REDIRECTS = 5
 DEFAULT_CONCURRENCY = 8
 UNAVAILABLE_AFTER = 2
+DEFAULT_ATTEMPTS = 3
+# Seconds before the first retry; each further retry waits one multiple more.
+RETRY_BACKOFF_SECONDS = 1.5
+
+# Statuses that mean "ask again", not "this source is broken".
+RETRYABLE_STATUSES = frozenset({408, 425, 429, 500, 502, 503, 504, 522, 524})
 
 # The default urllib agent (``Python-urllib/3.x``) is rejected by many hosts.
 USER_AGENT = (
@@ -63,13 +80,40 @@ class LimitedRedirects(urllib.request.HTTPRedirectHandler):
 class ProbeResult:
     """Outcome of one availability probe."""
 
-    __slots__ = ("ok", "status", "error", "latency_ms")
+    __slots__ = ("ok", "status", "error", "latency_ms", "attempts", "retryable")
 
-    def __init__(self, ok: bool, status: int | None, error: str, latency_ms: int) -> None:
+    def __init__(
+        self,
+        ok: bool,
+        status: int | None,
+        error: str,
+        latency_ms: int,
+        attempts: int = 1,
+        retryable: bool | None = None,
+    ) -> None:
         self.ok = ok
         self.status = status
         self.error = error
         self.latency_ms = latency_ms
+        self.attempts = max(1, int(attempts))
+        if retryable is None:
+            # No status at all means a transport problem (DNS, TLS, timeout,
+            # reset); those are exactly the failures worth a second look.
+            retryable = (not ok) and (status is None or status in RETRYABLE_STATUSES)
+        self.retryable = bool(retryable)
+
+
+def build_opener(proxy: str | None = None) -> urllib.request.OpenerDirector:
+    """Opener with bounded redirects and, when asked, an explicit proxy.
+
+    Without ``proxy`` the default ``ProxyHandler`` is kept, so ``HTTP_PROXY`` /
+    ``HTTPS_PROXY`` keep working the way urllib normally behaves.
+    """
+
+    handlers: list[urllib.request.BaseHandler] = [LimitedRedirects]
+    if proxy:
+        handlers.append(urllib.request.ProxyHandler({"http": proxy, "https": proxy}))
+    return urllib.request.build_opener(*handlers)
 
 
 def normalize_url(value: object) -> str:
@@ -123,8 +167,14 @@ def describe_error(error: BaseException) -> str:
     return text
 
 
-def probe(url: str, *, timeout: float = TIMEOUT_SECONDS, user_agent: str = USER_AGENT) -> ProbeResult:
-    """Fetch response headers only and report whether the endpoint answers."""
+def probe_once(
+    url: str,
+    *,
+    timeout: float = TIMEOUT_SECONDS,
+    user_agent: str = USER_AGENT,
+    proxy: str | None = None,
+) -> ProbeResult:
+    """One attempt: fetch response headers only, no body."""
 
     request = urllib.request.Request(
         url,
@@ -136,7 +186,7 @@ def probe(url: str, *, timeout: float = TIMEOUT_SECONDS, user_agent: str = USER_
             "Accept-Encoding": "identity",
         },
     )
-    opener = urllib.request.build_opener(LimitedRedirects)
+    opener = build_opener(proxy)
     started = time.monotonic()
 
     def elapsed() -> int:
@@ -154,6 +204,32 @@ def probe(url: str, *, timeout: float = TIMEOUT_SECONDS, user_agent: str = USER_
         return ProbeResult(200 <= status < 400, status, f"HTTP {status}", elapsed())
     except BaseException as error:  # noqa: BLE001 - any transport failure is a failure
         return ProbeResult(False, None, describe_error(error), elapsed())
+
+
+def probe(
+    url: str,
+    *,
+    timeout: float = TIMEOUT_SECONDS,
+    user_agent: str = USER_AGENT,
+    attempts: int = DEFAULT_ATTEMPTS,
+    proxy: str | None = None,
+    backoff: float = RETRY_BACKOFF_SECONDS,
+) -> ProbeResult:
+    """Probe with retries; keep the last result and how many attempts it took.
+
+    Only transient failures are retried. A run that fails every attempt reports
+    the last error, so the message stays about the most recent try.
+    """
+
+    total = max(1, int(attempts))
+    result = None
+    for attempt in range(1, total + 1):
+        result = probe_once(url, timeout=timeout, user_agent=user_agent, proxy=proxy)
+        result.attempts = attempt
+        if result.ok or not result.retryable or attempt == total:
+            return result
+        time.sleep(max(0.0, backoff) * attempt)
+    return result  # pragma: no cover - the loop always returns
 
 
 def apply_probe(
@@ -226,10 +302,16 @@ def check_all(
     only_url: str | None = None,
     threshold: int = UNAVAILABLE_AFTER,
     timeout: float = TIMEOUT_SECONDS,
+    attempts: int = DEFAULT_ATTEMPTS,
+    proxy: str | None = None,
+    backoff: float = RETRY_BACKOFF_SECONDS,
 ) -> dict:
     picked, loaded = selected_entries(categories, only_url=only_url)
     checked_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-    print(f"检查 {len(picked)} 条源（并发 {max(1, concurrency)}，超时 {timeout:g}s）")
+    print(
+        f"检查 {len(picked)} 条源（并发 {max(1, concurrency)}，超时 {timeout:g}s，"
+        f"重试至 {max(1, attempts)} 次{('，代理 ' + proxy) if proxy else ''}）"
+    )
 
     counter = {"available": 0, "suspected": 0, "unavailable": 0, "disabled": 0, "unchecked": 0}
     lock = threading.Lock()
@@ -237,10 +319,12 @@ def check_all(
 
     def work(item: tuple[str, dict]) -> None:
         category, entry = item
-        result = probe(entry["url"], timeout=timeout)
+        result = probe(entry["url"], timeout=timeout, attempts=attempts, proxy=proxy, backoff=backoff)
         apply_probe(entry, result, checked_at, threshold=threshold)
         status = effective_status(entry)
         detail = f"HTTP {result.status}" if result.status else (result.error or "无响应")
+        if result.attempts > 1:
+            detail += f"，尝试 {result.attempts} 次"
         with lock:
             counter[status] = counter.get(status, 0) + 1
             rows.append(f"  {'✔' if result.ok else '✘'} [{CATEGORY_LABELS.get(category, category)}] {entry['title']} — {status} ({detail})")
@@ -316,7 +400,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--url", help="只检查一条源（按规范化地址匹配）")
     parser.add_argument("--concurrency", type=int, default=DEFAULT_CONCURRENCY, help="并发数，默认 8")
     parser.add_argument("--timeout", type=float, default=TIMEOUT_SECONDS, help="单条超时秒数，默认 15")
+    parser.add_argument("--attempts", type=int, default=DEFAULT_ATTEMPTS, help="单条最多尝试次数，默认 3")
     parser.add_argument("--threshold", type=int, default=UNAVAILABLE_AFTER, help="连续失败几次后判定不可用，默认 2")
+    parser.add_argument(
+        "--proxy",
+        default=os.getenv("SOURCE_CHECK_PROXY", ""),
+        help="HTTP(S) 代理，例如 http://127.0.0.1:7890；也可用 SOURCE_CHECK_PROXY 环境变量",
+    )
     parser.add_argument("--dry-run", action="store_true", help="只打印结果，不写文件、不提交")
     parser.add_argument("--no-commit", action="store_true", help="写入状态文件但不提交")
     return parser
@@ -325,6 +415,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     categories = resolve_categories(args.category)
+    proxy = (args.proxy or "").strip() or None
     report = check_all(
         categories,
         concurrency=args.concurrency,
@@ -332,6 +423,8 @@ def main(argv: list[str] | None = None) -> int:
         only_url=args.url,
         threshold=args.threshold,
         timeout=args.timeout,
+        attempts=args.attempts,
+        proxy=proxy,
     )
     if not args.dry_run and not args.no_commit:
         git_commit_and_push(report["written"])
