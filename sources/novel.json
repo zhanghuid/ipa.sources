@@ -1,14 +1,14 @@
 {
   "name": "小说源",
   "category": "novel",
-  "generatedAt": "2026-10-14T02:22:46Z",
+  "generatedAt": "2026-10-14T04:55:28Z",
   "total": 1,
   "sources": [
     {
       "title": "「阅读」自用书源分享",
       "url": "https://gh-proxy.org/https://raw.githubusercontent.com/XIU2/Yuedu/master/shuyuan",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T02:22:37Z",
+      "lastCheckedAt": "2026-10-14T04:55:20Z",
       "httpStatus": 206
     }
   ]
