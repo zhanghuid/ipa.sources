@@ -2,6 +2,11 @@
   "name": "直播源",
   "sources": [
     {
+      "title": "订阅直播中心",
+      "url": "https://iptv-hub-q7m2.web.zaka.live/playlist.m3u",
+      "status": "unchecked"
+    },
+    {
       "title": "电视直播",
       "url": "https://d1y.github.io/kitty/lives.json",
       "status": "available",
