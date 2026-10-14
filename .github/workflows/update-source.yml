@@ -45,15 +45,16 @@ jobs:
       - name: Decide whether the source check is due
         id: due
         # Catalogs regenerate every six hours, but availability is only checked
-        # once every other day: the odd day-of-year is skipped and only the first
-        # slot of a due day runs. Probing four times a day would let a six-hour
-        # blip mark a source unavailable, and `sources/available.json` drops
-        # those, so clients would lose a working source over a short outage.
-        # Manual runs and pushes always check.
+        # once every other day, on the first slot of an even UTC day. Probing
+        # four times a day would let a six-hour blip mark a source unavailable,
+        # and `sources/available.json` drops those, so a client would lose a
+        # working source over a short outage. Manual runs and pushes always
+        # check. Arithmetic goes through epoch seconds because the padded
+        # `date +%j` form (e.g. 018) is invalid in bash arithmetic.
         run: |
           if [ "${{ github.event_name }}" != "schedule" ]; then
             echo "run=true" >> "$GITHUB_OUTPUT"
-          elif [ $(( $(date -u +%j) % 2 )) -eq 0 ] && [ "$(date -u +%H)" -lt 6 ]; then
+          elif [ $(( $(date -u +%s) / 86400 % 2 )) -eq 0 ] && [ $(( $(date -u +%s) % 86400 / 3600 )) -lt 6 ]; then
             echo "run=true" >> "$GITHUB_OUTPUT"
           else
             echo "run=false" >> "$GITHUB_OUTPUT"

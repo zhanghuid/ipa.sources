@@ -109,27 +109,42 @@ urllib normally behaves.
 
 ### Scheduled checks in GitHub Actions
 
-The **Update app sources** workflow runs `scripts/check_sources.py --no-commit`
-every six hours, immediately before `scripts/generate_library.py`. The checker
-rewrites `config/library/*.json`, the generator then republishes `sources/`, and
-the workflow's commit step lands both in one commit. Because the checker writes
-into `config/library`, that path is part of the commit step's `git diff` guard
-and `git add` list; without it the status updates would be regenerated and
-discarded on every run.
+The **Update app sources** workflow schedules itself every six hours, but the
+availability check only runs **once every other day**. A gate step reads the UTC
+day-of-year and hour, and a scheduled run proceeds only on an even day-of-year
+before 06:00 UTC; `workflow_dispatch` and push runs always check. Probing four
+times a day would let a six-hour outage flip a source to `unavailable`, and
+`sources/available.json` omits those, so a client would lose a working source
+over a short blip.
+
+When it does run, the checker executes immediately before
+`scripts/generate_library.py`. It rewrites `config/library/*.json`, the
+generator republishes `sources/`, and the workflow's commit step lands both in
+one commit. Because the checker writes into `config/library`, that path is part
+of the commit step's `git diff` guard and `git add` list; without it the status
+updates would be regenerated and discarded on every run.
 
 The check step uses `continue-on-error: true`. The checker exits non-zero when a
 source is `unavailable`, and that must be visible without blocking the catalog
-commit — a dead subscription source should never stop app updates. To have the
-runner probe from a Chinese address, set the repository **variable**
-`SOURCE_CHECK_PROXY` to the proxy URL; it is read through the same variable by
-the workflow step.
+commit — a dead subscription source should never stop app updates. It runs with
+`--timeout 25 --attempts 3`, because a Chinese host answering a runner in
+another country can take ten seconds to send its first byte.
+
+The datacentre the workflow runs in is not the network path your clients use.
+Hosts that only serve Chinese addresses, or that block overseas IPs, are
+misreported as down there and would then be dropped from `available.json`. The
+checker sends the user agent a browser would, which clears the common
+bot-filter false positives, but it cannot fix a blocked route. To have the runner
+probe through a Chinese address, set the repository **variable**
+`SOURCE_CHECK_PROXY` to an HTTP(S) proxy URL; the workflow passes it to
+`--proxy` through the environment. Leaving it unset keeps direct probes.
 
 Writing status files changes `config/library/**`, which itself triggers this
-workflow. When running the checker by hand, `python scripts/check_sources.py`
-performs its own commit and push; the workflow uses `--no-commit` and lets the
-shared commit step handle it. The process exits non-zero when any source is
-`unavailable`, which makes it usable from a launchd job or any other scheduler;
-a schedule every other day is a reasonable default.
+workflow, so the manual and scheduled paths must not commit the same thing twice.
+Running `python scripts/check_sources.py` by hand writes *and commits and
+pushes*, which triggers the workflow to regenerate the feeds; the workflow
+itself uses `--no-commit` and lets its shared commit step land the status change
+and the regenerated feeds together.
 
 ### Multiple addresses and editing
 
