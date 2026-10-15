@@ -553,20 +553,23 @@
     {
       "name": "Kazumi",
       "bundleIdentifier": "com.example.kazumi",
-      "developerName": "Predidit",
-      "subtitle": "基于自定义规则的番剧采集APP，支持流媒体在线观看，支持弹幕，支持实时超分辨率。",
-      "localizedDescription": "使用 Flutter 开发的基于自定义规则的番剧采集与在线观看程序。使用最多五行基于 Xpath 语法的选择器构建自己的规则，支持规则导入与规则分享，支持基于 Anime4K 的实时超分辨率。\n\n其他特性：番剧目录与搜索、分集播放、番剧弹幕、追番列表、历史记录、倍速播放、多视频源支持、配色方案等。",
-      "iconURL": "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/apps/Kazumi/icon.png",
-      "screenshots": [
-        "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/apps/Kazumi/images/home.jpg",
-        "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/apps/Kazumi/images/timetable.jpg",
-        "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/apps/Kazumi/images/details.jpg",
-        "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/apps/Kazumi/images/selection.jpg",
-        "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/apps/Kazumi/images/rules.jpg",
-        "https://raw.githubusercontent.com/bebound/AltGallery/refs/heads/master/apps/Kazumi/images/rules_edit.jpg"
-      ],
-      "tintColor": "#4CAF50",
+      "developerName": "个人归档",
+      "subtitle": "IPA 归档",
+      "localizedDescription": "从本地 IPA 归档生成。",
+      "upstream": {
+        "repo": "Predidit/Kazumi"
+      },
+      "iconURL": "https://raw.githubusercontent.com/Predidit/Kazumi/main/ios/Runner/Assets.xcassets/AppIcon.appiconset/Icon-App-1024x1024%401x.png",
+      "category": "entertainment",
       "versions": [
+        {
+          "version": "2.3.9",
+          "buildVersion": "20309",
+          "date": "2026-10-14",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.3.9_no_sign.ipa",
+          "downloadURL": "https://gh-proxy.org/https://github.com/Predidit/Kazumi/releases/download/2.3.9/Kazumi_ios_2.3.9_no_sign.ipa",
+          "size": 30477942
+        },
         {
           "version": "2.3.9",
           "date": "2026-10-14",
@@ -792,6 +795,10 @@
           "size": 27866552
         }
       ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {}
+      },
       "platform": "ios",
       "devices": [
         "phone",
@@ -2611,7 +2618,7 @@
         {
           "version": "0.9.0",
           "date": "2026-10-13",
-          "localizedDescription": "* 修复断网恢复等待与首次游客 Feed 初始化 by @huamurui in https://github.com/huamurui/zhihu-minus-minus/pull/127\r\n* 恢复收藏快捷操作，统一 SVG 图标与列表收藏信息 by @huamurui in https://github.com/huamurui/zhihu-minus-minus/pull/128\r\n* 修复关注头像栏横滑冲突，支持最近发布左右切换用户 by @huamurui in https://github.com/huamurui/zhihu-minus-minus/pull/129\r\n* 支持内容导出（可能还有挺多问题） by @huamurui in https://github.com/huamurui/zhihu-minus-minus/pull/130\r\n* 修复安卓偶现的页面跳转闪烁 https://github.com/huamurui/zhihu-minus-minus/commit/95c813741198b59a5faf18639b9a7cce719d3913\r\n\r\nFull Changelog: https://github.com/huamurui/zhihu-minus-minus/compare/v0.8.1...v0.9.0",
+          "localizedDescription": "* 修复断网恢复等待与首次游客 Feed 初始化 by @huamurui in https://github.com/huamurui/zhihu-minus-minus/pull/127\r\n* 恢复收藏快捷操作，统一 SVG 图标与列表收藏信息 by @huamurui in https://github.com/huamurui/zhihu-minus-minus/pull/128\r\n* 修复关注头像栏横滑冲突，支持最近发布左右切换用户 by @huamurui in https://github.com/huamurui/zhihu-minus-minus/pull/129\r\n* 支持内容导出（还有挺多问题） by @huamurui in https://github.com/huamurui/zhihu-minus-minus/pull/130\r\n* 修复安卓偶现的页面跳转闪烁 https://github.com/huamurui/zhihu-minus-minus/commit/95c813741198b59a5faf18639b9a7cce719d3913\r\n\r\nFull Changelog: https://github.com/huamurui/zhihu-minus-minus/compare/v0.8.1...v0.9.0",
           "downloadURL": "https://gh-proxy.org/https://github.com/huamurui/zhihu-minus-minus/releases/download/v0.9.0/zhihu-minus-minus-v0.9.0-unsigned.ipa",
           "size": 16096852,
           "minOSVersion": "15.1"

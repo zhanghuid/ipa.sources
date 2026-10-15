@@ -539,6 +539,14 @@
       "category": "entertainment",
       "versions": [
         {
+          "version": "2.3.9",
+          "buildVersion": "20309",
+          "date": "2026-10-14",
+          "localizedDescription": "上游源文件：Kazumi_ios_2.3.9_no_sign.ipa",
+          "downloadURL": "https://github.com/Predidit/Kazumi/releases/download/2.3.9/Kazumi_ios_2.3.9_no_sign.ipa",
+          "size": 30477942
+        },
+        {
           "version": "2.3.8",
           "buildVersion": "20308",
           "date": "2026-10-07",
