@@ -1,21 +1,21 @@
 {
   "name": "直播源",
   "category": "live",
-  "generatedAt": "2026-10-15T21:23:57Z",
+  "generatedAt": "2026-10-16T04:33:36Z",
   "total": 2,
   "sources": [
     {
       "title": "订阅直播中心",
       "url": "https://iptv-hub-q7m2.web.zaka.live/playlist.m3u",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T16:11:16Z",
+      "lastCheckedAt": "2026-10-16T04:33:29Z",
       "httpStatus": 206
     },
     {
       "title": "电视直播",
       "url": "https://d1y.github.io/kitty/lives.json",
       "status": "available",
-      "lastCheckedAt": "2026-10-14T16:11:16Z",
+      "lastCheckedAt": "2026-10-16T04:33:29Z",
       "httpStatus": 206
     }
   ]
