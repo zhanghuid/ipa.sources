@@ -319,6 +319,14 @@
       "category": "social",
       "versions": [
         {
+          "version": "12.33",
+          "buildVersion": "31",
+          "date": "2026-10-16",
+          "localizedDescription": "上游源文件：NeoFreeBird-sideloaded-X_7.2.0_12.33.ipa",
+          "downloadURL": "https://gh-proxy.org/https://github.com/NeoFreeBird/app/releases/download/v7.2.0/NeoFreeBird-sideloaded-X_7.2.0_12.33.ipa",
+          "size": 262415275
+        },
+        {
           "version": "12.31.1",
           "buildVersion": "1",
           "date": "2026-10-10",
@@ -1913,10 +1921,10 @@
       "versions": [
         {
           "version": "nightly",
-          "date": "2026-09-18",
-          "localizedDescription": "**Commit:** [4dbe0f9a626de801184a42c0be8d2cb105058e3d](https://github.com/LiveContainer/LiveContainer/commit/4dbe0f9a626de801184a42c0be8d2cb105058e3d)\n**Message:** Update litehook: add arm64e_x1 dsc suffix\n\nThis is a nightly release [created automatically with GitHub Actions workflow](https://github.com/LiveContainer/LiveContainer/actions/runs/35404675698/attempts/1).",
+          "date": "2026-10-17",
+          "localizedDescription": "**Commit:** [9108ae624ea001f7d7696d48407f890b48fa2653](https://github.com/LiveContainer/LiveContainer/commit/9108ae624ea001f7d7696d48407f890b48fa2653)\n**Message:** fix #1644 #1655 #1666, bump bersion\n\nThis is a nightly release [created automatically with GitHub Actions workflow](https://github.com/LiveContainer/LiveContainer/actions/runs/39017541871/attempts/1).",
           "downloadURL": "https://gh-proxy.org/https://github.com/LiveContainer/LiveContainer/releases/download/nightly/LiveContainer%2BSideStore.ipa",
-          "size": 35926202,
+          "size": 24155286,
           "minOSVersion": "15.0"
         },
         {
